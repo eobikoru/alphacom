@@ -139,12 +139,12 @@ export function HeroSection() {
                   style={{ animationDelay: "0.4s" }}
                   itemProp="headline"
                 >
-                  <span className="text-white text-[4rem] drop-shadow-2xl">{currentSlideData.title}</span>
-                  <span className="bg-gradient-to-r text-[3rem] from-cyan-400 via-cyan-300 to-purple-400 bg-clip-text text-transparent block animate-gradient-x bg-300% drop-shadow-lg">
+                  <span className="text-white font-normal text-[3rem] md:text-[4rem] drop-shadow-2xl">{currentSlideData.title}</span>
+                  <span className="bg-gradient-to-r text-[2rem] md:text-[3rem] from-cyan-400 via-cyan-300 to-purple-400 bg-clip-text text-transparent block animate-gradient-x bg-300% drop-shadow-lg">
                     {currentSlideData.highlight}
                   </span>
                   <span
-                    className="text-slate-200 text-[2rem] lg:text-[1.7rem] mb-4 font-light block mt-4 drop-shadow-lg animate-fade-in-up"
+                    className="text-slate-200 text-[2rem] font-normal  lg:text-[1.7rem] mb-4 font-light block mt-4 drop-shadow-lg animate-fade-in-up"
                     style={{ animationDelay: "0.6s" }}
                   >
                     {currentSlideData.subtitle}
@@ -152,7 +152,7 @@ export function HeroSection() {
                 </h1>
 
                 <p
-                  className="text-[1rem] text-slate-200 text-pretty max-w-lg leading-relaxed drop-shadow-md animate-fade-in-up"
+                  className="text-[1rem] text-slate-200 text-pretty max-w-lg font-normal  leading-relaxed drop-shadow-md animate-fade-in-up"
                   style={{ animationDelay: "0.8s" }}
                   itemProp="description"
                 >
@@ -169,7 +169,7 @@ export function HeroSection() {
               <Link href="/categories/computers" aria-label="Browse computer products">
                 <Button
                   size="lg"
-                  className="h-16 px-12 text-lg bg-gradient-to-r from-cyan-500 to-purple-600 hover:from-cyan-400 hover:to-purple-500 shadow-2xl hover:shadow-cyan-500/25 transition-all duration-500 transform hover:scale-105 hover:-translate-y-1 backdrop-blur-sm border border-white/10"
+                  className="h-16 px-12 text-[0.9rem] bg-gradient-to-r from-cyan-500 to-purple-600 hover:from-cyan-400 hover:to-purple-500 shadow-2xl hover:shadow-cyan-500/25 transition-all duration-500 transform hover:scale-105 hover:-translate-y-1 backdrop-blur-sm border border-white/10"
                 >
                   Start Shopping
                   <ArrowRight className="ml-3 h-6 w-6 transition-transform duration-300 group-hover:translate-x-1" />
@@ -179,7 +179,7 @@ export function HeroSection() {
                 <Button
                   variant="outline"
                   size="lg"
-                  className="h-16 px-12 text-lg border-2 border-white/30 hover:border-cyan-300/50 hover:bg-white/10 transition-all duration-500 bg-white/5 backdrop-blur-sm text-white hover:text-cyan-100 transform hover:scale-105"
+                  className="h-16 px-12 text-[0.9rem] border-2 border-white/30 hover:border-cyan-300/50 hover:bg-white/10 transition-all duration-500 bg-white/5 backdrop-blur-sm text-white hover:text-cyan-100 transform hover:scale-105"
                 >
                   View Categories
                 </Button>
@@ -203,7 +203,7 @@ export function HeroSection() {
                   <Shield className="h-7 w-7 text-cyan-300" aria-hidden="true" />
                 </div>
                 <div>
-                  <p className="font-semibold text-white text-lg drop-shadow-md" itemProp="name">
+                  <p className="font-normal text-[0.9rem] text-white text-lg drop-shadow-md" itemProp="name">
                     100% Warranty
                   </p>
                   <p className="text-sm text-slate-300" itemProp="description">
@@ -220,7 +220,7 @@ export function HeroSection() {
                   <Truck className="h-7 w-7 text-cyan-300" aria-hidden="true" />
                 </div>
                 <div>
-                  <p className="font-semibold text-white text-lg drop-shadow-md" itemProp="name">
+                  <p className="font-normal text-[0.9rem] text-white text-lg drop-shadow-md" itemProp="name">
                     Free Shipping
                   </p>
                   <p className="text-sm text-slate-300" itemProp="description">
@@ -237,7 +237,7 @@ export function HeroSection() {
                   <Headphones className="h-7 w-7 text-cyan-300" aria-hidden="true" />
                 </div>
                 <div>
-                  <p className="font-semibold text-white text-lg drop-shadow-md" itemProp="name">
+                  <p className="font-normal text-white text-[0.9rem] drop-shadow-md" itemProp="name">
                     24/7 Support
                   </p>
                   <p className="text-sm text-slate-300" itemProp="description">
