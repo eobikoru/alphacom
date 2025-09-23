@@ -54,7 +54,7 @@ export default function CartPage() {
   return (
     <>
       <StructuredData data={cartSchema} />
-      <AppLayout blackNavbar>
+      <AppLayout blackNavbar >
         <main>
           <CartPageClient />
         </main>

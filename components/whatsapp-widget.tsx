@@ -27,7 +27,7 @@ export function WhatsAppWidget() {
           aria-label="Chat with us on WhatsApp"
         >
           <Image
-            src="/images/whatsapp-icon.png"
+            src="/whatsapp-icon.png"
             alt="WhatsApp Chat"
             width={60}
             height={60}

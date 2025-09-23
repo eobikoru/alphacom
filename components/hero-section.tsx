@@ -14,7 +14,7 @@ const heroSlides = [
     highlight: "Tech Partner",
     subtitle: "with 100% Warranty",
     description: "Discover cutting-edge technology and premium gadgets with unmatched quality and service.",
-    image: "/modern-tech-devices-collection-including-laptops-s.jpg",
+    image: "/camera-equipment.jpg",
     badge: "✨ New Arrivals Available",
   },
   {
@@ -23,17 +23,20 @@ const heroSlides = [
     highlight: "Gaming Setup",
     subtitle: "Performance Unleashed",
     description: "Experience next-level gaming with our curated collection of high-performance devices.",
-    image: "/modern-laptop-computer-on-clean-desk-setup.jpg",
+    image: "/gaming-setup.jpg",
     badge: "🎮 Gaming Collection",
   },
   {
     id: 3,
-    title: "Professional",
-    highlight: "Workspace",
-    subtitle: "Productivity Redefined",
-    description: "Transform your workspace with professional-grade technology and accessories.",
-    image: "/modern-tech-devices-collection-including-laptops-s.jpg",
-    badge: "💼 Pro Series",
+    category: "accessories",
+    label: "Accessories",
+    title: "Stylish",
+    highlight: "Add-ons",
+    subtitle: "Tech That Complements",
+    description:
+      "Enhance your gadgets with sleek and functional accessories built for everyday use.",
+    image: "/slide5.jpg",
+    badge: "🛒 Must-Have Extras",
   },
 ]
 
@@ -80,7 +83,7 @@ export function HeroSection() {
       <div
         className="absolute inset-0 bg-cover bg-center bg-fixed transition-all duration-1000 ease-in-out"
         style={{
-          backgroundImage: `url('/premium-modern-tech-workspace-with-sleek-devices-a.jpg')`,
+          backgroundImage: `url('/backgroundimage.jpg')`,
         }}
         role="img"
         aria-label="Premium modern tech workspace background"
@@ -136,12 +139,12 @@ export function HeroSection() {
                   style={{ animationDelay: "0.4s" }}
                   itemProp="headline"
                 >
-                  <span className="text-white drop-shadow-2xl">{currentSlideData.title}</span>
-                  <span className="bg-gradient-to-r from-cyan-400 via-cyan-300 to-purple-400 bg-clip-text text-transparent block animate-gradient-x bg-300% drop-shadow-lg">
+                  <span className="text-white text-[4rem] drop-shadow-2xl">{currentSlideData.title}</span>
+                  <span className="bg-gradient-to-r text-[3rem] from-cyan-400 via-cyan-300 to-purple-400 bg-clip-text text-transparent block animate-gradient-x bg-300% drop-shadow-lg">
                     {currentSlideData.highlight}
                   </span>
                   <span
-                    className="text-slate-200 text-4xl lg:text-5xl font-light block mt-4 drop-shadow-lg animate-fade-in-up"
+                    className="text-slate-200 text-[2rem] lg:text-[1.7rem] mb-4 font-light block mt-4 drop-shadow-lg animate-fade-in-up"
                     style={{ animationDelay: "0.6s" }}
                   >
                     {currentSlideData.subtitle}
@@ -149,7 +152,7 @@ export function HeroSection() {
                 </h1>
 
                 <p
-                  className="text-xl text-slate-200 text-pretty max-w-lg leading-relaxed drop-shadow-md animate-fade-in-up"
+                  className="text-[1rem] text-slate-200 text-pretty max-w-lg leading-relaxed drop-shadow-md animate-fade-in-up"
                   style={{ animationDelay: "0.8s" }}
                   itemProp="description"
                 >

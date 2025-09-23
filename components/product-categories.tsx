@@ -13,7 +13,7 @@ const categories = [
     itemCount: "200+ items",
     color: "from-cyan-500/20 to-blue-600/20",
     icon: Monitor,
-    image: "/modern-laptop-workspace-setup.jpg",
+    image: "/accessories.jpg",
   },
   {
     name: "Cameras",
@@ -22,7 +22,7 @@ const categories = [
     itemCount: "90+ items",
     color: "from-indigo-500/20 to-purple-600/20",
     icon: Camera,
-    image: "/professional-camera-equipment-showcase.jpg",
+    image: "/cameras.jpg",
   },
   {
     name: "Audio & Speakers",
@@ -31,7 +31,7 @@ const categories = [
     itemCount: "150+ items",
     color: "from-emerald-500/20 to-teal-600/20",
     icon: Volume2,
-    image: "/premium-audio-headphones-collection.jpg",
+    image: "/audio-speakers.jpg",
   },
   {
     name: "Data Storage",
@@ -40,7 +40,7 @@ const categories = [
     itemCount: "80+ items",
     color: "from-orange-500/20 to-red-600/20",
     icon: HardDrive,
-    image: "/data-storage-devices-collection.jpg",
+    image: "/data-storage.jpg",
   },
   {
     name: "Printers & Scanners",
@@ -49,7 +49,7 @@ const categories = [
     itemCount: "60+ items",
     color: "from-purple-500/20 to-pink-600/20",
     icon: Printer,
-    image: "/office-printer-scanner-setup.jpg",
+    image: "/printers-scanners.jpg",
   },
   {
     name: "Networking",
@@ -58,7 +58,7 @@ const categories = [
     itemCount: "70+ items",
     color: "from-blue-500/20 to-cyan-600/20",
     icon: Network,
-    image: "/networking-equipment-display.jpg",
+    image: "/networking.jpg",
   },
   {
     name: "Software & Security",
@@ -67,7 +67,7 @@ const categories = [
     itemCount: "100+ items",
     color: "from-rose-500/20 to-pink-600/20",
     icon: Shield,
-    image: "/software-security-solutions.jpg",
+    image: "/software-securityss.jpg",
   },
   {
     name: "Accessories",
@@ -76,7 +76,7 @@ const categories = [
     itemCount: "300+ items",
     color: "from-teal-500/20 to-green-600/20",
     icon: Package,
-    image: "/tech-accessories-collection.jpg",
+    image: "/headphones-collection.jpg",
   },
 ]
 
@@ -96,10 +96,10 @@ export function ProductCategories() {
             </span>
           </div>
 
-          <h2 className="text-4xl lg:text-6xl font-bold mb-6 bg-gradient-to-r from-foreground via-foreground/90 to-foreground/70 bg-clip-text text-transparent">
+          <h2 className="text-4xl lg:text-3xl font-normal mb-6 bg-gradient-to-r from-foreground via-foreground/90 to-foreground/70 bg-clip-text text-transparent">
             Shop by Category
           </h2>
-          <p className="text-xl lg:text-2xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
+          <p className="text-xl lg:text-[1.2rem] text-muted-foreground max-w-3xl mx-auto leading-relaxed">
             Explore our comprehensive range of technology products and find exactly what you need
           </p>
         </div>
