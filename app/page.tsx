@@ -1,103 +1,161 @@
-import Image from "next/image";
+import { AppLayout } from "@/components/app-layout"
+import { HeroSection } from "@/components/hero-section"
+import { ProductCategories } from "@/components/product-categories"
+import { FeaturedProducts } from "@/components/featured-products"
+import { generateMetadata } from "@/components/seo/seo-head"
+import { StructuredData } from "@/components/seo/structured-data"
+import { generateOrganizationSchema } from "@/lib/seo-utils"
 
-export default function Home() {
+export const metadata = generateMetadata({
+  title: "Premium E-Commerce Store | Best Products & Deals Online",
+  description:
+    "Discover premium products at unbeatable prices. Shop electronics, fashion, home goods & more with fast shipping, secure checkout & 24/7 customer support.",
+  keywords: [
+    "premium store",
+    "online shopping",
+    "electronics",
+    "fashion",
+    "home goods",
+    "best deals",
+    "fast shipping",
+    "secure checkout",
+    "customer support",
+    "tech gadgets",
+    "smartphones",
+    "laptops",
+    "gaming",
+    "professional workspace",
+  ],
+  url: "/",
+  type: "website",
+  image: "/images/homepage-og.jpg",
+})
+
+export default function HomePage() {
+  const websiteSchema = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: "Premium Store",
+    url: "https://www.alphacomonline.com",
+    description:
+      "Premium e-commerce store offering the best products at unbeatable prices with fast shipping and secure checkout.",
+    potentialAction: {
+      "@type": "SearchAction",
+      target: "https://www.alphacomonline.com/search?q={search_term_string}",
+      "query-input": "required name=search_term_string",
+    },
+    sameAs: [
+      "https://facebook.com/premiumstore",
+      "https://twitter.com/premiumstore",
+      "https://instagram.com/premiumstore",
+      "https://linkedin.com/company/premiumstore",
+      "https://youtube.com/premiumstore",
+    ],
+  }
+
+  const organizationSchema = generateOrganizationSchema()
+
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "Home",
+        item: "https://www.alphacomonline.com",
+      },
+    ],
+  }
+
+  const offerCatalogSchema = {
+    "@context": "https://schema.org",
+    "@type": "OfferCatalog",
+    name: "Premium Store Product Catalog",
+    description:
+      "Browse our extensive catalog of premium products including electronics, fashion, home goods and more.",
+    itemListElement: [
+      {
+        "@type": "OfferCatalog",
+        name: "Electronics",
+        description: "Latest electronics including smartphones, laptops, tablets and accessories",
+        url: "https://www.alphacomonline.com/categories/electronics",
+      },
+      {
+        "@type": "OfferCatalog",
+        name: "Computers",
+        description: "Professional computers, gaming setups and accessories",
+        url: "https://www.alphacomonline.com/categories/computers",
+      },
+      {
+        "@type": "OfferCatalog",
+        name: "Fashion",
+        description: "Trendy fashion items for men and women",
+        url: "https://www.alphacomonline.com/categories/fashion",
+      },
+      {
+        "@type": "OfferCatalog",
+        name: "Home & Garden",
+        description: "Home improvement and garden essentials",
+        url: "https://www.alphacomonline.com/categories/home-garden",
+      },
+    ],
+  }
+
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: [
+      {
+        "@type": "Question",
+        name: "Do you offer free shipping?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "Yes, we offer free shipping on all orders over $50. Orders are typically delivered within 2-5 business days.",
+        },
+      },
+      {
+        "@type": "Question",
+        name: "What is your return policy?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "We offer a 30-day return policy on all items. Products must be in original condition with all packaging and accessories.",
+        },
+      },
+      {
+        "@type": "Question",
+        name: "Do you provide warranty on products?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "Yes, all our products come with manufacturer warranty. We also provide extended warranty options for additional protection.",
+        },
+      },
+      {
+        "@type": "Question",
+        name: "How can I track my order?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "Once your order ships, you'll receive a tracking number via email. You can also track your order in your account dashboard.",
+        },
+      },
+    ],
+  }
+
   return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+    <>
+      <StructuredData data={websiteSchema} />
+      <StructuredData data={organizationSchema} />
+      <StructuredData data={breadcrumbSchema} />
+      <StructuredData data={offerCatalogSchema} />
+      <StructuredData data={faqSchema} />
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
-  );
+      <AppLayout>
+        <main>
+          <HeroSection />
+          <ProductCategories />
+          <FeaturedProducts />
+        </main>
+      </AppLayout>
+    </>
+  )
 }
