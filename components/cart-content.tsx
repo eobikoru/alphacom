@@ -75,16 +75,16 @@ export function CartContent() {
                     <Button
                       variant="ghost"
                       size="sm"
-                      onClick={() => updateQuantity(item.id, item?.quantity - 1)}
+                      onClick={() => updateQuantity(item.id, (item.quantity as number) - 1)}
                       className="h-8 w-8 p-0"
                     >
                       <Minus className="h-4 w-4" />
                     </Button>
-                    <span className="px-3 py-1 text-sm font-medium text-foreground">{item?.quantity}</span>
+                    <span className="px-3 py-1 text-sm font-medium text-foreground">{item.quantity}</span>
                     <Button
                       variant="ghost"
                       size="sm"
-                      onClick={() => updateQuantity(item.id, item?.quantity + 1)}
+                      onClick={() => updateQuantity(item.id, (item.quantity as number) + 1)}
                       className="h-8 w-8 p-0"
                     >
                       <Plus className="h-4 w-4" />
@@ -92,7 +92,9 @@ export function CartContent() {
                   </div>
 
                   <div className="text-right">
-                    <p className="font-semibold text-card-foreground">{formatPrice(item.price * item?.quantity)}</p>
+                    <p className="font-semibold text-card-foreground">
+                      {formatPrice((item.price as number) * (item.quantity as number))}
+                    </p>
                     <p className="text-sm text-muted-foreground">{formatPrice(item.price)} each</p>
                   </div>
 

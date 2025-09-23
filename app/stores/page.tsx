@@ -76,7 +76,7 @@ export default function StoreLocatorPage() {
 
   return (
     <>
-      <PageSEO
+      {/* <PageSEO
         title="Store Locations - AlphaCom Online | Computer Village Lagos"
         description="Visit our premium technology store in Computer Village, Lagos. Expert service, quality products, and competitive prices. Get directions and store hours."
         keywords={[
@@ -92,7 +92,7 @@ export default function StoreLocatorPage() {
           description: "Located in Computer Village, Lagos. Premium technology products with expert service.",
           images: [{ url: "https://www.alphacomonline.com/store-location-og.jpg", width: 1200, height: 630 }],
         }}
-      />
+      /> */}
 
       <LocalBusinessSchema
         name={businessInfo.name}

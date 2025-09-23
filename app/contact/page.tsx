@@ -18,7 +18,7 @@ export default function ContactPage() {
 
   return (
     <>
-      <PageSEO
+      {/* <PageSEO
         title="Contact Us - AlphaCom Online | Computer Village Lagos Store"
         description="Contact AlphaCom Online in Computer Village, Lagos. WhatsApp support, phone, email, and store location. Expert technology support and consultation."
         keywords={[
@@ -35,7 +35,7 @@ export default function ContactPage() {
             "Get in touch with our expert team. WhatsApp support, store visits, and technical consultation available.",
           images: [{ url: "https://www.alphacomonline.com/contact-og.jpg", width: 1200, height: 630 }],
         }}
-      />
+      /> */}
 
       <LocalBusinessSchema
         name={businessInfo.name}

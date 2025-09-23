@@ -68,13 +68,13 @@ export function CartSheet() {
                       key={item.id}
                       className="flex items-center space-x-4 bg-card p-4 rounded-lg border border-border"
                     >
-                      <Image
+                      {/* <Image
                         src={item.image || "/placeholder.svg"}
                         alt={item.name}
                         width={60}
                         height={60}
                         className="rounded-md object-cover"
-                      />
+                      /> */}
                       <div className="flex-1">
                         <h4 className="font-medium text-card-foreground">{item.name}</h4>
                         <p className="text-sm text-muted-foreground">{item.category}</p>
