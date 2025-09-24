@@ -1,7 +1,7 @@
 "use client"
 
 import type React from "react"
-import { Search, User, Menu, MapPin, Package, ShoppingCart } from "lucide-react"
+import { Search, User, Menu, MapPin, ShoppingCart } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
@@ -47,22 +47,16 @@ export function ModernHeader({ blackNavbar }: ModernHeaderProps) {
       {/* Top bar */}
       <div className="border-b bg-muted/30 border-border">
         <div className="container mx-auto px-4 py-2">
-          <div className="flex items-center justify-between text-sm text-muted-foreground">
-            <div className="flex items-center gap-6">
-              <Link
-                href="/stores"
-                onClick={handleNavClick}
-                className="flex items-center gap-2 hover:text-foreground transition-colors"
-              >
-                <MapPin className="h-4 w-4" />
-                <span>Store Locator</span>
-              </Link>
-              <div className="flex items-center gap-2">
-                <Package className="h-4 w-4" />
-                <span>Track Your Order</span>
-              </div>
-            </div>
-            <div className="flex items-center gap-4">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-0 text-sm text-muted-foreground">
+            <Link
+              href="/stores"
+              onClick={handleNavClick}
+              className="flex items-center gap-2 hover:text-foreground transition-colors w-fit"
+            >
+              <MapPin className="h-4 w-4 flex-shrink-0" />
+              <span className="text-xs sm:text-sm">Store Locator</span>
+            </Link>
+            <div className="text-xs sm:text-sm text-center sm:text-right">
               <span>Free shipping on orders over ₦50,000</span>
             </div>
           </div>
