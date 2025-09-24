@@ -126,38 +126,11 @@ export function ModernFooter() {
             <div className="space-y-3 text-sm">
               <div>
                 <Link
-                  href="/categories/smartphones"
+                  href="/categories/computers-accessories"
                   onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
                   className="text-muted-foreground hover:text-primary transition-colors"
                 >
-                  Smartphones & Tablets
-                </Link>
-              </div>
-              <div>
-                <Link
-                  href="/categories/computers"
-                  onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-                  className="text-muted-foreground hover:text-primary transition-colors"
-                >
-                  Computers
-                </Link>
-              </div>
-              <div>
-                <Link
-                  href="/categories/audio"
-                  onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-                  className="text-muted-foreground hover:text-primary transition-colors"
-                >
-                  Audio & Speakers
-                </Link>
-              </div>
-              <div>
-                <Link
-                  href="/categories/wearables"
-                  onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-                  className="text-muted-foreground hover:text-primary transition-colors"
-                >
-                  Wearables
+                  Computers & Accessories
                 </Link>
               </div>
               <div>
@@ -171,11 +144,38 @@ export function ModernFooter() {
               </div>
               <div>
                 <Link
-                  href="/categories/gaming"
+                  href="/categories/audio-speakers"
                   onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
                   className="text-muted-foreground hover:text-primary transition-colors"
                 >
-                  Gaming
+                  Audio & Speakers
+                </Link>
+              </div>
+              <div>
+                <Link
+                  href="/categories/data-storage"
+                  onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+                  className="text-muted-foreground hover:text-primary transition-colors"
+                >
+                  Data Storage
+                </Link>
+              </div>
+              <div>
+                <Link
+                  href="/categories/printers-scanners"
+                  onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+                  className="text-muted-foreground hover:text-primary transition-colors"
+                >
+                  Printers & Scanners
+                </Link>
+              </div>
+              <div>
+                <Link
+                  href="/categories/networking"
+                  onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+                  className="text-muted-foreground hover:text-primary transition-colors"
+                >
+                  Networking
                 </Link>
               </div>
             </div>

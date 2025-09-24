@@ -86,7 +86,7 @@ export function ModernHeader({ blackNavbar }: ModernHeaderProps) {
           </Link>
 
           {/* Search */}
-          <div className="flex-1 max-w-2xl mx-8">
+          <div className="flex-1 max-w-2xl mx-8 hidden md:block">
             <form onSubmit={handleSearch} className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
@@ -140,6 +140,19 @@ export function ModernHeader({ blackNavbar }: ModernHeaderProps) {
 
         {isMobileMenuOpen && (
           <div className="md:hidden mt-4 p-4 rounded-lg border bg-card border-border">
+            {/* Mobile Search */}
+            <div className="mb-4">
+              <form onSubmit={handleSearch} className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                  placeholder="Search for products, brands, and more..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-10 pr-4 h-12 border-0 focus-visible:ring-2 focus-visible:ring-primary bg-muted/50"
+                />
+              </form>
+            </div>
+
             <nav className="flex flex-col gap-4">
               {/* <Link
                 href="/about"

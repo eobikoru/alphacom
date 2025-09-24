@@ -109,6 +109,7 @@ const mockProducts: Product[] = [
 ]
 
 const categories = {
+  computers: "Computers & Accessories",
   "computers-accessories": "Computers & Accessories",
   cameras: "Cameras",
   "audio-speakers": "Audio & Speakers",
@@ -120,6 +121,16 @@ const categories = {
 }
 
 const categorySubcategories = {
+  computers: [
+    { id: "desktop-computers", name: "Desktop Computers", count: 156 },
+    { id: "laptops", name: "Laptops & Notebooks", count: 234 },
+    { id: "tablets", name: "Tablets", count: 89 },
+    { id: "monitors", name: "Monitors & Displays", count: 167 },
+    { id: "keyboards-mice", name: "Keyboards & Mice", count: 298 },
+    { id: "computer-components", name: "Computer Components", count: 445 },
+    { id: "computer-accessories", name: "Computer Accessories", count: 356 },
+    { id: "external-drives", name: "External Drives", count: 123 },
+  ],
   "computers-accessories": [
     { id: "desktop-computers", name: "Desktop Computers", count: 156 },
     { id: "laptops", name: "Laptops & Notebooks", count: 234 },
@@ -339,8 +350,17 @@ export function CategoryPage({ categorySlug, selectedSubcategory }: CategoryPage
             <Select
               value={selectedSubcategory || "all"}
               onValueChange={(value) => {
-                if (value) {
+                if (value && value !== "all") {
                   window.location.href = `/categories/${categorySlug}/${value}`
+                  setTimeout(() => {
+                    const productsSection = document.getElementById("products-section")
+                    if (productsSection) {
+                      productsSection.scrollIntoView({
+                        behavior: "smooth",
+                        block: "start",
+                      })
+                    }
+                  }, 100)
                 }
               }}
             >
@@ -361,7 +381,22 @@ export function CategoryPage({ categorySlug, selectedSubcategory }: CategoryPage
           {/* Desktop Grid */}
           <div className="hidden md:grid grid-cols-3 lg:grid-cols-6 gap-4">
             {subcategories.map((subcategory) => (
-              <Link key={subcategory.id} href={`/categories/${categorySlug}/${subcategory.id}`} className="group">
+              <Link
+                key={subcategory.id}
+                href={`/categories/${categorySlug}/${subcategory.id}`}
+                className="group"
+                onClick={(e) => {
+                  setTimeout(() => {
+                    const productsSection = document.getElementById("products-section")
+                    if (productsSection) {
+                      productsSection.scrollIntoView({
+                        behavior: "smooth",
+                        block: "start",
+                      })
+                    }
+                  }, 100)
+                }}
+              >
                 <Card
                   className={`hover:shadow-lg transition-all duration-300 border-border hover:border-cyan-200 bg-card ${
                     selectedSubcategory === subcategory.id ? "ring-2 ring-cyan-500 border-cyan-500" : ""
@@ -390,10 +425,10 @@ export function CategoryPage({ categorySlug, selectedSubcategory }: CategoryPage
       )}
 
       {/* Search and Filters Bar */}
-      <div className="bg-card rounded-2xl shadow-sm border border-border p-6 mb-8">
-        <div className="flex flex-col lg:flex-row gap-4 items-center justify-between">
+      <div className="bg-card rounded-2xl shadow-sm border border-border p-6 mb-8" id="products-section">
+        <div className="flex flex-col gap-4">
           {/* Search */}
-          <div className="relative flex-1 max-w-md">
+          <div className="relative flex-1 max-w-md mx-auto lg:mx-0">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
             <Input
               placeholder="Search products..."
@@ -403,47 +438,55 @@ export function CategoryPage({ categorySlug, selectedSubcategory }: CategoryPage
             />
           </div>
 
-          <div className="flex items-center gap-4">
-            {/* Sort */}
-            <Select value={sortBy} onValueChange={setSortBy}>
-              <SelectTrigger className="w-48">
-                <SelectValue placeholder="Sort by" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="featured">Featured</SelectItem>
-                <SelectItem value="newest">Newest First</SelectItem>
-                <SelectItem value="price-low">Price: Low to High</SelectItem>
-                <SelectItem value="price-high">Price: High to Low</SelectItem>
-                <SelectItem value="rating">Highest Rated</SelectItem>
-              </SelectContent>
-            </Select>
-
-            {/* View Mode */}
-            <div className="flex items-center border border-border rounded-lg p-1">
-              <Button
-                variant={viewMode === "grid" ? "default" : "ghost"}
-                size="sm"
-                onClick={() => setViewMode("grid")}
-                className="h-8 w-8 p-0"
-              >
-                <Grid3X3 className="h-4 w-4" />
-              </Button>
-              <Button
-                variant={viewMode === "list" ? "default" : "ghost"}
-                size="sm"
-                onClick={() => setViewMode("list")}
-                className="h-8 w-8 p-0"
-              >
-                <List className="h-4 w-4" />
-              </Button>
+          <div className="flex flex-col sm:flex-row items-center gap-4 justify-between">
+            {/* Sort - Featured */}
+            <div className="w-full sm:w-auto">
+              <Select value={sortBy} onValueChange={setSortBy}>
+                <SelectTrigger className="w-full sm:w-48">
+                  <SelectValue placeholder="Sort by" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="featured">Featured</SelectItem>
+                  <SelectItem value="newest">Newest First</SelectItem>
+                  <SelectItem value="price-low">Price: Low to High</SelectItem>
+                  <SelectItem value="price-high">Price: High to Low</SelectItem>
+                  <SelectItem value="rating">Highest Rated</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
 
-            {/* Filter Toggle */}
-            <Button variant="outline" onClick={() => setShowFilters(!showFilters)} className="flex items-center gap-2">
-              <Filter className="h-4 w-4" />
-              Filters
-              <ChevronDown className={`h-4 w-4 transition-transform ${showFilters ? "rotate-180" : ""}`} />
-            </Button>
+            <div className="flex items-center gap-4 w-full sm:w-auto justify-between sm:justify-end">
+              {/* View Mode */}
+              <div className="flex items-center border border-border rounded-lg p-1">
+                <Button
+                  variant={viewMode === "grid" ? "default" : "ghost"}
+                  size="sm"
+                  onClick={() => setViewMode("grid")}
+                  className="h-8 w-8 p-0"
+                >
+                  <Grid3X3 className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant={viewMode === "list" ? "default" : "ghost"}
+                  size="sm"
+                  onClick={() => setViewMode("list")}
+                  className="h-8 w-8 p-0"
+                >
+                  <List className="h-4 w-4" />
+                </Button>
+              </div>
+
+              {/* Filter Toggle */}
+              <Button
+                variant="outline"
+                onClick={() => setShowFilters(!showFilters)}
+                className="flex items-center gap-2"
+              >
+                <Filter className="h-4 w-4" />
+                Filters
+                <ChevronDown className={`h-4 w-4 transition-transform ${showFilters ? "rotate-180" : ""}`} />
+              </Button>
+            </div>
           </div>
         </div>
 

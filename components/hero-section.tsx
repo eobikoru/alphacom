@@ -33,8 +33,7 @@ const heroSlides = [
     title: "Stylish",
     highlight: "Add-ons",
     subtitle: "Tech That Complements",
-    description:
-      "Enhance your gadgets with sleek and functional accessories built for everyday use.",
+    description: "Enhance your gadgets with sleek and functional accessories built for everyday use.",
     image: "/slide5.jpg",
     badge: "🛒 Must-Have Extras",
   },
@@ -139,12 +138,14 @@ export function HeroSection() {
                   style={{ animationDelay: "0.4s" }}
                   itemProp="headline"
                 >
-                  <span className="text-white font-normal text-[3rem] md:text-[4rem] drop-shadow-2xl">{currentSlideData.title}</span>
+                  <span className="text-white font-normal text-[3rem] md:text-[4rem] drop-shadow-2xl">
+                    {currentSlideData.title}
+                  </span>
                   <span className="bg-gradient-to-r text-[2rem] md:text-[3rem] from-cyan-400 via-cyan-300 to-purple-400 bg-clip-text text-transparent block animate-gradient-x bg-300% drop-shadow-lg">
                     {currentSlideData.highlight}
                   </span>
                   <span
-                    className="text-slate-200 text-[2rem] font-normal  lg:text-[1.7rem] mb-4 font-light block mt-4 drop-shadow-lg animate-fade-in-up"
+                    className="text-slate-200 text-[2rem] font-normal lg:text-[1.7rem] mb-4 font-light block mt-4 drop-shadow-lg animate-fade-in-up"
                     style={{ animationDelay: "0.6s" }}
                   >
                     {currentSlideData.subtitle}
@@ -152,7 +153,7 @@ export function HeroSection() {
                 </h1>
 
                 <p
-                  className="text-[1rem] text-slate-200 text-pretty max-w-lg font-normal  leading-relaxed drop-shadow-md animate-fade-in-up"
+                  className="text-[1rem] text-slate-200 text-pretty max-w-lg font-normal leading-relaxed drop-shadow-md animate-fade-in-up"
                   style={{ animationDelay: "0.8s" }}
                   itemProp="description"
                 >
@@ -166,7 +167,7 @@ export function HeroSection() {
               style={{ animationDelay: "1s" }}
               aria-label="Main navigation"
             >
-              <Link href="/categories/computers" aria-label="Browse computer products">
+              <Link href="/categories/computers-accessories" aria-label="Browse computer products">
                 <Button
                   size="lg"
                   className="h-16 px-12 text-[0.9rem] bg-gradient-to-r from-cyan-500 to-purple-600 hover:from-cyan-400 hover:to-purple-500 shadow-2xl hover:shadow-cyan-500/25 transition-all duration-500 transform hover:scale-105 hover:-translate-y-1 backdrop-blur-sm border border-white/10"
