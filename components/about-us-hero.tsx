@@ -11,7 +11,7 @@ export function AboutUsHero() {
       {/* Background image with overlay */}
       <div className="absolute inset-0">
         <Image
-          src="/modern-computer-store-interior-with-displays.jpg"
+          src="/aboutpic.jpg"
           alt="Modern computer store interior"
           fill
           className="object-cover"
@@ -32,20 +32,20 @@ export function AboutUsHero() {
         <div className="mb-8">
           <div className="relative w-full max-w-4xl mx-auto">
             <div className="text-white">
-              <h1 className="text-4xl md:text-6xl font-bold mb-4 text-balance">
+              <h1 className="text-2xl md:text-[4rem] font-normal mb-4  text-balance">
                 About{" "}
                 <span className="bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent">
                   Alphacom
                 </span>
               </h1>
-              <p className="text-xl md:text-2xl text-gray-200 mb-6">Your Trusted Technology Partner Since 2000</p>
+              <p className="text-[0.9rem] md:text-[1rem] text-gray-200 mb-6">Your Trusted Technology Partner Since 2000</p>
             </div>
           </div>
         </div>
 
         {/* Subtitle */}
         <div className="max-w-3xl mx-auto">
-          <p className="text-xl md:text-2xl text-gray-200 leading-relaxed">
+          <p className="text-[0.9rem] md:text-[0.9rem] text-gray-200 leading-relaxed">
             Located in the heart of Computer Village, Ikeja Lagos, we've been Nigeria's premier destination for quality
             ICT products and services for over two decades.
           </p>

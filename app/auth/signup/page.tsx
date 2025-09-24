@@ -4,12 +4,15 @@ import type React from "react"
 
 import { useState } from "react"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import { Eye, EyeOff, Mail, Lock, User, ArrowRight, Phone } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { useAppSelector } from "@/store/hooks"
 import { AppLayout } from "@/components/app-layout"
+import { useAuth } from "@/hooks/use-auth"
+import { toast } from "sonner"
 
 export default function SignUpPage() {
   const [showPassword, setShowPassword] = useState(false)
@@ -23,18 +26,75 @@ export default function SignUpPage() {
     confirmPassword: "",
   })
   const [isLoading, setIsLoading] = useState(false)
+  const [errors, setErrors] = useState<Record<string, string>>({})
   const theme = useAppSelector((state) => state.theme.mode)
+  const { register } = useAuth()
+  const router = useRouter()
 
   const handleInputChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }))
+    // Clear error when user starts typing
+    if (errors[field]) {
+      setErrors((prev) => ({ ...prev, [field]: "" }))
+    }
+  }
+
+  const validateForm = () => {
+    const newErrors: Record<string, string> = {}
+
+    if (!formData.firstName.trim()) {
+      newErrors.firstName = "First name is required"
+    }
+
+    if (!formData.lastName.trim()) {
+      newErrors.lastName = "Last name is required"
+    }
+
+    if (!formData.email.trim()) {
+      newErrors.email = "Email is required"
+    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      newErrors.email = "Please enter a valid email address"
+    }
+
+    if (!formData.phone.trim()) {
+      newErrors.phone = "Phone number is required"
+    }
+
+    if (!formData.password) {
+      newErrors.password = "Password is required"
+    } else if (formData.password.length < 8) {
+      newErrors.password = "Password must be at least 8 characters long"
+    }
+
+    if (!formData.confirmPassword) {
+      newErrors.confirmPassword = "Please confirm your password"
+    } else if (formData.password !== formData.confirmPassword) {
+      newErrors.confirmPassword = "Passwords do not match"
+    }
+
+    setErrors(newErrors)
+    return Object.keys(newErrors).length === 0
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+
+    if (!validateForm()) {
+      return
+    }
+
     setIsLoading(true)
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 2000))
-    setIsLoading(false)
+
+    try {
+      await register(formData.email, formData.password, formData.firstName, formData.lastName)
+      toast.success("Account created successfully! Welcome to our store.")
+      router.push("/") // Redirect to home page after successful signup
+    } catch (error) {
+      toast.error("Failed to create account. Please try again.")
+      console.error("Registration error:", error)
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   return (
@@ -69,9 +129,12 @@ export default function SignUpPage() {
                       placeholder="John"
                       value={formData.firstName}
                       onChange={(e) => handleInputChange("firstName", e.target.value)}
-                      className="bg-background border-border text-foreground placeholder:text-muted-foreground focus:border-cyan-500 focus:ring-cyan-500"
+                      className={`bg-background border-border text-foreground placeholder:text-muted-foreground focus:border-cyan-500 focus:ring-cyan-500 ${
+                        errors.firstName ? "border-red-500 focus:border-red-500 focus:ring-red-500" : ""
+                      }`}
                       required
                     />
+                    {errors.firstName && <p className="text-xs text-red-500">{errors.firstName}</p>}
                   </div>
                   <div className="space-y-2">
                     <label className="text-sm font-medium text-foreground">Last Name</label>
@@ -80,9 +143,12 @@ export default function SignUpPage() {
                       placeholder="Doe"
                       value={formData.lastName}
                       onChange={(e) => handleInputChange("lastName", e.target.value)}
-                      className="bg-background border-border text-foreground placeholder:text-muted-foreground focus:border-cyan-500 focus:ring-cyan-500"
+                      className={`bg-background border-border text-foreground placeholder:text-muted-foreground focus:border-cyan-500 focus:ring-cyan-500 ${
+                        errors.lastName ? "border-red-500 focus:border-red-500 focus:ring-red-500" : ""
+                      }`}
                       required
                     />
+                    {errors.lastName && <p className="text-xs text-red-500">{errors.lastName}</p>}
                   </div>
                 </div>
 
@@ -96,10 +162,13 @@ export default function SignUpPage() {
                       placeholder="john@example.com"
                       value={formData.email}
                       onChange={(e) => handleInputChange("email", e.target.value)}
-                      className="pl-10 bg-background border-border text-foreground placeholder:text-muted-foreground focus:border-cyan-500 focus:ring-cyan-500"
+                      className={`pl-10 bg-background border-border text-foreground placeholder:text-muted-foreground focus:border-cyan-500 focus:ring-cyan-500 ${
+                        errors.email ? "border-red-500 focus:border-red-500 focus:ring-red-500" : ""
+                      }`}
                       required
                     />
                   </div>
+                  {errors.email && <p className="text-xs text-red-500">{errors.email}</p>}
                 </div>
 
                 {/* Phone Field */}
@@ -112,10 +181,13 @@ export default function SignUpPage() {
                       placeholder="+234 800 000 0000"
                       value={formData.phone}
                       onChange={(e) => handleInputChange("phone", e.target.value)}
-                      className="pl-10 bg-background border-border text-foreground placeholder:text-muted-foreground focus:border-cyan-500 focus:ring-cyan-500"
+                      className={`pl-10 bg-background border-border text-foreground placeholder:text-muted-foreground focus:border-cyan-500 focus:ring-cyan-500 ${
+                        errors.phone ? "border-red-500 focus:border-red-500 focus:ring-red-500" : ""
+                      }`}
                       required
                     />
                   </div>
+                  {errors.phone && <p className="text-xs text-red-500">{errors.phone}</p>}
                 </div>
 
                 {/* Password Field */}
@@ -128,7 +200,9 @@ export default function SignUpPage() {
                       placeholder="Create a strong password"
                       value={formData.password}
                       onChange={(e) => handleInputChange("password", e.target.value)}
-                      className="pl-10 pr-10 bg-background border-border text-foreground placeholder:text-muted-foreground focus:border-cyan-500 focus:ring-cyan-500"
+                      className={`pl-10 pr-10 bg-background border-border text-foreground placeholder:text-muted-foreground focus:border-cyan-500 focus:ring-cyan-500 ${
+                        errors.password ? "border-red-500 focus:border-red-500 focus:ring-red-500" : ""
+                      }`}
                       required
                     />
                     <button
@@ -139,6 +213,7 @@ export default function SignUpPage() {
                       {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                     </button>
                   </div>
+                  {errors.password && <p className="text-xs text-red-500">{errors.password}</p>}
                 </div>
 
                 {/* Confirm Password Field */}
@@ -151,7 +226,9 @@ export default function SignUpPage() {
                       placeholder="Confirm your password"
                       value={formData.confirmPassword}
                       onChange={(e) => handleInputChange("confirmPassword", e.target.value)}
-                      className="pl-10 pr-10 bg-background border-border text-foreground placeholder:text-muted-foreground focus:border-cyan-500 focus:ring-cyan-500"
+                      className={`pl-10 pr-10 bg-background border-border text-foreground placeholder:text-muted-foreground focus:border-cyan-500 focus:ring-cyan-500 ${
+                        errors.confirmPassword ? "border-red-500 focus:border-red-500 focus:ring-red-500" : ""
+                      }`}
                       required
                     />
                     <button
@@ -162,6 +239,7 @@ export default function SignUpPage() {
                       {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                     </button>
                   </div>
+                  {errors.confirmPassword && <p className="text-xs text-red-500">{errors.confirmPassword}</p>}
                 </div>
 
                 {/* Terms & Conditions */}

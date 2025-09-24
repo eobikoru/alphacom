@@ -1,12 +1,23 @@
 import { configureStore } from "@reduxjs/toolkit"
+import { combineReducers } from "@reduxjs/toolkit"
 import themeReducer from "./slices/themeSlice"
+import authReducer from "./slices/authSlice"
+import wishlistReducer from "./slices/wishlistSlice"
 import cartReducer from "./slices/cartSlice"
 
+const rootReducer = combineReducers({
+  theme: themeReducer,
+  auth: authReducer,
+  wishlist: wishlistReducer,
+  cart: cartReducer,
+})
+
 export const store = configureStore({
-  reducer: {
-    theme: themeReducer,
-    cart: cartReducer,
-  },
+  reducer: rootReducer,
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: true,
+    }),
 })
 
 export type RootState = ReturnType<typeof store.getState>

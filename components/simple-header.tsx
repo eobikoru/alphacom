@@ -1,17 +1,14 @@
 "use client"
 
 import type React from "react"
-import { Search, User, Menu, MapPin, Package, ShoppingCart } from "lucide-react"
+import { Search, User, Menu, MapPin, Package } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Badge } from "@/components/ui/badge"
 import Link from "next/link"
-import { useAppSelector } from "@/store/hooks"
 import { SimpleThemeToggle } from "@/components/simple-theme-toggle"
 import { useState } from "react"
 
 export function SimpleHeader() {
-  const { itemCount } = useAppSelector((state) => state.cart)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState("")
 
@@ -102,24 +99,6 @@ export function SimpleHeader() {
               <Button variant="ghost" size="sm" className="flex items-center gap-2">
                 <User className="h-4 w-4" />
                 <span className="hidden md:inline">Sign In</span>
-              </Button>
-            </Link>
-
-            <Link href="/cart" onClick={handleNavClick}>
-              <Button
-                variant="outline"
-                size="icon"
-                className="relative bg-transparent hover:bg-muted/50 transition-all duration-300"
-              >
-                <ShoppingCart className="h-4 w-4" />
-                {itemCount > 0 && (
-                  <Badge
-                    variant="destructive"
-                    className="absolute -top-2 -right-2 h-5 w-5 rounded-full p-0 flex items-center justify-center text-xs bg-gradient-to-r from-cyan-600 to-purple-600 border-0"
-                  >
-                    {itemCount}
-                  </Badge>
-                )}
               </Button>
             </Link>
 

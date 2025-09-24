@@ -17,8 +17,8 @@ export default function PrivacyPolicyPage() {
 
           <div className="relative z-10 container mx-auto px-4 text-center">
             <Badge className="mb-4 bg-gradient-to-r from-cyan-500 to-purple-600 text-white">Privacy Policy</Badge>
-            <h1 className="text-4xl md:text-5xl font-bold text-white mb-6">Your Privacy Matters</h1>
-            <p className="text-xl text-gray-300 max-w-2xl mx-auto">
+            <h1 className="text-4xl md:text-5xl font-normal text-white mb-6">Your Privacy Matters</h1>
+            <p className="text-xl  font-normal text-gray-300 max-w-2xl mx-auto">
               We are committed to protecting your personal information and being transparent about how we use it.
             </p>
           </div>

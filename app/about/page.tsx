@@ -1,11 +1,11 @@
 "use client"
 
+import { AboutUsHero } from "@/components/about-us-hero"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Users, Award, Clock, MapPin, Phone, Mail, Star, Shield, Truck, HeartHandshake } from "lucide-react"
 import { useAppSelector } from "@/store/hooks"
 import { AppLayout } from "@/components/app-layout"
-import { AboutUsHero } from "@/components/about-us-hero"
 
 const stats = [
   { icon: Users, label: "Happy Customers", value: "50,000+" },
@@ -59,7 +59,7 @@ const team = [
 ]
 
 export default function AboutPage() {
-  const theme = useAppSelector((state: { theme: { mode: any } }) => state.theme.mode)
+  const theme = useAppSelector((state) => state.theme.mode)
 
   return (
     <AppLayout>
@@ -93,7 +93,7 @@ export default function AboutPage() {
             <div className="max-w-4xl mx-auto">
               <div className="text-center mb-12">
                 <Badge className="mb-4 bg-gradient-to-r from-cyan-500 to-purple-600 text-white">Our Story</Badge>
-                <h2 className="text-3xl md:text-4xl font-bold mb-6 text-foreground">Building Nigeria's Tech Future</h2>
+                <h2 className="text-3xl md:text-4xl font-normal mb-6 text-foreground">Building Nigeria's Tech Future</h2>
               </div>
 
               <div className="grid md:grid-cols-2 gap-12 items-center">
@@ -134,7 +134,7 @@ export default function AboutPage() {
           <div className="container mx-auto px-4">
             <div className="text-center mb-12">
               <Badge className="mb-4 bg-gradient-to-r from-cyan-500 to-purple-600 text-white">Our Values</Badge>
-              <h2 className="text-3xl md:text-4xl font-bold mb-6 text-foreground">What Sets Us Apart</h2>
+              <h2 className="text-3xl md:text-4xl font-normal mb-6 text-foreground">What Sets Us Apart</h2>
             </div>
 
             <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -146,7 +146,7 @@ export default function AboutPage() {
                       <div className="w-16 h-16 bg-gradient-to-r from-cyan-500 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
                         <IconComponent className="w-8 h-8 text-white" />
                       </div>
-                      <h3 className="text-xl font-bold mb-3 text-foreground">{value.title}</h3>
+                      <h3 className="text-xl font-normal mb-3 text-foreground">{value.title}</h3>
                       <p className="text-sm leading-relaxed text-muted-foreground">{value.description}</p>
                     </CardContent>
                   </Card>
@@ -161,7 +161,7 @@ export default function AboutPage() {
           <div className="container mx-auto px-4">
             <div className="text-center mb-12">
               <Badge className="mb-4 bg-gradient-to-r from-cyan-500 to-purple-600 text-white">Our Team</Badge>
-              <h2 className="text-3xl md:text-4xl font-bold mb-6 text-foreground">Meet the Experts</h2>
+              <h2 className="text-3xl md:text-4xl font-normal mb-6 text-foreground">Meet the Experts</h2>
             </div>
 
             <div className="grid md:grid-cols-3 gap-8">
@@ -191,7 +191,7 @@ export default function AboutPage() {
             <div className="max-w-4xl mx-auto">
               <div className="text-center mb-12">
                 <Badge className="mb-4 bg-gradient-to-r from-cyan-500 to-purple-600 text-white">Visit Us</Badge>
-                <h2 className="text-3xl md:text-4xl font-bold mb-6 text-foreground">Find Us at Computer Village</h2>
+                <h2 className="text-3xl md:text-4xl font-normal mb-6 text-foreground">Find Us at Computer Village</h2>
               </div>
 
               <div className="grid md:grid-cols-3 gap-8">

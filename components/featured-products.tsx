@@ -4,10 +4,10 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Heart, Star, ShoppingCart } from "lucide-react"
-import { useAppDispatch, useAppSelector } from "@/store/hooks"
-import { addItem } from "@/store/slices/cartSlice"
-import { useWishlist } from "@/contexts/wishlist-context"
-// import { toast } from "@/hooks/use-toast"
+import { useAppSelector } from "@/store/hooks"
+import { useWishlist } from "@/hooks/use-wishlist"
+import { useCart } from "@/hooks/use-cart"
+import { toast } from "sonner"
 import Link from "next/link"
 
 const featuredProducts = [
@@ -23,6 +23,7 @@ const featuredProducts = [
     badge: "Best Seller",
     badgeColor: "bg-green-500",
     category: "Computers & Accessories",
+    inStock: true,
   },
   {
     id: "2",
@@ -36,6 +37,7 @@ const featuredProducts = [
     badge: "Limited Offer",
     badgeColor: "bg-red-500",
     category: "Audio & Speakers",
+    inStock: true,
   },
   {
     id: "3",
@@ -49,6 +51,7 @@ const featuredProducts = [
     badge: "New Arrival",
     badgeColor: "bg-blue-500",
     category: "Cameras",
+    inStock: true,
   },
   {
     id: "4",
@@ -62,12 +65,13 @@ const featuredProducts = [
     badge: "Hot Deal",
     badgeColor: "bg-orange-500",
     category: "Data Storage",
+    inStock: false,
   },
 ]
 
 export function FeaturedProducts() {
-  const dispatch = useAppDispatch()
-  const { state: wishlistState, dispatch: wishlistDispatch } = useWishlist()
+  const { items: wishlistItems, addToWishlist, removeFromWishlist, isInWishlist } = useWishlist()
+  const { addItem, isInCart, getItemQuantity } = useCart()
   const isDark = useAppSelector((state) => state.theme.isDark)
 
   const formatPrice = (price: number) => {
@@ -78,50 +82,39 @@ export function FeaturedProducts() {
     }).format(price)
   }
 
-  const addToCart = (product: (typeof featuredProducts)[0]) => {
-    dispatch(
-      addItem({
+  const toggleWishlist = (product: (typeof featuredProducts)[0]) => {
+    if (isInWishlist(product.id)) {
+      removeFromWishlist(product.id)
+      toast.success(`${product.name} has been removed from your wishlist`)
+    } else {
+      addToWishlist({
         id: product.id,
         name: product.name,
         price: product.price,
         image: product.image,
         category: product.category,
         brand: product.brand,
-      }),
-    )
-
-    // toast({
-    //   title: "Added to cart",
-    //   description: `${product.name} has been added to your cart.`,
-    // })
+      })
+      toast.success(`${product.name} has been added to your wishlist`)
+    }
   }
 
-  const toggleWishlist = (product: (typeof featuredProducts)[0]) => {
-    const isInWishlist = wishlistState.items.some((item) => item.id === product.id)
-
-    if (isInWishlist) {
-      wishlistDispatch({ type: "REMOVE_ITEM", payload: product.id })
-      // toast({
-      //   title: "Removed from wishlist",
-      //   description: `${product.name} has been removed from your wishlist.`,
-      // })
-    } else {
-      wishlistDispatch({
-        type: "ADD_ITEM",
-        payload: {
-          id: product.id,
-          name: product.name,
-          price: product.price,
-          image: product.image,
-          category: product.category,
-          brand: product.brand,
-        },
-      })
-      // toast({
-      //   title: "Added to wishlist",
-      //   description: `${product.name} has been added to your wishlist.`,
-      // })
+  const handleAddToCart = (product: (typeof featuredProducts)[0]) => {
+    if (!product.inStock) {
+      toast.error("This item is currently out of stock")
+      return
     }
+
+    addItem({
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      image: product.image,
+      brand: product.brand,
+      category: product.category,
+    })
+
+    toast.success(`${product.name} has been added to your cart`)
   }
 
   return (
@@ -160,7 +153,9 @@ export function FeaturedProducts() {
 
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
           {featuredProducts.map((product) => {
-            const isInWishlist = wishlistState.items.some((item) => item.id === product.id)
+            const productInWishlist = isInWishlist(product.id)
+            const productInCart = isInCart(product.id)
+            const cartQuantity = getItemQuantity(product.id)
 
             return (
               <Card
@@ -188,10 +183,18 @@ export function FeaturedProducts() {
                         onClick={() => toggleWishlist(product)}
                       >
                         <Heart
-                          className={`h-4 w-4 transition-colors ${isInWishlist ? "fill-red-500 text-red-500" : "text-gray-600"}`}
+                          className={`h-4 w-4 transition-colors ${productInWishlist ? "fill-red-500 text-red-500" : "text-gray-600"}`}
                         />
                       </Button>
                     </div>
+
+                    {!product.inStock && (
+                      <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
+                        <Badge variant="secondary" className="bg-slate-500 text-white">
+                          Out of Stock
+                        </Badge>
+                      </div>
+                    )}
                   </div>
 
                   <div className="p-6">
@@ -245,14 +248,37 @@ export function FeaturedProducts() {
                       )}
                     </div>
 
-                    <Button
-                      className="w-full bg-gradient-to-r from-cyan-600 to-purple-600 hover:from-cyan-700 hover:to-purple-700 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
-                      size="sm"
-                      onClick={() => addToCart(product)}
-                    >
-                      <ShoppingCart className="mr-2 h-4 w-4" />
-                      Add to Cart
-                    </Button>
+                    <div className="space-y-2">
+                      <Button
+                        onClick={() => handleAddToCart(product)}
+                        disabled={!product.inStock}
+                        className={`w-full transition-all duration-300 transform hover:scale-105 ${
+                          productInCart
+                            ? "bg-green-600 hover:bg-green-700"
+                            : "bg-gradient-to-r from-cyan-600 to-purple-600 hover:from-cyan-700 hover:to-purple-700"
+                        } shadow-lg hover:shadow-xl`}
+                        size="sm"
+                      >
+                        <ShoppingCart className="h-4 w-4 mr-2" />
+                        {!product.inStock
+                          ? "Out of Stock"
+                          : productInCart
+                            ? `In Cart (${cartQuantity})`
+                            : "Add to Cart"}
+                      </Button>
+
+                      <Button
+                        variant="outline"
+                        className={`w-full transition-all duration-300 ${
+                          isDark
+                            ? "bg-transparent border-white/20 text-white hover:bg-white/10"
+                            : "bg-white border-gray-200 text-gray-900 hover:bg-gray-50"
+                        }`}
+                        size="sm"
+                      >
+                        View Details
+                      </Button>
+                    </div>
                   </div>
                 </CardContent>
               </Card>

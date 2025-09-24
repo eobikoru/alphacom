@@ -1,34 +1,39 @@
 "use client"
 
 import type React from "react"
-import { Search, User, Menu, MapPin, ShoppingCart } from "lucide-react"
+import { Search, User, Menu, MapPin } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Badge } from "@/components/ui/badge"
 import Link from "next/link"
-import { useAppSelector } from "@/store/hooks"
+import { useRouter } from "next/navigation"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { useState } from "react"
+import { CartDrawer } from "./cart-drawer"
 
 interface ModernHeaderProps {
   blackNavbar?: boolean
 }
 
 export function ModernHeader({ blackNavbar }: ModernHeaderProps) {
-  const { itemCount } = useAppSelector((state) => state.cart)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState("")
+  const router = useRouter()
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault()
     if (searchQuery.trim()) {
-      window.location.href = `/search?q=${encodeURIComponent(searchQuery)}`
+      router.push(`/search?q=${encodeURIComponent(searchQuery)}`)
     }
   }
 
   const handleNavClick = () => {
     window.scrollTo({ top: 0, behavior: "smooth" })
     setIsMobileMenuOpen(false)
+  }
+
+  const handleCategoryClick = (categorySlug: string) => {
+    setIsMobileMenuOpen(false)
+    router.push(`/categories/${categorySlug}`)
   }
 
   const categoryMap: Record<string, string> = {
@@ -96,28 +101,12 @@ export function ModernHeader({ blackNavbar }: ModernHeaderProps) {
           <div className="flex items-center gap-4">
             <ThemeToggle />
 
+            <CartDrawer />
+
             <Link href="/auth/signin" onClick={handleNavClick}>
               <Button variant="ghost" size="sm" className="flex items-center gap-2">
                 <User className="h-4 w-4" />
                 <span className="hidden md:inline">Sign In</span>
-              </Button>
-            </Link>
-
-            <Link href="/cart" onClick={handleNavClick}>
-              <Button
-                variant="outline"
-                size="icon"
-                className="relative transition-all duration-300 bg-transparent hover:bg-muted/50"
-              >
-                <ShoppingCart className="h-4 w-4" />
-                {itemCount > 0 && (
-                  <Badge
-                    variant="destructive"
-                    className="absolute -top-2 -right-2 h-5 w-5 rounded-full p-0 flex items-center justify-center text-xs bg-gradient-to-r from-cyan-600 to-purple-600 border-0"
-                  >
-                    {itemCount}
-                  </Badge>
-                )}
               </Button>
             </Link>
 
@@ -148,20 +137,6 @@ export function ModernHeader({ blackNavbar }: ModernHeaderProps) {
             </div>
 
             <nav className="flex flex-col gap-4">
-              {/* <Link
-                href="/about"
-                className="text-sm font-medium hover:text-primary transition-colors px-3 py-2 rounded-md hover:bg-muted/50"
-                onClick={handleNavClick}
-              >
-                About Us
-              </Link>
-              <Link
-                href="/contact"
-                className="text-sm font-medium hover:text-primary transition-colors px-3 py-2 rounded-md hover:bg-muted/50"
-                onClick={handleNavClick}
-              >
-                Contact Us
-              </Link> */}
               <Link
                 href="/categories"
                 className="text-sm font-medium hover:text-primary transition-colors px-3 py-2 rounded-md hover:bg-muted/50"
@@ -179,14 +154,13 @@ export function ModernHeader({ blackNavbar }: ModernHeaderProps) {
                 "Software & Security",
                 "Accessories",
               ].map((category) => (
-                <Link
+                <button
                   key={category}
-                  href={`/categories/${categoryMap[category]}`}
-                  className="text-sm font-medium hover:text-primary transition-colors px-3 py-2 rounded-md hover:bg-muted/50"
-                  onClick={handleNavClick}
+                  onClick={() => handleCategoryClick(categoryMap[category])}
+                  className="text-left text-sm font-medium hover:text-primary transition-colors px-3 py-2 rounded-md hover:bg-muted/50"
                 >
                   {category}
-                </Link>
+                </button>
               ))}
             </nav>
           </div>
@@ -197,20 +171,6 @@ export function ModernHeader({ blackNavbar }: ModernHeaderProps) {
       <div className="border-t bg-card/50 border-border">
         <div className="container mx-auto px-4">
           <nav className="flex items-center gap-8 py-3 overflow-x-auto">
-            {/* <Link
-              href="/about"
-              onClick={handleNavClick}
-              className="whitespace-nowrap text-sm font-medium hover:text-primary transition-colors px-3 py-2 rounded-md hover:bg-muted/50"
-            >
-              About Us
-            </Link>
-            <Link
-              href="/contact"
-              onClick={handleNavClick}
-              className="whitespace-nowrap text-sm font-medium hover:text-primary transition-colors px-3 py-2 rounded-md hover:bg-muted/50"
-            >
-              Contact Us
-            </Link> */}
             <Link
               href="/categories"
               onClick={handleNavClick}
@@ -228,14 +188,13 @@ export function ModernHeader({ blackNavbar }: ModernHeaderProps) {
               "Software & Security",
               "Accessories",
             ].map((category) => (
-              <Link
+              <button
                 key={category}
-                href={`/categories/${categoryMap[category]}`}
-                onClick={handleNavClick}
+                onClick={() => handleCategoryClick(categoryMap[category])}
                 className="whitespace-nowrap text-sm font-medium hover:text-primary transition-colors px-3 py-2 rounded-md hover:bg-muted/50"
               >
                 {category}
-              </Link>
+              </button>
             ))}
           </nav>
         </div>

@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button"
 import { ArrowRight, Shield, Truck, Headphones, ChevronLeft, ChevronRight } from "lucide-react"
 import { useState, useEffect } from "react"
 import Link from "next/link"
-import { SEOImage } from "@/components/seo/image-seo"
 
 const heroSlides = [
   {
@@ -255,14 +254,12 @@ export function HeroSection() {
             <div className="absolute -inset-2 bg-gradient-to-r from-cyan-400/10 to-purple-500/10 rounded-3xl blur-xl" />
 
             <figure className="relative z-10 overflow-hidden rounded-3xl border border-white/20 shadow-2xl backdrop-blur-sm">
-              <SEOImage
+              <img
                 src={currentSlideData.image || "/premium-modern-tech-workspace-with-sleek-devices-a.jpg"}
                 alt={`Premium ${currentSlideData.highlight.toLowerCase()} showcase - ${currentSlideData.description}`}
                 width={800}
                 height={600}
                 className="w-full h-[500px] lg:h-[600px] object-cover transition-all duration-1000 ease-out transform hover:scale-110"
-                priority={true}
-                sizes="(max-width: 768px) 100vw, 50vw"
               />
               <figcaption className="sr-only">
                 {currentSlideData.title} {currentSlideData.highlight} - {currentSlideData.description}

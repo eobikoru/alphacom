@@ -1,6 +1,10 @@
 "use client"
 
-import { createContext, useContext, useState, type ReactNode, useEffect } from "react"
+import { useEffect } from "react"
+import { useDispatch, useSelector } from "react-redux"
+import type { RootState, AppDispatch } from "@/store/store"
+import { loginSuccess, logout, setAuthFromStorage, setLoading } from "@/store/slices/authSlice"
+
 
 interface User {
   id: string
@@ -9,27 +13,9 @@ interface User {
   lastName: string
 }
 
-interface AuthState {
-  isAuthenticated: boolean
-  user: User | null
-  loading: boolean
-}
-
-interface AuthContextType {
-  state: AuthState
-  login: (email: string, password: string) => Promise<void>
-  logout: () => void
-  register: (email: string, password: string, firstName: string, lastName: string) => Promise<void>
-}
-
-const AuthContext = createContext<AuthContextType | null>(null)
-
-export function AuthProvider({ children }: { children: ReactNode }) {
-  const [state, setState] = useState<AuthState>({
-    isAuthenticated: false,
-    user: null,
-    loading: true,
-  })
+export function useAuth() {
+  const dispatch = useDispatch<AppDispatch>()
+  const authState = useSelector((state: RootState) => state.auth)
 
   useEffect(() => {
     // Check for existing session on mount
@@ -37,14 +23,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       try {
         const token = localStorage.getItem("auth_token")
         if (token) {
-          // In a real app, you'd validate the token with your backend
           const userData = localStorage.getItem("user_data")
           if (userData) {
-            setState({
-              isAuthenticated: true,
-              user: JSON.parse(userData),
-              loading: false,
-            })
+            const user = JSON.parse(userData)
+            dispatch(setAuthFromStorage({ user, isAuthenticated: true }))
             return
           }
         }
@@ -52,14 +34,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         console.error("Auth check failed:", error)
       }
 
-      setState((prev) => ({ ...prev, loading: false }))
+      dispatch(setLoading(false))
     }
 
     checkAuth()
-  }, [])
+  }, [dispatch])
 
   const login = async (email: string, password: string) => {
     try {
+      dispatch(setLoading(true))
+
       // Mock login - in a real app, you'd call your authentication API
       const mockUser: User = {
         id: "1",
@@ -71,18 +55,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       localStorage.setItem("auth_token", "mock_token")
       localStorage.setItem("user_data", JSON.stringify(mockUser))
 
-      setState({
-        isAuthenticated: true,
-        user: mockUser,
-        loading: false,
-      })
+      dispatch(loginSuccess(mockUser))
     } catch (error) {
+      dispatch(setLoading(false))
       throw new Error("Login failed")
     }
   }
 
   const register = async (email: string, password: string, firstName: string, lastName: string) => {
     try {
+      dispatch(setLoading(true))
+
       // Mock registration - in a real app, you'd call your registration API
       const mockUser: User = {
         id: "1",
@@ -94,33 +77,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       localStorage.setItem("auth_token", "mock_token")
       localStorage.setItem("user_data", JSON.stringify(mockUser))
 
-      setState({
-        isAuthenticated: true,
-        user: mockUser,
-        loading: false,
-      })
+      dispatch(loginSuccess(mockUser))
     } catch (error) {
+      dispatch(setLoading(false))
       throw new Error("Registration failed")
     }
   }
 
-  const logout = () => {
+  const handleLogout = () => {
     localStorage.removeItem("auth_token")
     localStorage.removeItem("user_data")
-    setState({
-      isAuthenticated: false,
-      user: null,
-      loading: false,
-    })
+    dispatch(logout())
   }
 
-  return <AuthContext.Provider value={{ state, login, logout, register }}>{children}</AuthContext.Provider>
-}
-
-export function useAuth() {
-  const context = useContext(AuthContext)
-  if (!context) {
-    throw new Error("useAuth must be used within an AuthProvider")
+  return {
+    ...authState,
+    login,
+    logout: handleLogout,
+    register,
   }
-  return context
 }

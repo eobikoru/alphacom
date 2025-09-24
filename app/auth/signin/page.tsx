@@ -6,11 +6,10 @@ import { useState } from "react"
 import Link from "next/link"
 import { Eye, EyeOff, Mail, Lock, ArrowRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
-
+import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { useAppSelector } from "@/store/hooks"
 import { AppLayout } from "@/components/app-layout"
-import { Input } from "@/components/ui/input"
 
 export default function SignInPage() {
   const [showPassword, setShowPassword] = useState(false)

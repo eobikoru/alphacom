@@ -79,6 +79,80 @@ const categories = [
     image: "/headphones-collection.jpg",
   },
 ]
+// const categories = [
+//   {
+//     name: "Computers & Accessories",
+//     slug: "computers-accessories",
+//     description: "Desktop computers, laptops, and essential accessories",
+//     itemCount: "200+ items",
+//     color: "from-cyan-500/20 to-blue-600/20",
+//     icon: Monitor,
+//     image: "/modern-laptop-workspace-setup.jpg",
+//   },
+//   {
+//     name: "Cameras",
+//     slug: "cameras",
+//     description: "Professional cameras and photography equipment",
+//     itemCount: "90+ items",
+//     color: "from-indigo-500/20 to-purple-600/20",
+//     icon: Camera,
+//     image: "/professional-camera-equipment-showcase.jpg",
+//   },
+//   {
+//     name: "Audio & Speakers",
+//     slug: "audio-speakers",
+//     description: "Premium audio equipment and sound systems",
+//     itemCount: "150+ items",
+//     color: "from-emerald-500/20 to-teal-600/20",
+//     icon: Volume2,
+//     image: "/premium-audio-headphones-collection.jpg",
+//   },
+//   {
+//     name: "Data Storage",
+//     slug: "data-storage",
+//     description: "Hard drives, SSDs, and storage solutions",
+//     itemCount: "80+ items",
+//     color: "from-orange-500/20 to-red-600/20",
+//     icon: HardDrive,
+//     image: "/data-storage-devices-collection.jpg",
+//   },
+//   {
+//     name: "Printers & Scanners",
+//     slug: "printers-scanners",
+//     description: "Office printing and scanning equipment",
+//     itemCount: "60+ items",
+//     color: "from-purple-500/20 to-pink-600/20",
+//     icon: Printer,
+//     image: "/office-printer-scanner-setup.jpg",
+//   },
+//   {
+//     name: "Networking",
+//     slug: "networking",
+//     description: "Routers, switches, and network infrastructure",
+//     itemCount: "70+ items",
+//     color: "from-blue-500/20 to-cyan-600/20",
+//     icon: Network,
+//     image: "/networking-equipment-display.jpg",
+//   },
+//   {
+//     name: "Software & Security",
+//     slug: "software-security",
+//     description: "Software licenses and security solutions",
+//     itemCount: "100+ items",
+//     color: "from-rose-500/20 to-pink-600/20",
+//     icon: Shield,
+//     image: "/software-security-solutions.jpg",
+//   },
+//   {
+//     name: "Accessories",
+//     slug: "accessories",
+//     description: "Cables, adapters, and tech accessories",
+//     itemCount: "300+ items",
+//     color: "from-teal-500/20 to-green-600/20",
+//     icon: Package,
+//     image: "/tech-accessories-collection.jpg",
+//   },
+// ]
 
 export function ProductCategories() {
   return (
@@ -96,10 +170,10 @@ export function ProductCategories() {
             </span>
           </div>
 
-          <h2 className="text-4xl lg:text-3xl font-normal mb-6 bg-gradient-to-r from-foreground via-foreground/90 to-foreground/70 bg-clip-text text-transparent">
+          <h2 className="text-4xl lg:text-6xl font-bold mb-6 bg-gradient-to-r from-foreground via-foreground/90 to-foreground/70 bg-clip-text text-transparent">
             Shop by Category
           </h2>
-          <p className="text-xl lg:text-[1.2rem] text-muted-foreground max-w-3xl mx-auto leading-relaxed">
+          <p className="text-xl lg:text-2xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
             Explore our comprehensive range of technology products and find exactly what you need
           </p>
         </div>

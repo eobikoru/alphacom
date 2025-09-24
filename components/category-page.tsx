@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useMemo } from "react"
-import { Search, Filter, Grid3X3, List, ChevronDown, Star, Heart, ShoppingCart, ChevronRight } from "lucide-react"
+import { Search, Filter, Grid3X3, List, ChevronDown, Star, Heart, ShoppingCart } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
@@ -9,10 +9,9 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Slider } from "@/components/ui/slider"
-import { useAppDispatch } from "@/store/hooks"
-import { addItem } from "@/store/slices/cartSlice"
-import { useWishlist } from "@/contexts/wishlist-context"
-// import { toast } from "@/hooks/use-toast"
+import { useWishlist } from "@/hooks/use-wishlist"
+import { useCart } from "@/hooks/use-cart"
+import { toast } from "sonner"
 import Link from "next/link"
 
 interface Product {
@@ -221,8 +220,8 @@ export function CategoryPage({ categorySlug, selectedSubcategory }: CategoryPage
   const [selectedBrands, setSelectedBrands] = useState<string[]>([])
   const [showFilters, setShowFilters] = useState(false)
 
-  const dispatch = useAppDispatch()
-  const { state: wishlistState, dispatch: wishlistDispatch } = useWishlist()
+  const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist()
+  const { addItem, isInCart, getItemQuantity } = useCart()
 
   const categoryName = categories[categorySlug as keyof typeof categories] || "Products"
   const subcategories = categorySubcategories[categorySlug as keyof typeof categorySubcategories] || []
@@ -263,50 +262,39 @@ export function CategoryPage({ categorySlug, selectedSubcategory }: CategoryPage
     return `₦${price.toLocaleString()}`
   }
 
-  const addToCart = (product: Product) => {
-    dispatch(
-      addItem({
+  const toggleWishlist = (product: Product) => {
+    if (isInWishlist(product.id)) {
+      removeFromWishlist(product.id)
+      toast.success(`${product.name} has been removed from your wishlist`)
+    } else {
+      addToWishlist({
         id: product.id,
         name: product.name,
         price: product.price,
         image: product.image,
         category: product.category,
         brand: product.brand,
-      }),
-    )
-
-    // toast({
-    //   title: "Added to cart",
-    //   description: `${product.name} has been added to your cart.`,
-    // })
+      })
+      toast.success(`${product.name} has been added to your wishlist`)
+    }
   }
 
-  const toggleWishlist = (product: Product) => {
-    const isInWishlist = wishlistState.items.some((item) => item.id === product.id)
-
-    if (isInWishlist) {
-      wishlistDispatch({ type: "REMOVE_ITEM", payload: product.id })
-      // toast({
-      //   title: "Removed from wishlist",
-      //   description: `${product.name} has been removed from your wishlist.`,
-      // })
-    } else {
-      wishlistDispatch({
-        type: "ADD_ITEM",
-        payload: {
-          id: product.id,
-          name: product.name,
-          price: product.price,
-          image: product.image,
-          category: product.category,
-          brand: product.brand,
-        },
-      })
-      // toast({
-      //   title: "Added to wishlist",
-      //   description: `${product.name} has been added to your wishlist.`,
-      // })
+  const handleAddToCart = (product: Product) => {
+    if (!product.inStock) {
+      toast.error("This item is currently out of stock")
+      return
     }
+
+    addItem({
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      image: product.image,
+      brand: product.brand,
+      category: product.category,
+    })
+
+    toast.success(`${product.name} has been added to your cart`)
   }
 
   return (
@@ -378,8 +366,7 @@ export function CategoryPage({ categorySlug, selectedSubcategory }: CategoryPage
             </Select>
           </div>
 
-          {/* Desktop Grid */}
-          <div className="hidden md:grid grid-cols-3 lg:grid-cols-6 gap-4">
+          <div className="hidden md:flex flex-wrap gap-3">
             {subcategories.map((subcategory) => (
               <Link
                 key={subcategory.id}
@@ -397,27 +384,33 @@ export function CategoryPage({ categorySlug, selectedSubcategory }: CategoryPage
                   }, 100)
                 }}
               >
-                <Card
-                  className={`hover:shadow-lg transition-all duration-300 border-border hover:border-cyan-200 bg-card ${
-                    selectedSubcategory === subcategory.id ? "ring-2 ring-cyan-500 border-cyan-500" : ""
+                <div
+                  className={`flex items-center gap-2 px-4 py-2.5 rounded-full border transition-all duration-200 hover:shadow-md hover:scale-105 ${
+                    selectedSubcategory === subcategory.id
+                      ? "bg-cyan-50 border-cyan-200 text-cyan-700 shadow-sm"
+                      : "bg-card border-border hover:border-cyan-200 hover:bg-cyan-50/50"
                   }`}
                 >
-                  <CardContent className="p-4 text-center">
-                    <h3
-                      className={`font-medium group-hover:text-cyan-600 transition-colors mb-1 ${
-                        selectedSubcategory === subcategory.id ? "text-cyan-600" : "text-card-foreground"
-                      }`}
-                    >
-                      {subcategory.name}
-                    </h3>
-                    <p className="text-sm text-muted-foreground">{subcategory.count} items</p>
-                    <ChevronRight
-                      className={`w-4 h-4 mx-auto mt-2 group-hover:text-cyan-600 transition-colors ${
-                        selectedSubcategory === subcategory.id ? "text-cyan-600" : "text-muted-foreground"
-                      }`}
-                    />
-                  </CardContent>
-                </Card>
+                  <span
+                    className={`font-medium text-sm ${
+                      selectedSubcategory === subcategory.id
+                        ? "text-cyan-700"
+                        : "text-card-foreground group-hover:text-cyan-600"
+                    }`}
+                  >
+                    {subcategory.name}
+                  </span>
+                  <Badge
+                    variant="secondary"
+                    className={`text-xs px-2 py-0.5 ${
+                      selectedSubcategory === subcategory.id
+                        ? "bg-cyan-100 text-cyan-600 border-cyan-200"
+                        : "bg-muted text-muted-foreground group-hover:bg-cyan-100 group-hover:text-cyan-600"
+                    }`}
+                  >
+                    {subcategory.count}
+                  </Badge>
+                </div>
               </Link>
             ))}
           </div>
@@ -574,7 +567,9 @@ export function CategoryPage({ categorySlug, selectedSubcategory }: CategoryPage
         }`}
       >
         {sortedProducts.map((product) => {
-          const isInWishlist = wishlistState.items.some((item) => item.id === product.id)
+          const productInWishlist = isInWishlist(product.id)
+          const productInCart = isInCart(product.id)
+          const cartQuantity = getItemQuantity(product.id)
 
           return (
             <Card
@@ -609,7 +604,7 @@ export function CategoryPage({ categorySlug, selectedSubcategory }: CategoryPage
                     className="h-8 w-8 p-0 bg-background/90 hover:bg-background"
                     onClick={() => toggleWishlist(product)}
                   >
-                    <Heart className={`h-4 w-4 ${isInWishlist ? "fill-red-500 text-red-500" : ""}`} />
+                    <Heart className={`h-4 w-4 ${productInWishlist ? "fill-red-500 text-red-500" : ""}`} />
                   </Button>
                 </div>
               </div>
@@ -649,15 +644,18 @@ export function CategoryPage({ categorySlug, selectedSubcategory }: CategoryPage
                     )}
                   </div>
 
-                  {/* Add to Cart */}
-                  <Button
-                    className="w-full bg-gradient-to-r from-cyan-600 to-purple-700 hover:from-cyan-700 hover:to-purple-800 text-white font-semibold"
-                    disabled={!product.inStock}
-                    onClick={() => product.inStock && addToCart(product)}
-                  >
-                    <ShoppingCart className="h-4 w-4 mr-2" />
-                    {product.inStock ? "Add to Cart" : "Out of Stock"}
-                  </Button>
+                  {/* Add to Cart Button */}
+                  <div className="pt-2">
+                    <Button
+                      onClick={() => handleAddToCart(product)}
+                      disabled={!product.inStock}
+                      className="w-full"
+                      variant={productInCart ? "secondary" : "default"}
+                    >
+                      <ShoppingCart className="h-4 w-4 mr-2" />
+                      {!product.inStock ? "Out of Stock" : productInCart ? `In Cart (${cartQuantity})` : "Add to Cart"}
+                    </Button>
+                  </div>
                 </div>
               </CardContent>
             </Card>

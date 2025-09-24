@@ -8,8 +8,6 @@ import "./globals.css"
 import { ReduxProvider } from "@/components/redux-provider"
 import { ThemeWrapper } from "@/components/theme-wrapper"
 import { Suspense } from "react"
-import { CartProvider } from "@/lib/cart-context"
-import { WishlistProvider } from "@/contexts/wishlist-context"
 import NextTopLoader from "nextjs-toploader"
 import { WhatsAppWidget } from "@/components/whatsapp-widget"
 
@@ -46,7 +44,7 @@ export const metadata: Metadata = {
     locale: "en_US",
     url: "https://www.alphacomonline.com",
     siteName: "AlphaCom Online",
-    title: "AlphaCom Online | Premium Technology Store - Computer Village Lagos",
+    title: "AlphaCom Online | Premium Technology Store Lagos",
     description:
       "Premium technology store in Computer Village, Lagos. Expert support, competitive prices & fast delivery across Nigeria.",
     images: [
@@ -201,13 +199,9 @@ export default function RootLayout({
           shadow="0 0 10px #3b82f6,0 0 5px #3b82f6"
         />
         <ReduxProvider>
-          <CartProvider>
-            <WishlistProvider>
-              <Suspense fallback={null}>
-                <ThemeWrapper>{children}</ThemeWrapper>
-              </Suspense>
-            </WishlistProvider>
-          </CartProvider>
+          <Suspense fallback={null}>
+            <ThemeWrapper>{children}</ThemeWrapper>
+          </Suspense>
         </ReduxProvider>
         <WhatsAppWidget />
         <Analytics />
