@@ -1,7 +1,7 @@
 import axios from "axios"
 
 const apiClient = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL || "http://144.126.219.115:8000",
+  baseURL: process.env.NEXT_PUBLIC_API_URL || "https://alphacom.grevego.com",
   headers: {
     "Content-Type": "application/json",
   },
