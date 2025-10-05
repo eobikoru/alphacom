@@ -1,14 +1,17 @@
 "use client"
 
 import type React from "react"
-import { Search, User, Menu, MapPin } from "lucide-react"
+import { Search, User, Menu, MapPin, LogOut, Mail, Shield, ChevronDown } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import { Separator } from "@/components/ui/separator"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { ThemeToggle } from "@/components/theme-toggle"
-import { useState } from "react"
-import { CartDrawer } from "./cart-drawer"
+import { CartDrawer, type CartDrawerRef } from "@/components/cart-drawer"
+import { useState, useRef, useEffect } from "react"
+import { useAuth } from "@/hooks/use-auth"
 
 interface ModernHeaderProps {
   blackNavbar?: boolean
@@ -17,7 +20,27 @@ interface ModernHeaderProps {
 export function ModernHeader({ blackNavbar }: ModernHeaderProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState("")
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false)
+  const cartDrawerRef = useRef<CartDrawerRef>(null)
+  const dropdownRef = useRef<HTMLDivElement>(null)
   const router = useRouter()
+  const { isAuthenticated, user, logout } = useAuth()
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsUserMenuOpen(false)
+      }
+    }
+
+    if (isUserMenuOpen) {
+      document.addEventListener("mousedown", handleClickOutside)
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside)
+    }
+  }, [isUserMenuOpen])
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault()
@@ -34,6 +57,22 @@ export function ModernHeader({ blackNavbar }: ModernHeaderProps) {
   const handleCategoryClick = (categorySlug: string) => {
     setIsMobileMenuOpen(false)
     router.push(`/categories/${categorySlug}`)
+  }
+
+  const handleLogout = () => {
+    logout()
+    setIsUserMenuOpen(false)
+    router.push("/")
+  }
+
+  const handleOpenCart = () => {
+    setIsUserMenuOpen(false)
+    cartDrawerRef.current?.open()
+  }
+
+  const getUserInitials = () => {
+    if (!user?.username) return "U"
+    return user.username.charAt(0).toUpperCase()
   }
 
   const categoryMap: Record<string, string> = {
@@ -101,14 +140,87 @@ export function ModernHeader({ blackNavbar }: ModernHeaderProps) {
           <div className="flex items-center gap-4">
             <ThemeToggle />
 
-            <CartDrawer />
+            <CartDrawer ref={cartDrawerRef} />
 
-            <Link href="/auth/signin" onClick={handleNavClick}>
-              <Button variant="ghost" size="sm" className="flex items-center gap-2">
-                <User className="h-4 w-4" />
-                <span className="hidden md:inline">Sign In</span>
-              </Button>
-            </Link>
+            {isAuthenticated && user ? (
+              <div className="relative" ref={dropdownRef}>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="flex items-center gap-2"
+                  onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
+                >
+                  <Avatar className="h-8 w-8">
+                    <AvatarFallback className="bg-gradient-to-r from-cyan-500 to-purple-600 text-white text-sm font-semibold">
+                      {getUserInitials()}
+                    </AvatarFallback>
+                  </Avatar>
+                  <span className="hidden md:inline text-sm font-medium">{user.username}</span>
+                  <ChevronDown className="h-4 w-4 hidden md:inline" />
+                </Button>
+
+                {/* Custom Dropdown Menu */}
+                {isUserMenuOpen && (
+                  <div className="absolute right-0 mt-2 w-72 bg-popover border border-border rounded-lg shadow-lg overflow-hidden z-50">
+                    {/* User Info Header */}
+                    <div className="p-4 bg-card">
+                      <div className="flex items-center gap-3">
+                        <Avatar className="h-12 w-12">
+                          <AvatarFallback className="bg-gradient-to-r from-cyan-500 to-purple-600 text-white text-lg font-semibold">
+                            {getUserInitials()}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div className="flex flex-col space-y-1">
+                          <p className="text-sm font-semibold text-popover-foreground">{user.username}</p>
+                          <p className="text-xs text-muted-foreground flex items-center gap-1">
+                            <Mail className="h-3 w-3" />
+                            {user.email}
+                          </p>
+                          {(user.is_admin || user.is_super_admin) && (
+                            <p className="text-xs text-primary flex items-center gap-1">
+                              <Shield className="h-3 w-3" />
+                              {user.is_super_admin ? "Super Admin" : "Admin"}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+
+                    <Separator />
+
+                    {/* Menu Items */}
+                    <div className="p-2 bg-popover">
+                      <button
+                        onClick={handleOpenCart}
+                        className="w-full flex items-center gap-2 px-3 py-2 text-sm rounded-md hover:bg-accent hover:text-accent-foreground transition-colors text-left"
+                      >
+                        <span className="text-base">📦</span>
+                        <span>My Orders</span>
+                      </button>
+                    </div>
+
+                    <Separator />
+
+                    <div className="p-2 bg-popover">
+                      <button
+                        onClick={handleLogout}
+                        className="w-full flex items-center gap-2 px-3 py-2 text-sm rounded-md hover:bg-red-50 dark:hover:bg-red-950 text-red-600 transition-colors text-left"
+                      >
+                        <LogOut className="h-4 w-4" />
+                        <span>Logout</span>
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <Link href="/auth/signin" onClick={handleNavClick}>
+                <Button variant="ghost" size="sm" className="flex items-center gap-2">
+                  <User className="h-4 w-4" />
+                  <span className="hidden md:inline">Sign In</span>
+                </Button>
+              </Link>
+            )}
 
             <Button
               variant="ghost"

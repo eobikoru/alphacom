@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, forwardRef, useImperativeHandle } from "react"
 import { ShoppingCart, Plus, Minus, X, Trash2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -11,9 +11,19 @@ import { useCart } from "@/hooks/use-cart"
 import { toast } from "sonner"
 import Link from "next/link"
 
-export function CartDrawer() {
+export interface CartDrawerRef {
+  open: () => void
+  close: () => void
+}
+
+export const CartDrawer = forwardRef<CartDrawerRef>((props, ref) => {
   const [isOpen, setIsOpen] = useState(false)
   const { items, total, itemCount, removeItem, updateItemQuantity, clearAllItems, formatPrice } = useCart()
+
+  useImperativeHandle(ref, () => ({
+    open: () => setIsOpen(true),
+    close: () => setIsOpen(false),
+  }))
 
   const handleQuantityChange = (id: string, newQuantity: number) => {
     if (newQuantity <= 0) {
@@ -164,4 +174,6 @@ export function CartDrawer() {
       </SheetContent>
     </Sheet>
   )
-}
+})
+
+CartDrawer.displayName = "CartDrawer"

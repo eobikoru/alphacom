@@ -10,6 +10,7 @@ import { ThemeWrapper } from "@/components/theme-wrapper"
 import { Suspense } from "react"
 import NextTopLoader from "nextjs-toploader"
 import { WhatsAppWidget } from "@/components/whatsapp-widget"
+import { QueryProvider } from "@/lib/providers/query-provider"
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://www.alphacomonline.com"),
@@ -198,11 +199,13 @@ export default function RootLayout({
           speed={200}
           shadow="0 0 10px #3b82f6,0 0 5px #3b82f6"
         />
-        <ReduxProvider>
-          <Suspense fallback={null}>
-            <ThemeWrapper>{children}</ThemeWrapper>
-          </Suspense>
-        </ReduxProvider>
+        <QueryProvider>
+          <ReduxProvider>
+            <Suspense fallback={null}>
+              <ThemeWrapper>{children}</ThemeWrapper>
+            </Suspense>
+          </ReduxProvider>
+        </QueryProvider>
         <WhatsAppWidget />
         <Analytics />
         <SpeedInsights />

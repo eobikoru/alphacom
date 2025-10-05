@@ -25,10 +25,9 @@ export default function SignUpPage() {
     password: "",
     confirmPassword: "",
   })
-  const [isLoading, setIsLoading] = useState(false)
   const [errors, setErrors] = useState<Record<string, string>>({})
   const theme = useAppSelector((state) => state.theme.mode)
-  const { register } = useAuth()
+  const { register, isLoading } = useAuth()
   const router = useRouter()
 
   const handleInputChange = (field: string, value: string) => {
@@ -83,17 +82,15 @@ export default function SignUpPage() {
       return
     }
 
-    setIsLoading(true)
-
     try {
-      await register(formData.email, formData.password, formData.firstName, formData.lastName)
+      await register(formData.email, formData.password)
       toast.success("Account created successfully! Welcome to our store.")
-      router.push("/") // Redirect to home page after successful signup
+      setTimeout(() => {
+        router.push("/auth/signin")
+      }, 2000)
     } catch (error) {
       toast.error("Failed to create account. Please try again.")
       console.error("Registration error:", error)
-    } finally {
-      setIsLoading(false)
     }
   }
 
