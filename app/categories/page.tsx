@@ -1,128 +1,40 @@
 "use client"
 
 import Link from "next/link"
-import { ChevronRight, Monitor, Camera, Volume2, HardDrive, Printer, Network, Shield, Package } from "lucide-react"
+import { ChevronRight, Package } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
 import { useAppSelector } from "@/store/hooks"
 import { AppLayout } from "@/components/app-layout"
-
-const categories = [
-  {
-    id: "computers-accessories",
-    name: "Computers & Accessories",
-    icon: Monitor,
-    description: "Desktop computers, laptops, and essential accessories",
-    subcategories: [
-      { id: "laptops", name: "Laptops", count: 156 },
-      { id: "desktops", name: "Desktop Computers", count: 89 },
-      { id: "monitors", name: "Monitors", count: 234 },
-      { id: "keyboards", name: "Keyboards & Mice", count: 178 },
-      { id: "motherboards", name: "Motherboards", count: 67 },
-      { id: "processors", name: "Processors", count: 45 },
-    ],
-  },
-  {
-    id: "cameras",
-    name: "Cameras",
-    icon: Camera,
-    description: "Professional cameras and photography equipment",
-    subcategories: [
-      { id: "dslr", name: "DSLR Cameras", count: 67 },
-      { id: "mirrorless", name: "Mirrorless Cameras", count: 89 },
-      { id: "action-cameras", name: "Action Cameras", count: 45 },
-      { id: "lenses", name: "Camera Lenses", count: 123 },
-      { id: "tripods", name: "Tripods & Stands", count: 78 },
-      { id: "camera-accessories", name: "Camera Accessories", count: 156 },
-    ],
-  },
-  {
-    id: "audio-speakers",
-    name: "Audio & Speakers",
-    icon: Volume2,
-    description: "Premium audio equipment and sound systems",
-    subcategories: [
-      { id: "headphones", name: "Headphones", count: 234 },
-      { id: "earbuds", name: "Earbuds & Earphones", count: 189 },
-      { id: "speakers", name: "Bluetooth Speakers", count: 145 },
-      { id: "soundbars", name: "Soundbars", count: 67 },
-      { id: "microphones", name: "Microphones", count: 89 },
-      { id: "audio-accessories", name: "Audio Accessories", count: 123 },
-    ],
-  },
-  {
-    id: "data-storage",
-    name: "Data Storage",
-    icon: HardDrive,
-    description: "Hard drives, SSDs, and storage solutions",
-    subcategories: [
-      { id: "external-drives", name: "External Hard Drives", count: 89 },
-      { id: "ssd", name: "Solid State Drives", count: 67 },
-      { id: "internal-drives", name: "Internal Hard Drives", count: 78 },
-      { id: "usb-drives", name: "USB Flash Drives", count: 145 },
-      { id: "memory-cards", name: "Memory Cards", count: 234 },
-      { id: "nas-storage", name: "NAS Storage", count: 34 },
-    ],
-  },
-  {
-    id: "printers-scanners",
-    name: "Printers & Scanners",
-    icon: Printer,
-    description: "Office printing and scanning equipment",
-    subcategories: [
-      { id: "inkjet-printers", name: "Inkjet Printers", count: 89 },
-      { id: "laser-printers", name: "Laser Printers", count: 67 },
-      { id: "all-in-one", name: "All-in-One Printers", count: 78 },
-      { id: "scanners", name: "Scanners", count: 45 },
-      { id: "printer-ink", name: "Printer Ink & Toner", count: 234 },
-      { id: "printer-accessories", name: "Printer Accessories", count: 123 },
-    ],
-  },
-  {
-    id: "networking",
-    name: "Networking",
-    icon: Network,
-    description: "Routers, switches, and network infrastructure",
-    subcategories: [
-      { id: "routers", name: "Wireless Routers", count: 89 },
-      { id: "switches", name: "Network Switches", count: 45 },
-      { id: "access-points", name: "Access Points", count: 34 },
-      { id: "network-cables", name: "Network Cables", count: 156 },
-      { id: "modems", name: "Modems", count: 67 },
-      { id: "network-accessories", name: "Network Accessories", count: 123 },
-    ],
-  },
-  {
-    id: "software-security",
-    name: "Software & Security",
-    icon: Shield,
-    description: "Software licenses and security solutions",
-    subcategories: [
-      { id: "antivirus", name: "Antivirus Software", count: 45 },
-      { id: "office-software", name: "Office Software", count: 67 },
-      { id: "operating-systems", name: "Operating Systems", count: 23 },
-      { id: "security-software", name: "Security Software", count: 89 },
-      { id: "backup-software", name: "Backup Software", count: 34 },
-      { id: "productivity-software", name: "Productivity Software", count: 78 },
-    ],
-  },
-  {
-    id: "accessories",
-    name: "Accessories",
-    icon: Package,
-    description: "Cables, adapters, and tech accessories",
-    subcategories: [
-      { id: "cables", name: "Cables & Adapters", count: 234 },
-      { id: "power-supplies", name: "Power Supplies", count: 89 },
-      { id: "cooling", name: "Cooling Solutions", count: 67 },
-      { id: "cases", name: "Computer Cases", count: 45 },
-      { id: "tools", name: "Tech Tools", count: 123 },
-      { id: "misc-accessories", name: "Miscellaneous", count: 156 },
-    ],
-  },
-]
+import { useEffect, useState } from "react"
+import { getCategoriesWithProducts, type CategoryWithProducts } from "@/lib/api/categories"
+import { CategoryCardSkeleton } from "@/components/skeletons/category-card-skeleton"
 
 export default function CategoriesPage() {
   const isDark = useAppSelector((state) => state.theme.isDark)
+  const [categories, setCategories] = useState<CategoryWithProducts[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        setIsLoading(true)
+        const response = await getCategoriesWithProducts()
+        if (response.success) {
+          setCategories(response.data)
+        } else {
+          setError("Failed to load categories")
+        }
+      } catch (error) {
+        console.error("Failed to fetch categories:", error)
+        setError("Failed to load categories")
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    fetchCategories()
+  }, [])
 
   return (
     <AppLayout>
@@ -136,11 +48,23 @@ export default function CategoriesPage() {
             </p>
           </div>
 
-          {/* Categories Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {categories.map((category) => {
-              const IconComponent = category.icon
-              return (
+          {isLoading && (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {[1, 2, 3, 4, 5, 6].map((i) => (
+                <CategoryCardSkeleton key={i} />
+              ))}
+            </div>
+          )}
+
+          {error && (
+            <div className="text-center py-12">
+              <p className="text-red-500">{error}</p>
+            </div>
+          )}
+
+          {!isLoading && !error && (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {categories.map((category) => (
                 <Card
                   key={category.id}
                   className="group hover:shadow-2xl transition-all duration-300 border-0 bg-card/80 hover:bg-card backdrop-blur-xl transform hover:scale-[1.02]"
@@ -149,13 +73,23 @@ export default function CategoriesPage() {
                     {/* Category Header */}
                     <div className="flex items-center space-x-4 mb-6">
                       <div className="w-16 h-16 bg-gradient-to-r from-cyan-500 to-purple-600 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                        <IconComponent className="w-8 h-8 text-white" />
+                        {category.image_url ? (
+                          <img
+                            src={category.image_url || "/placeholder.svg"}
+                            alt={category.name}
+                            className="w-full h-full object-cover rounded-2xl"
+                          />
+                        ) : (
+                          <Package className="w-8 h-8 text-white" />
+                        )}
                       </div>
                       <div>
                         <h3 className="text-xl font-bold text-card-foreground group-hover:text-cyan-600 transition-colors">
                           {category.name}
                         </h3>
-                        <p className="text-sm text-muted-foreground">{category.description}</p>
+                        <p className="text-sm text-muted-foreground line-clamp-2">
+                          {category.description || "Explore our collection"}
+                        </p>
                       </div>
                     </div>
 
@@ -164,12 +98,12 @@ export default function CategoriesPage() {
                       {category.subcategories.slice(0, 4).map((subcategory) => (
                         <Link
                           key={subcategory.id}
-                          href={`/categories/${category.id}/${subcategory.id}`}
+                          href={`/categories/${category.slug}/${subcategory.slug}`}
                           className="flex items-center justify-between p-3 rounded-lg transition-all duration-200 hover:bg-accent text-card-foreground hover:text-accent-foreground"
                         >
                           <span className="font-medium">{subcategory.name}</span>
                           <div className="flex items-center space-x-2">
-                            <span className="text-sm text-muted-foreground">({subcategory.count})</span>
+                            <span className="text-sm text-muted-foreground">({subcategory.product_count})</span>
                             <ChevronRight className="w-4 h-4" />
                           </div>
                         </Link>
@@ -179,7 +113,7 @@ export default function CategoriesPage() {
                     {/* View All Link */}
                     <div className="mt-6 pt-4 border-t border-border">
                       <Link
-                        href={`/categories/${category.id}`}
+                        href={`/categories/${category.slug}`}
                         onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
                         className="flex items-center justify-center space-x-2 text-cyan-600 hover:text-cyan-700 font-semibold transition-colors"
                       >
@@ -189,9 +123,9 @@ export default function CategoriesPage() {
                     </div>
                   </CardContent>
                 </Card>
-              )
-            })}
-          </div>
+              ))}
+            </div>
+          )}
 
           {/* Featured Categories Banner */}
           <div className="mt-16">

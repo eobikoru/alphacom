@@ -59,7 +59,7 @@ export const CartDrawer = forwardRef<CartDrawerRef>((props, ref) => {
           )}
         </Button>
       </SheetTrigger>
-      <SheetContent className="w-full sm:max-w-lg flex flex-col">
+      <SheetContent className="w-full sm:max-w-lg flex flex-col px-6">
         <SheetHeader className="flex-shrink-0">
           <SheetTitle className="flex items-center gap-2">
             <ShoppingCart className="h-5 w-5" />
@@ -77,12 +77,11 @@ export const CartDrawer = forwardRef<CartDrawerRef>((props, ref) => {
           </div>
         ) : (
           <div className="flex flex-col flex-1 min-h-0">
-            {/* Scrollable cart items with better height management */}
-            <ScrollArea className="flex-1 -mx-6 px-6 min-h-0">
-              <div className="space-y-4 py-4">
+            <ScrollArea className="flex-1 min-h-0">
+              <div className="space-y-4 py-6 pr-4">
                 {items.map((item) => (
                   <div key={item.id} className="flex gap-4 p-4 border border-border rounded-lg bg-card">
-                    <div className="w-16 h-16 bg-muted rounded-md overflow-hidden flex-shrink-0">
+                    <div className="w-20 h-20 bg-muted rounded-md overflow-hidden flex-shrink-0">
                       <img
                         src={item.image || "/placeholder.svg"}
                         alt={item.name}
@@ -128,45 +127,42 @@ export const CartDrawer = forwardRef<CartDrawerRef>((props, ref) => {
                     </div>
                   </div>
                 ))}
-                <div className="h-4" />
               </div>
             </ScrollArea>
 
-            <div className="flex-shrink-0 border-t border-border pt-4 mt-4 bg-background">
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-muted-foreground">Subtotal</span>
-                  <span className="font-semibold">{formatPrice(total)}</span>
-                </div>
+            <div className="flex-shrink-0 border-t border-border pt-6 mt-4 bg-background space-y-4">
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-muted-foreground">Subtotal</span>
+                <span className="font-semibold">{formatPrice(total)}</span>
+              </div>
 
-                <Separator />
+              <Separator />
 
-                <div className="flex items-center justify-between text-lg font-bold">
-                  <span>Total</span>
-                  <span>{formatPrice(total)}</span>
-                </div>
+              <div className="flex items-center justify-between text-lg font-bold">
+                <span>Total</span>
+                <span>{formatPrice(total)}</span>
+              </div>
 
-                <div className="space-y-2">
-                  <Link href="/checkout" onClick={() => setIsOpen(false)}>
-                    <Button className="w-full" size="lg">
-                      Proceed to Checkout
-                    </Button>
-                  </Link>
-                  <Button variant="outline" className="w-full bg-transparent" onClick={() => setIsOpen(false)}>
-                    Continue Shopping
+              <div className="space-y-2 pt-2">
+                <Link href="/checkout" onClick={() => setIsOpen(false)}>
+                  <Button className="w-full" size="lg">
+                    Proceed to Checkout
                   </Button>
-                  {items.length > 0 && (
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={handleClearCart}
-                      className="w-full text-muted-foreground hover:text-destructive"
-                    >
-                      <Trash2 className="h-4 w-4 mr-2" />
-                      Clear Cart
-                    </Button>
-                  )}
-                </div>
+                </Link>
+                <Button variant="outline" className="w-full bg-transparent" onClick={() => setIsOpen(false)}>
+                  Continue Shopping
+                </Button>
+                {items.length > 0 && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={handleClearCart}
+                    className="w-full text-muted-foreground hover:text-destructive"
+                  >
+                    <Trash2 className="h-4 w-4 mr-2" />
+                    Clear Cart
+                  </Button>
+                )}
               </div>
             </div>
           </div>

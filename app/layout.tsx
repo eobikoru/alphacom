@@ -11,6 +11,7 @@ import { Suspense } from "react"
 import NextTopLoader from "nextjs-toploader"
 import { WhatsAppWidget } from "@/components/whatsapp-widget"
 import { QueryProvider } from "@/lib/providers/query-provider"
+import { Toaster } from "@/components/ui/sonner"
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://www.alphacomonline.com"),
@@ -206,6 +207,7 @@ export default function RootLayout({
             </Suspense>
           </ReduxProvider>
         </QueryProvider>
+        <Toaster />
         <WhatsAppWidget />
         <Analytics />
         <SpeedInsights />

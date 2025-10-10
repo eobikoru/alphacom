@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useMemo } from "react"
+import { useState, useMemo, useEffect } from "react"
 import { Search, Filter, Grid3X3, List, ChevronDown, Star, Heart, ShoppingCart } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -9,10 +9,13 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Slider } from "@/components/ui/slider"
+import { Skeleton } from "@/components/ui/skeleton"
 import { useWishlist } from "@/hooks/use-wishlist"
 import { useCart } from "@/hooks/use-cart"
 import { toast } from "sonner"
 import Link from "next/link"
+import { getCategoriesWithProducts, getSubcategoriesByCategory } from "@/lib/api/categories"
+import { ProductCardSkeleton } from "@/components/skeletons/product-card-skeleton"
 
 interface Product {
   id: string
@@ -34,184 +37,6 @@ interface CategoryPageProps {
   selectedSubcategory?: string
 }
 
-const mockProducts: Product[] = [
-  {
-    id: "1",
-    name: "HP Color LaserJet CP5225 Printer CE710A",
-    price: 105000,
-    image: "/hp-color-laserjet-printer-white-modern.jpg",
-    rating: 4.5,
-    reviews: 128,
-    brand: "HP",
-    category: "Printers & Scanners",
-    inStock: true,
-    isNew: true,
-  },
-  {
-    id: "2",
-    name: "HP 415 All in One Ink Tank Wireless Printer",
-    price: 58000,
-    originalPrice: 65000,
-    image: "/hp-all-in-one-wireless-printer-modern-white.jpg",
-    rating: 4.3,
-    reviews: 89,
-    brand: "HP",
-    category: "Printers & Scanners",
-    inStock: true,
-    isOnSale: true,
-  },
-  {
-    id: "3",
-    name: "Canon PIXMA G3020 Wireless All-in-One Printer",
-    price: 680000,
-    image: "/canon-pixma-printer-black-professional.jpg",
-    rating: 4.7,
-    reviews: 156,
-    brand: "Canon",
-    category: "Printers & Scanners",
-    inStock: true,
-  },
-  {
-    id: "4",
-    name: "Epson EcoTank L3250 Wi-Fi All-in-One Ink Tank Printer",
-    price: 950000,
-    image: "/epson-ecotank-printer-modern-design.jpg",
-    rating: 4.6,
-    reviews: 203,
-    brand: "Epson",
-    category: "Printers & Scanners",
-    inStock: false,
-  },
-  {
-    id: "5",
-    name: "Brother DCP-L2540DW Wireless Laser Printer",
-    price: 310000,
-    image: "/brother-laser-printer-compact-white.jpg",
-    rating: 4.2,
-    reviews: 74,
-    brand: "Brother",
-    category: "Printers & Scanners",
-    inStock: true,
-  },
-  {
-    id: "6",
-    name: "HP LaserJet Pro M404dn Monochrome Printer",
-    price: 640000,
-    image: "/hp-laserjet-pro-printer-professional-black.jpg",
-    rating: 4.8,
-    reviews: 312,
-    brand: "HP",
-    category: "Printers & Scanners",
-    inStock: true,
-    isNew: true,
-  },
-]
-
-const categories = {
-  computers: "Computers & Accessories",
-  "computers-accessories": "Computers & Accessories",
-  cameras: "Cameras",
-  "audio-speakers": "Audio & Speakers",
-  "data-storage": "Data Storage",
-  "printers-scanners": "Printers & Scanners",
-  networking: "Networking",
-  "software-security": "Software & Security",
-  accessories: "Accessories",
-}
-
-const categorySubcategories = {
-  computers: [
-    { id: "desktop-computers", name: "Desktop Computers", count: 156 },
-    { id: "laptops", name: "Laptops & Notebooks", count: 234 },
-    { id: "tablets", name: "Tablets", count: 89 },
-    { id: "monitors", name: "Monitors & Displays", count: 167 },
-    { id: "keyboards-mice", name: "Keyboards & Mice", count: 298 },
-    { id: "computer-components", name: "Computer Components", count: 445 },
-    { id: "computer-accessories", name: "Computer Accessories", count: 356 },
-    { id: "external-drives", name: "External Drives", count: 123 },
-  ],
-  "computers-accessories": [
-    { id: "desktop-computers", name: "Desktop Computers", count: 156 },
-    { id: "laptops", name: "Laptops & Notebooks", count: 234 },
-    { id: "tablets", name: "Tablets", count: 89 },
-    { id: "monitors", name: "Monitors & Displays", count: 167 },
-    { id: "keyboards-mice", name: "Keyboards & Mice", count: 298 },
-    { id: "computer-components", name: "Computer Components", count: 445 },
-    { id: "computer-accessories", name: "Computer Accessories", count: 356 },
-    { id: "external-drives", name: "External Drives", count: 123 },
-  ],
-  cameras: [
-    { id: "digital-cameras", name: "Digital Cameras", count: 89 },
-    { id: "dslr-cameras", name: "DSLR Cameras", count: 67 },
-    { id: "mirrorless-cameras", name: "Mirrorless Cameras", count: 78 },
-    { id: "action-cameras", name: "Action Cameras", count: 45 },
-    { id: "camera-lenses", name: "Camera Lenses", count: 123 },
-    { id: "tripods-stands", name: "Tripods & Stands", count: 89 },
-    { id: "camera-accessories", name: "Camera Accessories", count: 234 },
-    { id: "memory-cards", name: "Memory Cards", count: 156 },
-  ],
-  "audio-speakers": [
-    { id: "headphones", name: "Headphones", count: 234 },
-    { id: "earbuds", name: "Earbuds & Earphones", count: 189 },
-    { id: "bluetooth-speakers", name: "Bluetooth Speakers", count: 145 },
-    { id: "soundbars", name: "Soundbars", count: 67 },
-    { id: "home-audio", name: "Home Audio Systems", count: 89 },
-    { id: "microphones", name: "Microphones", count: 78 },
-    { id: "audio-accessories", name: "Audio Accessories", count: 123 },
-    { id: "professional-audio", name: "Professional Audio", count: 56 },
-  ],
-  "data-storage": [
-    { id: "external-hard-drives", name: "External Hard Drives", count: 167 },
-    { id: "usb-flash-drives", name: "USB Flash Drives", count: 234 },
-    { id: "memory-cards", name: "Memory Cards", count: 189 },
-    { id: "internal-hard-drives", name: "Internal Hard Drives", count: 123 },
-    { id: "solid-state-drives", name: "Solid State Drives (SSD)", count: 145 },
-    { id: "network-storage", name: "Network Storage (NAS)", count: 67 },
-    { id: "optical-media", name: "Optical Media", count: 89 },
-    { id: "storage-accessories", name: "Storage Accessories", count: 78 },
-  ],
-  "printers-scanners": [
-    { id: "inkjet-printers", name: "Inkjet Printers", count: 123 },
-    { id: "laser-printers", name: "Laser Printers", count: 89 },
-    { id: "all-in-one-printers", name: "All-in-One Printers", count: 156 },
-    { id: "photo-printers", name: "Photo Printers", count: 67 },
-    { id: "3d-printers", name: "3D Printers", count: 45 },
-    { id: "scanners", name: "Scanners", count: 78 },
-    { id: "printer-ink", name: "Printer Ink & Toner", count: 234 },
-    { id: "printer-accessories", name: "Printer Accessories", count: 145 },
-  ],
-  networking: [
-    { id: "routers", name: "Routers", count: 89 },
-    { id: "modems", name: "Modems", count: 67 },
-    { id: "switches", name: "Network Switches", count: 78 },
-    { id: "access-points", name: "Access Points", count: 56 },
-    { id: "network-adapters", name: "Network Adapters", count: 123 },
-    { id: "cables", name: "Network Cables", count: 189 },
-    { id: "powerline", name: "Powerline Networking", count: 45 },
-    { id: "network-accessories", name: "Network Accessories", count: 134 },
-  ],
-  "software-security": [
-    { id: "antivirus", name: "Antivirus Software", count: 67 },
-    { id: "operating-systems", name: "Operating Systems", count: 45 },
-    { id: "office-software", name: "Office Software", count: 89 },
-    { id: "design-software", name: "Design Software", count: 78 },
-    { id: "security-software", name: "Security Software", count: 123 },
-    { id: "backup-software", name: "Backup Software", count: 56 },
-    { id: "utility-software", name: "Utility Software", count: 134 },
-    { id: "educational-software", name: "Educational Software", count: 67 },
-  ],
-  accessories: [
-    { id: "phone-accessories", name: "Phone Accessories", count: 345 },
-    { id: "laptop-accessories", name: "Laptop Accessories", count: 234 },
-    { id: "tablet-accessories", name: "Tablet Accessories", count: 156 },
-    { id: "gaming-accessories", name: "Gaming Accessories", count: 189 },
-    { id: "charging-cables", name: "Charging Cables", count: 267 },
-    { id: "cases-covers", name: "Cases & Covers", count: 456 },
-    { id: "screen-protectors", name: "Screen Protectors", count: 234 },
-    { id: "stands-mounts", name: "Stands & Mounts", count: 123 },
-  ],
-}
-
 export function CategoryPage({ categorySlug, selectedSubcategory }: CategoryPageProps) {
   const [searchQuery, setSearchQuery] = useState("")
   const [sortBy, setSortBy] = useState("featured")
@@ -220,26 +45,93 @@ export function CategoryPage({ categorySlug, selectedSubcategory }: CategoryPage
   const [selectedBrands, setSelectedBrands] = useState<string[]>([])
   const [showFilters, setShowFilters] = useState(false)
 
+  const [categoriesData, setCategoriesData] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
+  const [currentCategory, setCurrentCategory] = useState<any>(null)
+  const [allProducts, setAllProducts] = useState<any[]>([])
+
   const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist()
   const { addItem, isInCart, getItemQuantity } = useCart()
 
-  const categoryName = categories[categorySlug as keyof typeof categories] || "Products"
-  const subcategories = categorySubcategories[categorySlug as keyof typeof categorySubcategories] || []
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true)
+        const categoriesResponse = await getCategoriesWithProducts()
+
+        if (!categoriesResponse.success) {
+          toast.error("Failed to load categories")
+          return
+        }
+
+        const category = categoriesResponse.data.find((cat: any) => cat.slug === categorySlug)
+
+        if (!category) {
+          toast.error("Category not found")
+          return
+        }
+
+        setCurrentCategory(category)
+
+        const subcategoriesResponse = await getSubcategoriesByCategory(category.id)
+
+        if (subcategoriesResponse.success) {
+          // Collect all products from subcategories
+          const products: any[] = []
+
+          // Add products from subcategories
+          subcategoriesResponse.data.forEach((sub: any) => {
+            if (sub.products) {
+              products.push(...sub.products)
+            }
+          })
+
+          // Update category with fetched subcategories
+          setCurrentCategory({
+            ...category,
+            subcategories: subcategoriesResponse.data,
+          })
+
+          setAllProducts(products)
+        }
+      } catch (error) {
+        console.error("[v0] Error fetching category data:", error)
+        toast.error("Failed to load category data")
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchData()
+  }, [categorySlug])
+
+  const categoryName = currentCategory?.name || "Products"
+  const subcategories = currentCategory?.subcategories || []
 
   const brands = useMemo(() => {
-    const brandSet = new Set(mockProducts.map((p) => p.brand))
+    const brandSet = new Set(allProducts.map((p) => p.brand).filter(Boolean))
     return Array.from(brandSet)
-  }, [])
+  }, [allProducts])
 
   const filteredProducts = useMemo(() => {
-    return mockProducts.filter((product) => {
+    let products = allProducts
+
+    // Filter by selected subcategory
+    if (selectedSubcategory) {
+      const subcategory = subcategories.find((sub: any) => sub.slug === selectedSubcategory)
+      if (subcategory) {
+        products = subcategory.products || []
+      }
+    }
+
+    return products.filter((product) => {
       const matchesSearch = product.name.toLowerCase().includes(searchQuery.toLowerCase())
       const matchesPrice = product.price >= priceRange[0] && product.price <= priceRange[1]
       const matchesBrand = selectedBrands.length === 0 || selectedBrands.includes(product.brand)
 
       return matchesSearch && matchesPrice && matchesBrand
     })
-  }, [searchQuery, priceRange, selectedBrands])
+  }, [allProducts, selectedSubcategory, subcategories, searchQuery, priceRange, selectedBrands])
 
   const sortedProducts = useMemo(() => {
     const sorted = [...filteredProducts]
@@ -250,9 +142,9 @@ export function CategoryPage({ categorySlug, selectedSubcategory }: CategoryPage
       case "price-high":
         return sorted.sort((a, b) => b.price - a.price)
       case "rating":
-        return sorted.sort((a, b) => b.rating - a.rating)
+        return sorted.sort((a, b) => (b.rating || 0) - (a.rating || 0))
       case "newest":
-        return sorted.sort((a, b) => (b.isNew ? 1 : 0) - (a.isNew ? 1 : 0))
+        return sorted.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
       default:
         return sorted
     }
@@ -262,7 +154,7 @@ export function CategoryPage({ categorySlug, selectedSubcategory }: CategoryPage
     return `₦${price.toLocaleString()}`
   }
 
-  const toggleWishlist = (product: Product) => {
+  const toggleWishlist = (product: any) => {
     if (isInWishlist(product.id)) {
       removeFromWishlist(product.id)
       toast.success(`${product.name} has been removed from your wishlist`)
@@ -271,7 +163,7 @@ export function CategoryPage({ categorySlug, selectedSubcategory }: CategoryPage
         id: product.id,
         name: product.name,
         price: product.price,
-        image: product.image,
+        image: product.image_url,
         category: product.category,
         brand: product.brand,
       })
@@ -279,8 +171,8 @@ export function CategoryPage({ categorySlug, selectedSubcategory }: CategoryPage
     }
   }
 
-  const handleAddToCart = (product: Product) => {
-    if (!product.inStock) {
+  const handleAddToCart = (product: any) => {
+    if (!product.in_stock) {
       toast.error("This item is currently out of stock")
       return
     }
@@ -289,12 +181,65 @@ export function CategoryPage({ categorySlug, selectedSubcategory }: CategoryPage
       id: product.id,
       name: product.name,
       price: product.price,
-      image: product.image,
+      image: product.main_image,
       brand: product.brand,
       category: product.category,
     })
 
     toast.success(`${product.name} has been added to your cart`)
+  }
+
+  if (loading) {
+    return (
+      <div className="container mx-auto px-4 py-8 bg-background text-foreground">
+        {/* Breadcrumb Skeleton */}
+        <div className="flex items-center space-x-2 mb-6">
+          <Skeleton className="h-4 w-12" />
+          <span>/</span>
+          <Skeleton className="h-4 w-24" />
+        </div>
+
+        {/* Page Header Skeleton */}
+        <div className="mb-8">
+          <Skeleton className="h-9 w-64 mb-2" />
+          <Skeleton className="h-5 w-96" />
+        </div>
+
+        {/* Subcategories Skeleton */}
+        <div className="mb-8">
+          <Skeleton className="h-7 w-48 mb-4" />
+          <div className="hidden md:flex flex-wrap gap-3">
+            {[...Array(4)].map((_, i) => (
+              <Skeleton key={i} className="h-10 w-32 rounded-full" />
+            ))}
+          </div>
+        </div>
+
+        {/* Search and Filters Bar Skeleton */}
+        <div className="bg-card rounded-2xl shadow-sm border border-border p-6 mb-8">
+          <div className="flex flex-col gap-4">
+            <Skeleton className="h-10 w-full max-w-md mx-auto lg:mx-0" />
+            <div className="flex flex-col sm:flex-row items-center gap-4 justify-between">
+              <Skeleton className="h-10 w-full sm:w-48" />
+              <div className="flex items-center gap-4 w-full sm:w-auto justify-between sm:justify-end">
+                <Skeleton className="h-10 w-20" />
+                <Skeleton className="h-10 w-24" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Results Count Skeleton */}
+        <Skeleton className="h-5 w-48 mb-6" />
+
+        {/* Products Grid Skeleton */}
+        <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          {[...Array(8)].map((_, i) => (
+            <ProductCardSkeleton key={i} />
+          ))}
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -308,7 +253,7 @@ export function CategoryPage({ categorySlug, selectedSubcategory }: CategoryPage
           <>
             <span>/</span>
             <span className="text-foreground font-medium">
-              {subcategories.find((sub) => sub.id === selectedSubcategory)?.name || selectedSubcategory}
+              {subcategories.find((sub: any) => sub.slug === selectedSubcategory)?.name || selectedSubcategory}
             </span>
           </>
         )}
@@ -318,20 +263,17 @@ export function CategoryPage({ categorySlug, selectedSubcategory }: CategoryPage
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-foreground mb-2">
           {selectedSubcategory
-            ? subcategories.find((sub) => sub.id === selectedSubcategory)?.name || categoryName
+            ? subcategories.find((sub: any) => sub.slug === selectedSubcategory)?.name || categoryName
             : categoryName}
         </h1>
         <p className="text-muted-foreground">
-          Discover our premium collection of{" "}
-          {selectedSubcategory
-            ? (subcategories.find((sub) => sub.id === selectedSubcategory)?.name || categoryName).toLowerCase()
-            : categoryName.toLowerCase()}
+          {currentCategory?.description || `Discover our premium collection of ${categoryName.toLowerCase()}`}
         </p>
       </div>
 
       {subcategories.length > 0 && (
         <div className="mb-8">
-          <h2 className="text-xl font-semibold text-foreground mb-4">Shop by Subcategory</h2>
+          <h2 className="text-xl font-normal text-foreground mb-4">Shop by Subcategory</h2>
 
           {/* Mobile Dropdown */}
           <div className="md:hidden mb-4">
@@ -357,9 +299,9 @@ export function CategoryPage({ categorySlug, selectedSubcategory }: CategoryPage
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All Categories</SelectItem>
-                {subcategories.map((subcategory) => (
-                  <SelectItem key={subcategory.id} value={subcategory.id}>
-                    {subcategory.name} ({subcategory.count} items)
+                {subcategories.map((subcategory: any) => (
+                  <SelectItem key={subcategory.id} value={subcategory.slug}>
+                    {subcategory.name} ({subcategory.product_count || 0} items)
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -367,10 +309,10 @@ export function CategoryPage({ categorySlug, selectedSubcategory }: CategoryPage
           </div>
 
           <div className="hidden md:flex flex-wrap gap-3">
-            {subcategories.map((subcategory) => (
+            {subcategories.map((subcategory: any) => (
               <Link
                 key={subcategory.id}
-                href={`/categories/${categorySlug}/${subcategory.id}`}
+                href={`/categories/${categorySlug}/${subcategory.slug}`}
                 className="group"
                 onClick={(e) => {
                   setTimeout(() => {
@@ -386,14 +328,14 @@ export function CategoryPage({ categorySlug, selectedSubcategory }: CategoryPage
               >
                 <div
                   className={`flex items-center gap-2 px-4 py-2.5 rounded-full border transition-all duration-200 hover:shadow-md hover:scale-105 ${
-                    selectedSubcategory === subcategory.id
+                    selectedSubcategory === subcategory.slug
                       ? "bg-cyan-50 border-cyan-200 text-cyan-700 shadow-sm"
                       : "bg-card border-border hover:border-cyan-200 hover:bg-cyan-50/50"
                   }`}
                 >
                   <span
                     className={`font-medium text-sm ${
-                      selectedSubcategory === subcategory.id
+                      selectedSubcategory === subcategory.slug
                         ? "text-cyan-700"
                         : "text-card-foreground group-hover:text-cyan-600"
                     }`}
@@ -403,12 +345,12 @@ export function CategoryPage({ categorySlug, selectedSubcategory }: CategoryPage
                   <Badge
                     variant="secondary"
                     className={`text-xs px-2 py-0.5 ${
-                      selectedSubcategory === subcategory.id
+                      selectedSubcategory === subcategory.slug
                         ? "bg-cyan-100 text-cyan-600 border-cyan-200"
                         : "bg-muted text-muted-foreground group-hover:bg-cyan-100 group-hover:text-cyan-600"
                     }`}
                   >
-                    {subcategory.count}
+                    {subcategory.product_count || 0}
                   </Badge>
                 </div>
               </Link>
@@ -481,82 +423,82 @@ export function CategoryPage({ categorySlug, selectedSubcategory }: CategoryPage
               </Button>
             </div>
           </div>
-        </div>
 
-        {/* Expandable Filters */}
-        {showFilters && (
-          <div className="mt-6 pt-6 border-t border-border">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {/* Price Range */}
-              <div>
-                <h3 className="font-semibold text-foreground mb-3">Price Range</h3>
-                <div className="space-y-3">
-                  <Slider
-                    value={priceRange}
-                    onValueChange={setPriceRange}
-                    max={1000000}
-                    step={10000}
-                    className="w-full"
-                  />
-                  <div className="flex justify-between text-sm text-muted-foreground">
-                    <span>{formatPrice(priceRange[0])}</span>
-                    <span>{formatPrice(priceRange[1])}</span>
+          {/* Expandable Filters */}
+          {showFilters && (
+            <div className="mt-6 pt-6 border-t border-border">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {/* Price Range */}
+                <div>
+                  <h3 className="font-semibold text-foreground mb-3">Price Range</h3>
+                  <div className="space-y-3">
+                    <Slider
+                      value={priceRange}
+                      onValueChange={setPriceRange}
+                      max={1000000}
+                      step={10000}
+                      className="w-full"
+                    />
+                    <div className="flex justify-between text-sm text-muted-foreground">
+                      <span>{formatPrice(priceRange[0])}</span>
+                      <span>{formatPrice(priceRange[1])}</span>
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              {/* Brands */}
-              <div>
-                <h3 className="font-semibold text-foreground mb-3">Brands</h3>
-                <div className="space-y-2">
-                  {brands.map((brand) => (
-                    <div key={brand} className="flex items-center space-x-2">
-                      <Checkbox
-                        id={brand}
-                        checked={selectedBrands.includes(brand)}
-                        onCheckedChange={(checked) => {
-                          if (checked) {
-                            setSelectedBrands([...selectedBrands, brand])
-                          } else {
-                            setSelectedBrands(selectedBrands.filter((b) => b !== brand))
-                          }
-                        }}
-                      />
-                      <label htmlFor={brand} className="text-sm text-card-foreground cursor-pointer">
-                        {brand}
+                {/* Brands */}
+                <div>
+                  <h3 className="font-semibold text-foreground mb-3">Brands</h3>
+                  <div className="space-y-2">
+                    {brands.map((brand) => (
+                      <div key={brand} className="flex items-center space-x-2">
+                        <Checkbox
+                          id={brand}
+                          checked={selectedBrands.includes(brand)}
+                          onCheckedChange={(checked) => {
+                            if (checked) {
+                              setSelectedBrands([...selectedBrands, brand])
+                            } else {
+                              setSelectedBrands(selectedBrands.filter((b) => b !== brand))
+                            }
+                          }}
+                        />
+                        <label htmlFor={brand} className="text-sm text-card-foreground cursor-pointer">
+                          {brand}
+                        </label>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Availability */}
+                <div>
+                  <h3 className="font-semibold text-foreground mb-3">Availability</h3>
+                  <div className="space-y-2">
+                    <div className="flex items-center space-x-2">
+                      <Checkbox id="in-stock" />
+                      <label htmlFor="in-stock" className="text-sm text-card-foreground cursor-pointer">
+                        In Stock ({allProducts.filter((p) => p.in_stock).length})
                       </label>
                     </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Availability */}
-              <div>
-                <h3 className="font-semibold text-foreground mb-3">Availability</h3>
-                <div className="space-y-2">
-                  <div className="flex items-center space-x-2">
-                    <Checkbox id="in-stock" />
-                    <label htmlFor="in-stock" className="text-sm text-card-foreground cursor-pointer">
-                      In Stock ({mockProducts.filter((p) => p.inStock).length})
-                    </label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Checkbox id="on-sale" />
-                    <label htmlFor="on-sale" className="text-sm text-card-foreground cursor-pointer">
-                      On Sale ({mockProducts.filter((p) => p.isOnSale).length})
-                    </label>
+                    <div className="flex items-center space-x-2">
+                      <Checkbox id="on-sale" />
+                      <label htmlFor="on-sale" className="text-sm text-card-foreground cursor-pointer">
+                        On Sale ({allProducts.filter((p) => p.discount_percentage > 0).length})
+                      </label>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
-        )}
+          )}
+        </div>
       </div>
 
       {/* Results Count */}
       <div className="flex items-center justify-between mb-6">
         <p className="text-muted-foreground">
-          Showing {sortedProducts.length} of {mockProducts.length} results
+          Showing {sortedProducts.length} of {allProducts.length} results
         </p>
       </div>
 
@@ -570,6 +512,7 @@ export function CategoryPage({ categorySlug, selectedSubcategory }: CategoryPage
           const productInWishlist = isInWishlist(product.id)
           const productInCart = isInCart(product.id)
           const cartQuantity = getItemQuantity(product.id)
+          const inStock = product.in_stock
 
           return (
             <Card
@@ -579,7 +522,7 @@ export function CategoryPage({ categorySlug, selectedSubcategory }: CategoryPage
               <div className="relative">
                 <div className="aspect-square overflow-hidden bg-muted">
                   <img
-                    src={product.image || "/placeholder.svg"}
+                    src={product.main_image || "/placeholder.svg"}
                     alt={product.name}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                   />
@@ -587,11 +530,15 @@ export function CategoryPage({ categorySlug, selectedSubcategory }: CategoryPage
 
                 {/* Badges */}
                 <div className="absolute top-3 left-3 flex flex-col gap-2">
-                  {product.isNew && <Badge className="bg-green-500 hover:bg-green-600 text-white">New</Badge>}
-                  {product.isOnSale && <Badge className="bg-red-500 hover:bg-red-600 text-white">Sale</Badge>}
-                  {!product.inStock && (
+                  {product.is_featured && (
+                    <Badge className="bg-green-500 hover:bg-green-600 text-white">Featured</Badge>
+                  )}
+                  {product.discount_percentage > 0 && (
+                    <Badge className="bg-red-500 hover:bg-red-600 text-white">-{product.discount_percentage}%</Badge>
+                  )}
+                  {!inStock && (
                     <Badge variant="secondary" className="bg-slate-500 text-white">
-                      Out of Stock
+                      {product.stock_status || "Out of Stock"}
                     </Badge>
                   )}
                 </div>
@@ -612,7 +559,7 @@ export function CategoryPage({ categorySlug, selectedSubcategory }: CategoryPage
               <CardContent className="p-4">
                 <div className="space-y-3">
                   {/* Brand */}
-                  <p className="text-sm text-cyan-600 font-medium">{product.brand}</p>
+                  {product.brand && <p className="text-sm text-cyan-600 font-medium">{product.brand}</p>}
 
                   {/* Product Name */}
                   <h3 className="font-semibold text-card-foreground line-clamp-2 group-hover:text-cyan-600 transition-colors">
@@ -620,41 +567,54 @@ export function CategoryPage({ categorySlug, selectedSubcategory }: CategoryPage
                   </h3>
 
                   {/* Rating */}
-                  <div className="flex items-center gap-2">
-                    <div className="flex items-center">
-                      {[...Array(5)].map((_, i) => (
-                        <Star
-                          key={i}
-                          className={`h-4 w-4 ${
-                            i < Math.floor(product.rating) ? "text-yellow-400 fill-current" : "text-muted"
-                          }`}
-                        />
-                      ))}
+                  {product.rating && (
+                    <div className="flex items-center gap-2">
+                      <div className="flex items-center">
+                        {[...Array(5)].map((_, i) => (
+                          <Star
+                            key={i}
+                            className={`h-4 w-4 ${
+                              i < Math.floor(product.rating) ? "text-yellow-400 fill-current" : "text-muted"
+                            }`}
+                          />
+                        ))}
+                      </div>
+                      <span className="text-sm text-muted-foreground">({product.rating})</span>
                     </div>
-                    <span className="text-sm text-muted-foreground">({product.reviews})</span>
-                  </div>
+                  )}
 
                   {/* Price */}
                   <div className="flex items-center gap-2">
                     <span className="text-xl font-bold text-card-foreground">{formatPrice(product.price)}</span>
-                    {product.originalPrice && (
+                    {product.discount_percentage > 0 && product.original_price && (
                       <span className="text-sm text-muted-foreground line-through">
-                        {formatPrice(product.originalPrice)}
+                        {formatPrice(product.original_price)}
                       </span>
                     )}
                   </div>
 
                   {/* Add to Cart Button */}
-                  <div className="pt-2">
+                  <div className="pt-2 space-y-2">
                     <Button
                       onClick={() => handleAddToCart(product)}
-                      disabled={!product.inStock}
+                      disabled={!inStock}
                       className="w-full"
                       variant={productInCart ? "secondary" : "default"}
                     >
                       <ShoppingCart className="h-4 w-4 mr-2" />
-                      {!product.inStock ? "Out of Stock" : productInCart ? `In Cart (${cartQuantity})` : "Add to Cart"}
+                      {!inStock
+                        ? product.stock_status || "Out of Stock"
+                        : productInCart
+                          ? `In Cart (${cartQuantity})`
+                          : "Add to Cart"}
                     </Button>
+
+                    {/* View Details Button */}
+                    <Link href={`/products/id/${product.id}`} className="block">
+                      <Button variant="outline" className="w-full bg-transparent">
+                        View Details
+                      </Button>
+                    </Link>
                   </div>
                 </div>
               </CardContent>
@@ -663,8 +623,15 @@ export function CategoryPage({ categorySlug, selectedSubcategory }: CategoryPage
         })}
       </div>
 
+      {/* Empty State */}
+      {sortedProducts.length === 0 && (
+        <div className="text-center py-12">
+          <p className="text-muted-foreground text-lg">No products found matching your criteria.</p>
+        </div>
+      )}
+
       {/* Load More */}
-      {sortedProducts.length > 0 && (
+      {sortedProducts.length > 0 && sortedProducts.length < allProducts.length && (
         <div className="text-center mt-12">
           <Button variant="outline" size="lg" className="px-8 bg-transparent">
             Load More Products

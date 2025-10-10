@@ -120,7 +120,7 @@ export default function SignUpPage() {
                 {/* Name Fields */}
                 <div className="grid grid-cols-2 gap-3">
                   <div className="space-y-2">
-                    <label className="text-sm font-medium text-foreground">First Name</label>
+                    <label className="text-sm font-medium text-foreground mb-2 block">First Name</label>
                     <Input
                       type="text"
                       placeholder="John"
@@ -134,7 +134,7 @@ export default function SignUpPage() {
                     {errors.firstName && <p className="text-xs text-red-500">{errors.firstName}</p>}
                   </div>
                   <div className="space-y-2">
-                    <label className="text-sm font-medium text-foreground">Last Name</label>
+                    <label className="text-sm font-medium text-foreground mb-2 block">Last Name</label>
                     <Input
                       type="text"
                       placeholder="Doe"
@@ -151,7 +151,7 @@ export default function SignUpPage() {
 
                 {/* Email Field */}
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-foreground">Email Address</label>
+                  <label className="text-sm font-medium text-foreground mb-2 block">Email Address</label>
                   <div className="relative">
                     <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                     <Input
@@ -170,7 +170,7 @@ export default function SignUpPage() {
 
                 {/* Phone Field */}
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-foreground">Phone Number</label>
+                  <label className="text-sm font-medium text-foreground mb-2 block">Phone Number</label>
                   <div className="relative">
                     <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                     <Input
@@ -189,7 +189,7 @@ export default function SignUpPage() {
 
                 {/* Password Field */}
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-foreground">Password</label>
+                  <label className="text-sm font-medium text-foreground mb-2 block">Password</label>
                   <div className="relative">
                     <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                     <Input
@@ -215,7 +215,7 @@ export default function SignUpPage() {
 
                 {/* Confirm Password Field */}
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-foreground">Confirm Password</label>
+                  <label className="text-sm font-medium text-foreground mb-2 block">Confirm Password</label>
                   <div className="relative">
                     <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                     <Input

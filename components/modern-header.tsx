@@ -1,17 +1,19 @@
 "use client"
 
 import type React from "react"
-import { Search, User, Menu, MapPin, LogOut, Mail, Shield, ChevronDown } from "lucide-react"
+import { Search, User, Menu, MapPin, LogOut, Mail, Shield, ChevronDown, Package } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Separator } from "@/components/ui/separator"
+import { Skeleton } from "@/components/ui/skeleton"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { CartDrawer, type CartDrawerRef } from "@/components/cart-drawer"
 import { useState, useRef, useEffect } from "react"
 import { useAuth } from "@/hooks/use-auth"
+import { getCategoriesWithProducts, type CategoryWithProducts } from "@/lib/api/categories"
 
 interface ModernHeaderProps {
   blackNavbar?: boolean
@@ -21,10 +23,29 @@ export function ModernHeader({ blackNavbar }: ModernHeaderProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState("")
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false)
+  const [categories, setCategories] = useState<CategoryWithProducts[]>([])
+  const [isCategoriesLoading, setIsCategoriesLoading] = useState(true)
   const cartDrawerRef = useRef<CartDrawerRef>(null)
   const dropdownRef = useRef<HTMLDivElement>(null)
   const router = useRouter()
   const { isAuthenticated, user, logout } = useAuth()
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await getCategoriesWithProducts()
+        if (response.success) {
+          setCategories(response.data)
+        }
+      } catch (error) {
+        console.error("Failed to fetch categories:", error)
+      } finally {
+        setIsCategoriesLoading(false)
+      }
+    }
+
+    fetchCategories()
+  }, [])
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -92,14 +113,24 @@ export function ModernHeader({ blackNavbar }: ModernHeaderProps) {
       <div className="border-b bg-muted/30 border-border">
         <div className="container mx-auto px-4 py-2">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-0 text-sm text-muted-foreground">
-            <Link
-              href="/stores"
-              onClick={handleNavClick}
-              className="flex items-center gap-2 hover:text-foreground transition-colors w-fit"
-            >
-              <MapPin className="h-4 w-4 flex-shrink-0" />
-              <span className="text-xs sm:text-sm">Store Locator</span>
-            </Link>
+            <div className="flex items-center gap-4">
+              <Link
+                href="/stores"
+                onClick={handleNavClick}
+                className="flex items-center gap-2 hover:text-foreground transition-colors w-fit"
+              >
+                <MapPin className="h-4 w-4 flex-shrink-0" />
+                <span className="text-xs sm:text-sm">Store Locator</span>
+              </Link>
+              <Link
+                href="/track"
+                onClick={handleNavClick}
+                className="flex items-center gap-2 hover:text-foreground transition-colors w-fit"
+              >
+                <Package className="h-4 w-4 flex-shrink-0" />
+                <span className="text-xs sm:text-sm">Track Order</span>
+              </Link>
+            </div>
             <div className="text-xs sm:text-sm text-center sm:text-right">
               <span>Free shipping on orders over ₦50,000</span>
             </div>
@@ -251,27 +282,18 @@ export function ModernHeader({ blackNavbar }: ModernHeaderProps) {
             <nav className="flex flex-col gap-4">
               <Link
                 href="/categories"
-                className="text-sm font-medium hover:text-primary transition-colors px-3 py-2 rounded-md hover:bg-muted/50"
+                className="whitespace-nowrap text-sm font-medium hover:text-primary transition-colors px-3 py-2 rounded-md hover:bg-muted/50"
                 onClick={handleNavClick}
               >
                 All Categories
               </Link>
-              {[
-                "Computers & Accessories",
-                "Cameras",
-                "Audio & Speakers",
-                "Data Storage",
-                "Printers & Scanners",
-                "Networking",
-                "Software & Security",
-                "Accessories",
-              ].map((category) => (
+              {categories.map((category) => (
                 <button
-                  key={category}
-                  onClick={() => handleCategoryClick(categoryMap[category])}
+                  key={category.id}
+                  onClick={() => handleCategoryClick(category.slug)}
                   className="text-left text-sm font-medium hover:text-primary transition-colors px-3 py-2 rounded-md hover:bg-muted/50"
                 >
-                  {category}
+                  {category.name}
                 </button>
               ))}
             </nav>
@@ -290,24 +312,24 @@ export function ModernHeader({ blackNavbar }: ModernHeaderProps) {
             >
               All Categories
             </Link>
-            {[
-              "Computers & Accessories",
-              "Cameras",
-              "Audio & Speakers",
-              "Data Storage",
-              "Printers & Scanners",
-              "Networking",
-              "Software & Security",
-              "Accessories",
-            ].map((category) => (
-              <button
-                key={category}
-                onClick={() => handleCategoryClick(categoryMap[category])}
-                className="whitespace-nowrap text-sm font-medium hover:text-primary transition-colors px-3 py-2 rounded-md hover:bg-muted/50"
-              >
-                {category}
-              </button>
-            ))}
+            {isCategoriesLoading ? (
+              <>
+                {[1, 2, 3, 4, 5].map((i) => (
+                  <Skeleton key={i} className="h-8 w-24 rounded-md" />
+                ))}
+              </>
+            ) : (
+              categories.map((category) => (
+                <div key={category.id} className="relative">
+                  <Link
+                    href={`/categories/${category.slug}`}
+                    className="whitespace-nowrap text-sm font-medium hover:text-primary transition-colors px-3 py-2 rounded-md hover:bg-muted/50"
+                  >
+                    {category.name}
+                  </Link>
+                </div>
+              ))
+            )}
           </nav>
         </div>
       </div>

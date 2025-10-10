@@ -166,7 +166,7 @@ export function HeroSection() {
               style={{ animationDelay: "1s" }}
               aria-label="Main navigation"
             >
-              <Link href="/categories/computers-accessories" aria-label="Browse computer products">
+              <Link href="/categories" aria-label="Browse all categories">
                 <Button
                   size="lg"
                   className="h-16 px-12 text-[0.9rem] bg-gradient-to-r from-cyan-500 to-purple-600 hover:from-cyan-400 hover:to-purple-500 shadow-2xl hover:shadow-cyan-500/25 transition-all duration-500 transform hover:scale-105 hover:-translate-y-1 backdrop-blur-sm border border-white/10"

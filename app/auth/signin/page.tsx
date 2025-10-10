@@ -62,7 +62,7 @@ export default function SignInPage() {
               <form onSubmit={handleSubmit} className="space-y-4">
                 {/* Email Field */}
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-foreground">Email Address</label>
+                  <label className="text-sm font-medium text-foreground mb-2 block">Email Address</label>
                   <div className="relative">
                     <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                     <Input
@@ -78,7 +78,7 @@ export default function SignInPage() {
 
                 {/* Password Field */}
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-foreground">Password</label>
+                  <label className="text-sm font-medium text-foreground mb-2 block">Password</label>
                   <div className="relative">
                     <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                     <Input
