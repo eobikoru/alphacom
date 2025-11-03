@@ -39,20 +39,20 @@ export default function SignInPage() {
 
   return (
     <AppLayout showHeader={true} showFooter={true}>
-      <div className="min-h-screen flex items-center justify-center p-4 bg-background">
+      <div className=" flex items-center justify-center p-4 bg-background">
         {/* Background Elements */}
         <div className="absolute inset-0 overflow-hidden">
           <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-cyan-400/10 to-blue-500/10 rounded-full blur-3xl animate-pulse" />
           <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-br from-purple-400/10 to-pink-500/10 rounded-full blur-3xl animate-pulse delay-1000" />
         </div>
 
-        <div className="relative z-10 w-full max-w-md">
+        <div className="relative z-10 w-full max-w-md py-[3rem]">
           <Card className="shadow-2xl border-0 bg-card/90 backdrop-blur-xl">
             <CardHeader className="text-center space-y-4">
               <div className="mx-auto w-16 h-16 bg-gradient-to-r from-cyan-500 to-purple-600 rounded-2xl flex items-center justify-center">
                 <Lock className="w-8 h-8 text-white" />
               </div>
-              <CardTitle className="text-2xl font-bold text-foreground">Welcome Back</CardTitle>
+              <CardTitle className="text-2xl font-normal text-foreground">Welcome Back</CardTitle>
               <CardDescription className="text-muted-foreground">
                 Sign in to your account to continue shopping
               </CardDescription>
@@ -62,7 +62,7 @@ export default function SignInPage() {
               <form onSubmit={handleSubmit} className="space-y-4">
                 {/* Email Field */}
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-foreground mb-2 block">Email Address</label>
+                  <label className="text-sm font-normal text-foreground mb-2 block">Email Address</label>
                   <div className="relative">
                     <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                     <Input
@@ -78,7 +78,7 @@ export default function SignInPage() {
 
                 {/* Password Field */}
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-foreground mb-2 block">Password</label>
+                  <label className="text-sm font-normal text-foreground mb-2 block">Password</label>
                   <div className="relative">
                     <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                     <Input
@@ -111,9 +111,9 @@ export default function SignInPage() {
                       Remember me
                     </label>
                   </div>
-                  <Link href="/auth/forgot-password" className="text-sm text-cyan-600 hover:text-cyan-700 font-medium">
+                  {/* <Link href="/auth/forgot-password" className="text-sm text-cyan-600 hover:text-cyan-700 font-medium">
                     Forgot password?
-                  </Link>
+                  </Link> */}
                 </div>
 
                 {/* Sign In Button */}

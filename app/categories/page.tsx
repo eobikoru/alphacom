@@ -42,8 +42,8 @@ export default function CategoriesPage() {
         <div className="container mx-auto px-4 py-8">
           {/* Page Header */}
           <div className="text-center mb-12">
-            <h1 className="text-4xl font-bold mb-4 text-foreground">Shop by Category</h1>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+            <h1 className="text-4xl mt-4 font-normal mb-4 text-foreground">Shop by Category</h1>
+            <p className="text-[1rem] text-muted-foreground max-w-2xl mx-auto">
               Discover our extensive range of technology products organized by category
             </p>
           </div>
@@ -84,7 +84,7 @@ export default function CategoriesPage() {
                         )}
                       </div>
                       <div>
-                        <h3 className="text-xl font-bold text-card-foreground group-hover:text-cyan-600 transition-colors">
+                        <h3 className="text-xl font-normal text-card-foreground group-hover:text-cyan-600 transition-colors">
                           {category.name}
                         </h3>
                         <p className="text-sm text-muted-foreground line-clamp-2">
@@ -115,7 +115,7 @@ export default function CategoriesPage() {
                       <Link
                         href={`/categories/${category.slug}`}
                         onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-                        className="flex items-center justify-center space-x-2 text-cyan-600 hover:text-cyan-700 font-semibold transition-colors"
+                        className="flex items-center justify-center space-x-2 text-cyan-600 hover:text-cyan-700 font-normal transition-colors"
                       >
                         <span>View All {category.name}</span>
                         <ChevronRight className="w-4 h-4" />
@@ -131,7 +131,7 @@ export default function CategoriesPage() {
           <div className="mt-16">
             <div className="rounded-3xl p-8 bg-gradient-to-r from-muted to-accent border border-border">
               <div className="text-center">
-                <h2 className="text-3xl font-bold mb-4 text-foreground">Can't find what you're looking for?</h2>
+                <h2 className="text-xl font-normal mb-4 text-foreground">Can't find what you're looking for?</h2>
                 <p className="text-lg mb-6 text-muted-foreground">
                   Contact our expert team for personalized recommendations
                 </p>

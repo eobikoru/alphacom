@@ -7,6 +7,8 @@ import { Facebook, Instagram, Twitter, Youtube, MapPin, Phone, Mail } from "luci
 import Link from "next/link"
 
 export function SimpleFooter() {
+  const currentYear = new Date().getFullYear()
+
   return (
     <footer className="border-t transition-colors duration-300 bg-white dark:bg-card">
       {/* Newsletter */}
@@ -213,7 +215,7 @@ export function SimpleFooter() {
       {/* Bottom Footer */}
       <div className="container mx-auto px-4 py-6">
         <div className="flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-muted-foreground">
-          <p>© 2024 Alphacom Online Store. All rights reserved.</p>
+          <p>© {currentYear} Alphacom Online Store. All rights reserved.</p>
           <div className="flex items-center gap-6">
             <span>Secure payments powered by</span>
             <div className="flex items-center gap-2">

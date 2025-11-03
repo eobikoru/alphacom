@@ -7,7 +7,7 @@ export function AboutUsHero() {
   const theme = useAppSelector((state) => state.theme.mode)
 
   return (
-    <section className="relative min-h-[80vh] flex items-center justify-center overflow-hidden">
+    <section className="relative min-h-[60vh] flex items-center justify-center overflow-hidden">
       {/* Background image with overlay */}
       <div className="absolute inset-0">
         <Image

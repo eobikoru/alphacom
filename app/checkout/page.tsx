@@ -69,7 +69,7 @@ export default function CheckoutPage() {
       phone: formData.phone,
     }
 
-    const callbackUrl = `https://alphacom-f8j4.vercel.app/payment/verify`
+    const callbackUrl = `https://alphacomonline.com/payment/verify`
 
     if (isAuthenticated) {
       const response = await authenticatedCheckoutMutation.mutateAsync({

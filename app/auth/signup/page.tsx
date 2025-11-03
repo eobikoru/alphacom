@@ -109,7 +109,7 @@ export default function SignUpPage() {
               <div className="mx-auto w-16 h-16 bg-gradient-to-r from-cyan-500 to-purple-600 rounded-2xl flex items-center justify-center">
                 <User className="w-8 h-8 text-white" />
               </div>
-              <CardTitle className="text-2xl font-bold text-foreground">Create Account</CardTitle>
+              <CardTitle className="text-2xl font-normal text-foreground">Create Account</CardTitle>
               <CardDescription className="text-muted-foreground">
                 Join us and start your shopping journey
               </CardDescription>
@@ -120,7 +120,7 @@ export default function SignUpPage() {
                 {/* Name Fields */}
                 <div className="grid grid-cols-2 gap-3">
                   <div className="space-y-2">
-                    <label className="text-sm font-medium text-foreground mb-2 block">First Name</label>
+                    <label className="text-sm font-normal text-foreground mb-2 block">First Name</label>
                     <Input
                       type="text"
                       placeholder="John"
@@ -134,7 +134,7 @@ export default function SignUpPage() {
                     {errors.firstName && <p className="text-xs text-red-500">{errors.firstName}</p>}
                   </div>
                   <div className="space-y-2">
-                    <label className="text-sm font-medium text-foreground mb-2 block">Last Name</label>
+                    <label className="text-sm font-normal text-foreground mb-2 block">Last Name</label>
                     <Input
                       type="text"
                       placeholder="Doe"
@@ -151,7 +151,7 @@ export default function SignUpPage() {
 
                 {/* Email Field */}
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-foreground mb-2 block">Email Address</label>
+                  <label className="text-sm font-normal text-foreground mb-2 block">Email Address</label>
                   <div className="relative">
                     <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                     <Input
@@ -170,7 +170,7 @@ export default function SignUpPage() {
 
                 {/* Phone Field */}
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-foreground mb-2 block">Phone Number</label>
+                  <label className="text-sm font-normal text-foreground mb-2 block">Phone Number</label>
                   <div className="relative">
                     <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                     <Input
@@ -189,7 +189,7 @@ export default function SignUpPage() {
 
                 {/* Password Field */}
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-foreground mb-2 block">Password</label>
+                  <label className="text-sm font-normal text-foreground mb-2 block">Password</label>
                   <div className="relative">
                     <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                     <Input
@@ -215,7 +215,7 @@ export default function SignUpPage() {
 
                 {/* Confirm Password Field */}
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-foreground mb-2 block">Confirm Password</label>
+                  <label className="text-sm font-normal text-foreground mb-2 block">Confirm Password</label>
                   <div className="relative">
                     <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                     <Input
@@ -249,11 +249,11 @@ export default function SignUpPage() {
                   />
                   <label htmlFor="terms" className="text-sm text-muted-foreground">
                     I agree to the{" "}
-                    <Link href="/terms" className="text-cyan-600 hover:text-cyan-700 font-medium">
+                    <Link href="/terms" className="text-cyan-600 hover:text-cyan-700 font-normal">
                       Terms of Service
                     </Link>{" "}
                     and{" "}
-                    <Link href="/privacy" className="text-cyan-600 hover:text-cyan-700 font-medium">
+                    <Link href="/privacy" className="text-cyan-600 hover:text-cyan-700 font-normal">
                       Privacy Policy
                     </Link>
                   </label>

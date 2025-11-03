@@ -96,13 +96,13 @@ export function FeaturedProducts() {
         <div className="flex items-center justify-between mb-12">
           <div>
             <h2
-              className={`text-3xl lg:text-4xl font-bold mb-4 transition-colors duration-300 ${
+              className={`text-3xl lg:text-3xl font-normal mb-4 transition-colors duration-300 ${
                 isDark ? "text-white" : "text-gray-900"
               }`}
             >
               Featured Products
             </h2>
-            <p className={`text-lg transition-colors duration-300 ${isDark ? "text-gray-300" : "text-gray-600"}`}>
+            <p className={`text-[1rem] transition-colors duration-300 ${isDark ? "text-gray-300" : "text-gray-600"}`}>
               Handpicked premium products with exceptional quality and performance
             </p>
           </div>

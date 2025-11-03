@@ -273,7 +273,7 @@ export function CategoryPage({ categorySlug, selectedSubcategory }: CategoryPage
 
       {subcategories.length > 0 && (
         <div className="mb-8">
-          <h2 className="text-xl font-normal text-foreground mb-4">Shop by Subcategory</h2>
+          <h2 className="text-xl font-light text-foreground mb-4">Shop by Subcategory</h2>
 
           {/* Mobile Dropdown */}
           <div className="md:hidden mb-4">

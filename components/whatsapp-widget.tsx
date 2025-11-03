@@ -8,7 +8,7 @@ export function WhatsAppWidget() {
   const [isOpen, setIsOpen] = useState(false)
 
   // WhatsApp number and message (customize these)
-  const phoneNumber = "+1234567890" // Replace with actual WhatsApp number
+  const phoneNumber = "+2347026384967" // Replace with actual WhatsApp number
   const defaultMessage = "Hello! I'm interested in your products and would like to chat with a representative."
 
   const openWhatsApp = () => {

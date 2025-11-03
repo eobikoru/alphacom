@@ -6,9 +6,31 @@ import { Separator } from "@/components/ui/separator"
 import { Facebook, Instagram, Twitter, Youtube, MapPin, Phone, Mail } from "lucide-react"
 import { useAppSelector } from "@/store/hooks"
 import Link from "next/link"
+import { useEffect, useState } from "react"
+import { getCategoriesWithProducts, type CategoryWithProducts } from "@/lib/api/categories"
+import { Skeleton } from "@/components/ui/skeleton"
 
 export function ModernFooter() {
   const isDark = useAppSelector((state) => state.theme.isDark)
+  const [categories, setCategories] = useState<CategoryWithProducts[]>([])
+  const [isCategoriesLoading, setIsCategoriesLoading] = useState(true)
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await getCategoriesWithProducts()
+        if (response.success) {
+          setCategories(response.data)
+        }
+      } catch (error) {
+        console.error("Failed to fetch categories:", error)
+      } finally {
+        setIsCategoriesLoading(false)
+      }
+    }
+
+    fetchCategories()
+  }, [])
 
   return (
     <footer className={`border-t transition-colors duration-300 ${isDark ? "bg-card" : "bg-white"}`}>
@@ -39,13 +61,12 @@ export function ModernFooter() {
           {/* Company Info */}
           <div className="space-y-4">
             <div className="flex items-center gap-2">
-              <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center">
-                <span className="text-primary-foreground font-bold text-lg">A</span>
-              </div>
-              <div>
-                <h1 className="text-xl font-bold">ALPHACOM</h1>
-                <p className="text-xs text-muted-foreground -mt-1">TECH & GADGETS</p>
-              </div>
+            {isDark ? (
+             <img src="/alphacomblacklogo.png" className="h-[5rem] fit-cover" />
+            ) : (
+              <img src="/alphacomwhitelogo.png" className="h-[5rem] fit-cover" />
+              
+            )}
             </div>
             <p className="text-muted-foreground text-sm">
               Your trusted partner for premium technology products with 100% warranty and exceptional customer service.
@@ -124,60 +145,25 @@ export function ModernFooter() {
           <div>
             <h4 className="font-semibold mb-4">Categories</h4>
             <div className="space-y-3 text-sm">
-              <div>
-                <Link
-                  href="/categories/computers-accessories"
-                  onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-                  className="text-muted-foreground hover:text-primary transition-colors"
-                >
-                  Computers & Accessories
-                </Link>
-              </div>
-              <div>
-                <Link
-                  href="/categories/cameras"
-                  onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-                  className="text-muted-foreground hover:text-primary transition-colors"
-                >
-                  Cameras
-                </Link>
-              </div>
-              <div>
-                <Link
-                  href="/categories/audio-speakers"
-                  onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-                  className="text-muted-foreground hover:text-primary transition-colors"
-                >
-                  Audio & Speakers
-                </Link>
-              </div>
-              <div>
-                <Link
-                  href="/categories/data-storage"
-                  onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-                  className="text-muted-foreground hover:text-primary transition-colors"
-                >
-                  Data Storage
-                </Link>
-              </div>
-              <div>
-                <Link
-                  href="/categories/printers-scanners"
-                  onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-                  className="text-muted-foreground hover:text-primary transition-colors"
-                >
-                  Printers & Scanners
-                </Link>
-              </div>
-              <div>
-                <Link
-                  href="/categories/networking"
-                  onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-                  className="text-muted-foreground hover:text-primary transition-colors"
-                >
-                  Networking
-                </Link>
-              </div>
+              {isCategoriesLoading ? (
+                <>
+                  {[1, 2, 3, 4, 5].map((i) => (
+                    <Skeleton key={i} className="h-4 w-32 rounded" />
+                  ))}
+                </>
+              ) : (
+                categories.map((category) => (
+                  <div key={category.id}>
+                    <Link
+                      href={`/categories/${category.slug}`}
+                      onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+                      className="text-muted-foreground hover:text-primary transition-colors"
+                    >
+                      {category.name}
+                    </Link>
+                  </div>
+                ))
+              )}
             </div>
           </div>
 

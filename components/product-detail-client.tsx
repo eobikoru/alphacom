@@ -12,6 +12,8 @@ import { Heart, ShoppingCart, Truck, Shield, RefreshCw } from "lucide-react"
 import { toast } from "sonner"
 import Link from "next/link"
 import { Skeleton } from "@/components/ui/skeleton"
+import { useRouter } from "next/navigation"
+import Image from "next/image"
 
 interface ProductDetailClientProps {
   slug?: string
@@ -24,6 +26,7 @@ export function ProductDetailClient({ slug, productId }: ProductDetailClientProp
   const [selectedImage, setSelectedImage] = useState(0)
   const [quantity, setQuantity] = useState(1)
 
+  const router = useRouter()
   const isDark = useAppSelector((state) => state.theme.isDark)
   const { addItem, isInCart, getItemQuantity } = useCart()
   const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist()
@@ -155,6 +158,10 @@ export function ProductDetailClient({ slug, productId }: ProductDetailClientProp
               </Link>
             </li>
             <li className={isDark ? "text-gray-600" : "text-gray-400"}>/</li>
+            <li className="cursor-pointer" onClick={() => router.back()}>
+              Back
+            </li>
+            <li className={isDark ? "text-gray-600" : "text-gray-400"}>/</li>
             <li>
               <Link
                 href={`/categories/${product.category.slug}`}
@@ -173,10 +180,13 @@ export function ProductDetailClient({ slug, productId }: ProductDetailClientProp
           <div>
             <Card className={`overflow-hidden mb-4 ${isDark ? "bg-gray-800" : "bg-white"}`}>
               <CardContent className="p-0">
-                <img
+                <Image
                   src={product.images[selectedImage] || "/placeholder.svg?height=600&width=600"}
                   alt={product.name}
-                  className="w-full h-96 object-cover"
+                  width={600}
+                  height={600}
+                  className="w-full h-96 object-fit"
+                  priority
                 />
               </CardContent>
             </Card>
@@ -271,7 +281,7 @@ export function ProductDetailClient({ slug, productId }: ProductDetailClientProp
               <Card className={isDark ? "bg-gray-800" : "bg-white"}>
                 <CardContent className="p-4 text-center">
                   <Truck className={`h-6 w-6 mx-auto mb-2 ${isDark ? "text-cyan-400" : "text-cyan-600"}`} />
-                  <p className={`text-sm ${isDark ? "text-gray-300" : "text-gray-700"}`}>Free Delivery</p>
+                  <p className={`text-sm ${isDark ? "text-gray-300" : "text-gray-700"}`}>Free Delivery above 50,000</p>
                 </CardContent>
               </Card>
               <Card className={isDark ? "bg-gray-800" : "bg-white"}>

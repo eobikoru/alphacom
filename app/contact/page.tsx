@@ -7,7 +7,7 @@ import { MapPin, Phone, Mail, Clock, MessageCircle } from "lucide-react"
 
 export default function ContactPage() {
   const handleWhatsAppChat = () => {
-    const phoneNumber = "2347026384967" // Remove + and spaces for WhatsApp URL
+    const phoneNumber = "2347026384967" // Remove + and spaces for WhatsApp URL+2347026384967
     const message = "Hello! I'm interested in your products and would like to get more information."
     const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`
     window.open(whatsappUrl, "_blank")

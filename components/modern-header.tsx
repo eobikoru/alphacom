@@ -14,7 +14,7 @@ import { CartDrawer, type CartDrawerRef } from "@/components/cart-drawer"
 import { useState, useRef, useEffect } from "react"
 import { useAuth } from "@/hooks/use-auth"
 import { getCategoriesWithProducts, type CategoryWithProducts } from "@/lib/api/categories"
-
+import { useAppSelector } from "@/store/hooks"
 interface ModernHeaderProps {
   blackNavbar?: boolean
 }
@@ -29,7 +29,7 @@ export function ModernHeader({ blackNavbar }: ModernHeaderProps) {
   const dropdownRef = useRef<HTMLDivElement>(null)
   const router = useRouter()
   const { isAuthenticated, user, logout } = useAuth()
-
+  const isDark = useAppSelector((state) => state.theme.isDark)
   useEffect(() => {
     const fetchCategories = async () => {
       try {
@@ -143,19 +143,16 @@ export function ModernHeader({ blackNavbar }: ModernHeaderProps) {
         <div className="flex items-center justify-between">
           {/* Logo */}
           <Link href="/" onClick={handleNavClick} className="flex items-center gap-2">
-            <div className="flex items-center gap-2">
-              <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center">
-                <span className="text-primary-foreground font-bold text-lg">A</span>
-              </div>
-              <div>
-                <h1 className="text-xl font-bold text-foreground">ALPHACOM</h1>
-                <p className="text-xs -mt-1 text-muted-foreground">TECH & GADGETS</p>
-              </div>
-            </div>
+            {isDark ? (
+             <img src="/alphacomblacklogo.png" className="h-[3rem] fit-cover" />
+            ) : (
+              <img src="/alphacomwhitelogo.png" className="h-[3rem] fit-cover" />
+              
+            )}
           </Link>
 
           {/* Search */}
-          <div className="flex-1 max-w-2xl mx-8 hidden md:block">
+          {/* <div className="flex-1 max-w-2xl mx-8 hidden md:block">
             <form onSubmit={handleSearch} className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
@@ -165,7 +162,7 @@ export function ModernHeader({ blackNavbar }: ModernHeaderProps) {
                 className="pl-10 pr-4 h-12 border-0 focus-visible:ring-2 focus-visible:ring-primary bg-muted/50"
               />
             </form>
-          </div>
+          </div> */}
 
           {/* Actions */}
           <div className="flex items-center gap-4">
@@ -267,7 +264,7 @@ export function ModernHeader({ blackNavbar }: ModernHeaderProps) {
         {isMobileMenuOpen && (
           <div className="md:hidden mt-4 p-4 rounded-lg border bg-card border-border">
             {/* Mobile Search */}
-            <div className="mb-4">
+            {/* <div className="mb-4">
               <form onSubmit={handleSearch} className="relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
@@ -277,7 +274,7 @@ export function ModernHeader({ blackNavbar }: ModernHeaderProps) {
                   className="pl-10 pr-4 h-12 border-0 focus-visible:ring-2 focus-visible:ring-primary bg-muted/50"
                 />
               </form>
-            </div>
+            </div> */}
 
             <nav className="flex flex-col gap-4">
               <Link
