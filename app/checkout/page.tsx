@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { useCart } from "@/hooks/use-cart"
 import { useAuth } from "@/hooks/use-auth"
@@ -24,6 +24,8 @@ export default function CheckoutPage() {
   const { isAuthenticated, user } = useAuth()
   const { formData, updateField, clearForm } = useCheckout()
 
+  const [phoneError, setPhoneError] = useState("")
+
   const guestCheckoutMutation = useGuestCheckout()
   const authenticatedCheckoutMutation = useAuthenticatedCheckout()
 
@@ -33,6 +35,19 @@ export default function CheckoutPage() {
       updateField("name", user.username || "")
     }
   }, [isAuthenticated, user])
+
+  useEffect(() => {
+    if (!formData.phone) {
+      setPhoneError("")
+      return
+    }
+
+    if (formData.phone.length < 11) {
+      setPhoneError(`Phone number must be 11 digits (${formData.phone.length}/11)`)
+    } else if (formData.phone.length === 11) {
+      setPhoneError("")
+    }
+  }, [formData.phone])
 
   const isLoading = guestCheckoutMutation.isPending || authenticatedCheckoutMutation.isPending
 
@@ -55,6 +70,11 @@ export default function CheckoutPage() {
 
   const handleCheckout = async (e: React.FormEvent) => {
     e.preventDefault()
+
+    if (!formData.phone || formData.phone.length !== 11) {
+      setPhoneError("Phone number must be exactly 11 digits")
+      return
+    }
 
     // Prepare checkout items
     const checkoutItems: CheckoutItem[] = items.map((item) => ({
@@ -159,17 +179,21 @@ export default function CheckoutPage() {
                     </div>
                     <div>
                       <Label htmlFor="phone" className="mb-2 block">
-                        Phone Number *
+                        Phone Number * (11 digits)
                       </Label>
                       <Input
                         id="phone"
                         type="tel"
                         value={formData.phone}
-                        onChange={(e) => updateField("phone", e.target.value)}
+                        onChange={(e) => {
+                          const value = e.target.value.replace(/\D/g, "").slice(0, 11)
+                          updateField("phone", value)
+                        }}
                         required
                         placeholder="08012345678"
-                        minLength={11}
+                        maxLength={11}
                       />
+                      {phoneError && <p className="text-red-500 text-sm mt-1">{phoneError}</p>}
                     </div>
                   </CardContent>
                 </Card>
@@ -187,18 +211,22 @@ export default function CheckoutPage() {
                 <CardContent className="space-y-4">
                   {isAuthenticated && (
                     <div>
-                      <Label htmlFor="phone" className="mb-2 block">
-                        Phone Number *
+                      <Label htmlFor="phone-auth" className="mb-2 block">
+                        Phone Number * (11 digits)
                       </Label>
                       <Input
-                        id="phone"
+                        id="phone-auth"
                         type="tel"
                         value={formData.phone}
-                        onChange={(e) => updateField("phone", e.target.value)}
+                        onChange={(e) => {
+                          const value = e.target.value.replace(/\D/g, "").slice(0, 11)
+                          updateField("phone", value)
+                        }}
                         required
                         placeholder="08012345678"
-                        minLength={11}
+                        maxLength={11}
                       />
+                      {phoneError && <p className="text-red-500 text-sm mt-1">{phoneError}</p>}
                     </div>
                   )}
                   <div>
@@ -254,7 +282,7 @@ export default function CheckoutPage() {
                 </CardContent>
               </Card>
 
-              <Button type="submit" size="lg" className="w-full" disabled={isLoading}>
+              <Button type="submit" size="lg" className="w-full" disabled={isLoading || phoneError !== ""}>
                 {isLoading ? "Processing..." : `Proceed to Payment - ${formatPrice(total)}`}
               </Button>
             </form>
@@ -295,10 +323,6 @@ export default function CheckoutPage() {
                   <div className="flex justify-between text-sm">
                     <span className="text-muted-foreground">Subtotal</span>
                     <span>{formatPrice(total)}</span>
-                  </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">Shipping</span>
-                    <span className="text-green-600">Free</span>
                   </div>
                 </div>
 

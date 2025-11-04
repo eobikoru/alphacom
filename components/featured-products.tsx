@@ -9,11 +9,11 @@ import { useWishlist } from "@/hooks/use-wishlist"
 import { useCart } from "@/hooks/use-cart"
 import { toast } from "sonner"
 import Link from "next/link"
-import { useEffect, useState } from "react"
+import { useState, useEffect, startTransition } from "react"
 import { getFeaturedProducts, type FeaturedProduct } from "@/lib/api/products"
 import { ProductCardSkeleton } from "@/components/skeletons/product-card-skeleton"
 import { useRouter } from "next/navigation"
-
+import NProgress from "nprogress"
 export function FeaturedProducts() {
   const [products, setProducts] = useState<FeaturedProduct[]>([])
   const [loading, setLoading] = useState(true)
@@ -83,7 +83,11 @@ export function FeaturedProducts() {
   }
 
   const handleViewProduct = (productId: string) => {
-    router.push(`/products/${productId}`)
+    NProgress.start()
+    
+    startTransition(() => {
+      router.push(`/products/${productId}`)
+    })
   }
 
   return (

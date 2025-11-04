@@ -39,23 +39,18 @@ const values = [
 
 const team = [
   {
-    name: "Adebayo Johnson",
+    name: "Alphonsus Ejidike",
     role: "Founder & CEO",
-    image: "/professional-african-businessman-in-suit.jpg",
-    description: "25+ years experience in ICT industry",
+    image: "/ceo.jpeg",
+    description: "With over 23 years of experience in the ICT industry, Mr. Alphonsus Ejidike is a visionary leader and the driving force behind Alphacom Investment. ",
   },
   {
-    name: "Funmi Adebayo",
-    role: "Operations Manager",
-    image: "/professional-african-businesswoman-in-blazer.jpg",
-    description: "Expert in supply chain and logistics",
+    name: "Uzoma Ejidike",
+    role: "Chief Operating Officer",
+    image: "/ceowife.jpeg",
+    description: "Uzoma Ejidike is a seasoned professional with extensive experience in Human Resources and Business Management. ",
   },
-  {
-    name: "Tunde Okafor",
-    role: "Technical Director",
-    image: "/professional-african-tech-expert-with-glasses.jpg",
-    description: "Certified in multiple technology platforms",
-  },
+  
 ]
 
 export default function AboutPage() {
