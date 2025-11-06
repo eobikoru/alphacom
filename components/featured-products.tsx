@@ -71,7 +71,7 @@ export function FeaturedProducts() {
     }
 
     addItem({
-      id: product.slug,
+      id: product.id,
       name: product.name,
       price: product.price,
       image: product.main_image,

@@ -24,6 +24,7 @@ export default function CheckoutPage() {
   const { isAuthenticated, user } = useAuth()
   const { formData, updateField, clearForm } = useCheckout()
 
+
   const [phoneError, setPhoneError] = useState("")
 
   const guestCheckoutMutation = useGuestCheckout()
@@ -81,7 +82,7 @@ export default function CheckoutPage() {
       product_id: item.id,
       quantity: item.quantity,
     }))
-
+console.log(checkoutItems,"checkoutItems")
     const shippingAddress: ShippingAddress = {
       street: formData.street,
       city: formData.city,
