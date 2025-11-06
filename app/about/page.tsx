@@ -50,6 +50,12 @@ const team = [
     image: "/ceowife.jpeg",
     description: "Uzoma Ejidike is a seasoned professional with extensive experience in Human Resources and Business Management. ",
   },
+  {
+    name: "Anthony",
+    role: "Chief Technology Consultant",
+    image: "/davi.png",
+    description: "Anthony is a seasoned Information and Communication Technology Consultant with over 18years experience. ",
+  },
   
 ]
 
@@ -95,7 +101,7 @@ export default function AboutPage() {
                 <div>
                   <div className="prose prose-lg prose-slate dark:prose-invert">
                     <p className="text-muted-foreground">
-                      Founded in 2000 by Adebayo Johnson, Alphacom began as a small computer repair shop in Computer
+                      Founded by Alphonsus Ejidike, Alphacom began as a small computer repair shop in Computer
                       Village, Ikeja. What started as a passion for technology has grown into one of Nigeria's most
                       trusted ICT retailers.
                     </p>
@@ -113,7 +119,7 @@ export default function AboutPage() {
                 <div className="relative">
                   <div className="aspect-square rounded-2xl overflow-hidden shadow-2xl">
                     <img
-                      src="/modern-computer-store-interior-with-displays.jpg"
+                      src="/alpi.jpeg"
                       alt="Alphacom Store Interior"
                       className="w-full h-full object-cover"
                     />

@@ -184,8 +184,8 @@ export function ProductDetailClient({ slug, productId }: ProductDetailClientProp
                   src={product.images[selectedImage] || "/placeholder.svg?height=600&width=600"}
                   alt={product.name}
                   width={600}
-                  height={600}
-                  className="w-full h-96 object-fit"
+                  height={700}
+                  className="w-full h-96 md:h-[40rem] object-fit"
                   priority
                 />
               </CardContent>
