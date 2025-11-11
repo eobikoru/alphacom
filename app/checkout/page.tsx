@@ -24,7 +24,6 @@ export default function CheckoutPage() {
   const { isAuthenticated, user } = useAuth()
   const { formData, updateField, clearForm } = useCheckout()
 
-
   const [phoneError, setPhoneError] = useState("")
 
   const guestCheckoutMutation = useGuestCheckout()
@@ -54,12 +53,12 @@ export default function CheckoutPage() {
 
   if (items.length === 0) {
     return (
-      <div className="container mx-auto px-4 py-16">
+      <div className="container mx-auto px-4 py-8 md:py-16">
         <Card className="max-w-md mx-auto text-center">
           <CardContent className="pt-6">
             <ShoppingCart className="h-16 w-16 mx-auto text-muted-foreground mb-4" />
-            <h2 className="text-2xl font-bold mb-2">Your cart is empty</h2>
-            <p className="text-muted-foreground mb-6">Add some items to your cart to checkout</p>
+            <h2 className="text-xl md:text-2xl font-bold mb-2">Your cart is empty</h2>
+            <p className="text-sm md:text-base text-muted-foreground mb-6">Add some items to your cart to checkout</p>
             <Link href="/categories">
               <Button>Start Shopping</Button>
             </Link>
@@ -82,7 +81,7 @@ export default function CheckoutPage() {
       product_id: item.id,
       quantity: item.quantity,
     }))
-console.log(checkoutItems,"checkoutItems")
+
     const shippingAddress: ShippingAddress = {
       street: formData.street,
       city: formData.city,
@@ -124,37 +123,39 @@ console.log(checkoutItems,"checkoutItems")
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto px-4 py-6 md:py-8 lg:py-12">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
-        <div className="mb-8">
+        <div className="mb-6 md:mb-8">
           <Link href="/categories">
-            <Button variant="ghost" size="sm" className="mb-4">
+            <Button variant="ghost" size="sm" className="mb-3 md:mb-4">
               <ArrowLeft className="h-4 w-4 mr-2" />
               Continue Shopping
             </Button>
           </Link>
-          <h1 className="text-3xl font-bold">Checkout</h1>
-          <p className="text-muted-foreground">Complete your order</p>
+          <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold">Checkout</h1>
+          <p className="text-sm md:text-base text-muted-foreground">Complete your order</p>
         </div>
 
-        <div className="grid lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8">
           {/* Checkout Form */}
           <div className="lg:col-span-2">
-            <form onSubmit={handleCheckout} className="space-y-6">
+            <form onSubmit={handleCheckout} className="space-y-4 md:space-y-6">
               {/* Contact Information */}
               {!isAuthenticated && (
                 <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
+                  <CardHeader className="pb-3 md:pb-4">
+                    <CardTitle className="flex items-center gap-2 text-lg md:text-xl">
                       <CreditCard className="h-5 w-5" />
                       Contact Information
                     </CardTitle>
-                    <CardDescription>We'll use this to send you order updates</CardDescription>
+                    <CardDescription className="text-xs md:text-sm">
+                      We'll use this to send you order updates
+                    </CardDescription>
                   </CardHeader>
-                  <CardContent className="space-y-4">
+                  <CardContent className="space-y-3 md:space-y-4">
                     <div>
-                      <Label htmlFor="email" className="mb-2 block">
+                      <Label htmlFor="email" className="mb-1.5 md:mb-2 block text-sm">
                         Email *
                       </Label>
                       <Input
@@ -164,10 +165,11 @@ console.log(checkoutItems,"checkoutItems")
                         onChange={(e) => updateField("email", e.target.value)}
                         required
                         placeholder="your@email.com"
+                        className="text-sm"
                       />
                     </div>
                     <div>
-                      <Label htmlFor="name" className="mb-2 block">
+                      <Label htmlFor="name" className="mb-1.5 md:mb-2 block text-sm">
                         Full Name *
                       </Label>
                       <Input
@@ -176,10 +178,11 @@ console.log(checkoutItems,"checkoutItems")
                         onChange={(e) => updateField("name", e.target.value)}
                         required
                         placeholder="John Doe"
+                        className="text-sm"
                       />
                     </div>
                     <div>
-                      <Label htmlFor="phone" className="mb-2 block">
+                      <Label htmlFor="phone" className="mb-1.5 md:mb-2 block text-sm">
                         Phone Number * (11 digits)
                       </Label>
                       <Input
@@ -193,8 +196,9 @@ console.log(checkoutItems,"checkoutItems")
                         required
                         placeholder="08012345678"
                         maxLength={11}
+                        className="text-sm"
                       />
-                      {phoneError && <p className="text-red-500 text-sm mt-1">{phoneError}</p>}
+                      {phoneError && <p className="text-red-500 text-xs md:text-sm mt-1">{phoneError}</p>}
                     </div>
                   </CardContent>
                 </Card>
@@ -202,17 +206,17 @@ console.log(checkoutItems,"checkoutItems")
 
               {/* Shipping Address */}
               <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
+                <CardHeader className="pb-3 md:pb-4">
+                  <CardTitle className="flex items-center gap-2 text-lg md:text-xl">
                     <Truck className="h-5 w-5" />
                     Shipping Address
                   </CardTitle>
-                  <CardDescription>Where should we deliver your order?</CardDescription>
+                  <CardDescription className="text-xs md:text-sm">Where should we deliver your order?</CardDescription>
                 </CardHeader>
-                <CardContent className="space-y-4">
+                <CardContent className="space-y-3 md:space-y-4">
                   {isAuthenticated && (
                     <div>
-                      <Label htmlFor="phone-auth" className="mb-2 block">
+                      <Label htmlFor="phone-auth" className="mb-1.5 md:mb-2 block text-sm">
                         Phone Number * (11 digits)
                       </Label>
                       <Input
@@ -226,12 +230,13 @@ console.log(checkoutItems,"checkoutItems")
                         required
                         placeholder="08012345678"
                         maxLength={11}
+                        className="text-sm"
                       />
-                      {phoneError && <p className="text-red-500 text-sm mt-1">{phoneError}</p>}
+                      {phoneError && <p className="text-red-500 text-xs md:text-sm mt-1">{phoneError}</p>}
                     </div>
                   )}
                   <div>
-                    <Label htmlFor="street" className="mb-2 block">
+                    <Label htmlFor="street" className="mb-1.5 md:mb-2 block text-sm">
                       Street Address *
                     </Label>
                     <Input
@@ -240,11 +245,12 @@ console.log(checkoutItems,"checkoutItems")
                       onChange={(e) => updateField("street", e.target.value)}
                       required
                       placeholder="123 Main Street"
+                      className="text-sm"
                     />
                   </div>
-                  <div className="grid sm:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4">
                     <div>
-                      <Label htmlFor="city" className="mb-2 block">
+                      <Label htmlFor="city" className="mb-1.5 md:mb-2 block text-sm">
                         City *
                       </Label>
                       <Input
@@ -253,10 +259,11 @@ console.log(checkoutItems,"checkoutItems")
                         onChange={(e) => updateField("city", e.target.value)}
                         required
                         placeholder="Lagos"
+                        className="text-sm"
                       />
                     </div>
                     <div>
-                      <Label htmlFor="state" className="mb-2 block">
+                      <Label htmlFor="state" className="mb-1.5 md:mb-2 block text-sm">
                         State *
                       </Label>
                       <Input
@@ -265,11 +272,12 @@ console.log(checkoutItems,"checkoutItems")
                         onChange={(e) => updateField("state", e.target.value)}
                         required
                         placeholder="Lagos"
+                        className="text-sm"
                       />
                     </div>
                   </div>
                   <div>
-                    <Label htmlFor="notes" className="mb-2 block">
+                    <Label htmlFor="notes" className="mb-1.5 md:mb-2 block text-sm">
                       Delivery Notes (Optional)
                     </Label>
                     <Textarea
@@ -278,12 +286,18 @@ console.log(checkoutItems,"checkoutItems")
                       onChange={(e) => updateField("notes", e.target.value)}
                       placeholder="Any special instructions for delivery?"
                       rows={3}
+                      className="text-sm"
                     />
                   </div>
                 </CardContent>
               </Card>
 
-              <Button type="submit" size="lg" className="w-full" disabled={isLoading || phoneError !== ""}>
+              <Button
+                type="submit"
+                size="lg"
+                className="w-full text-sm md:text-base"
+                disabled={isLoading || phoneError !== ""}
+              >
                 {isLoading ? "Processing..." : `Proceed to Payment - ${formatPrice(total)}`}
               </Button>
             </form>
@@ -291,15 +305,15 @@ console.log(checkoutItems,"checkoutItems")
 
           {/* Order Summary */}
           <div className="lg:col-span-1">
-            <Card className="sticky top-4">
-              <CardHeader>
-                <CardTitle>Order Summary</CardTitle>
+            <Card className="lg:sticky lg:top-4">
+              <CardHeader className="pb-3 md:pb-4">
+                <CardTitle className="text-lg md:text-xl">Order Summary</CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="space-y-3">
+              <CardContent className="space-y-3 md:space-y-4">
+                <div className="space-y-2 md:space-y-3">
                   {items.map((item) => (
-                    <div key={item.id} className="flex gap-3">
-                      <div className="relative h-16 w-16 rounded-md overflow-hidden bg-muted flex-shrink-0">
+                    <div key={item.id} className="flex gap-2 md:gap-3">
+                      <div className="relative h-14 w-14 md:h-16 md:w-16 rounded-md overflow-hidden bg-muted flex-shrink-0">
                         <img
                           src={item.image || "/placeholder.svg"}
                           alt={item.name}
@@ -310,10 +324,10 @@ console.log(checkoutItems,"checkoutItems")
                         </div>
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="font-medium text-sm truncate">{item.name}</p>
-                        <p className="text-sm text-muted-foreground">{formatPrice(item.price)}</p>
+                        <p className="font-medium text-xs md:text-sm truncate">{item.name}</p>
+                        <p className="text-xs md:text-sm text-muted-foreground">{formatPrice(item.price)}</p>
                       </div>
-                      <div className="text-sm font-semibold">{formatPrice(item.price * item.quantity)}</div>
+                      <div className="text-xs md:text-sm font-semibold">{formatPrice(item.price * item.quantity)}</div>
                     </div>
                   ))}
                 </div>
@@ -321,7 +335,7 @@ console.log(checkoutItems,"checkoutItems")
                 <Separator />
 
                 <div className="space-y-2">
-                  <div className="flex justify-between text-sm">
+                  <div className="flex justify-between text-xs md:text-sm">
                     <span className="text-muted-foreground">Subtotal</span>
                     <span>{formatPrice(total)}</span>
                   </div>
@@ -329,7 +343,7 @@ console.log(checkoutItems,"checkoutItems")
 
                 <Separator />
 
-                <div className="flex justify-between text-lg font-bold">
+                <div className="flex justify-between text-base md:text-lg font-bold">
                   <span>Total</span>
                   <span>{formatPrice(total)}</span>
                 </div>

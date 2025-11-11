@@ -144,9 +144,9 @@ export function ModernHeader({ blackNavbar }: ModernHeaderProps) {
           {/* Logo */}
           <Link href="/" onClick={handleNavClick} className="flex items-center gap-2">
             {isDark ? (
-             <img src="/alphacomblacklogo.png" className="h-[3rem] fit-cover" />
+             <img src="/alpd.png" className="h-[3rem] fit-cover" />
             ) : (
-              <img src="/alphacomwhitelogo.png" className="h-[3rem] fit-cover" />
+              <img src="/alpw1.png" className="h-[3rem] fit-cover" />
               
             )}
           </Link>
