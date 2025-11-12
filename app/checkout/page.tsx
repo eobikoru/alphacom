@@ -14,7 +14,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
 import { ShoppingCart, CreditCard, Truck, ArrowLeft } from "lucide-react"
-import { useGuestCheckout, useAuthenticatedCheckout } from "@/hooks/use-orders"
+import { useGuestCheckout, useAuthenticatedCheckout, useOrderBreakdown } from "@/hooks/use-orders"
 import type { CheckoutItem, ShippingAddress } from "@/lib/api/orders"
 import Link from "next/link"
 
@@ -25,9 +25,12 @@ export default function CheckoutPage() {
   const { formData, updateField, clearForm } = useCheckout()
 
   const [phoneError, setPhoneError] = useState("")
+  const [breakdownData, setBreakdownData] = useState<any>(null)
+  const [breakdownLoading, setBreakdownLoading] = useState(false)
 
   const guestCheckoutMutation = useGuestCheckout()
   const authenticatedCheckoutMutation = useAuthenticatedCheckout()
+  const orderBreakdownMutation = useOrderBreakdown()
 
   useEffect(() => {
     if (isAuthenticated && user) {
@@ -48,6 +51,31 @@ export default function CheckoutPage() {
       setPhoneError("")
     }
   }, [formData.phone])
+
+  useEffect(() => {
+    if (items.length === 0) {
+      setBreakdownData(null)
+      return
+    }
+
+    const fetchBreakdown = async () => {
+      setBreakdownLoading(true)
+      try {
+        const checkoutItems = items.map((item) => ({
+          product_id: item.id,
+          quantity: item.quantity,
+        }))
+        const response = await orderBreakdownMutation.mutateAsync({ items: checkoutItems })
+        setBreakdownData(response?.data)
+      } catch (error) {
+        console.error("[v0] Error fetching order breakdown:", error)
+      } finally {
+        setBreakdownLoading(false)
+      }
+    }
+
+    fetchBreakdown()
+  }, [items])
 
   const isLoading = guestCheckoutMutation.isPending || authenticatedCheckoutMutation.isPending
 
@@ -138,7 +166,6 @@ export default function CheckoutPage() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8">
-          {/* Checkout Form */}
           <div className="lg:col-span-2">
             <form onSubmit={handleCheckout} className="space-y-4 md:space-y-6">
               {/* Contact Information */}
@@ -298,7 +325,7 @@ export default function CheckoutPage() {
                 className="w-full text-sm md:text-base"
                 disabled={isLoading || phoneError !== ""}
               >
-                {isLoading ? "Processing..." : `Proceed to Payment - ${formatPrice(total)}`}
+                {isLoading ? "Processing..." : `Proceed to Payment - ${formatPrice(breakdownData?.total || total)}`}
               </Button>
             </form>
           </div>
@@ -334,18 +361,42 @@ export default function CheckoutPage() {
 
                 <Separator />
 
-                <div className="space-y-2">
-                  <div className="flex justify-between text-xs md:text-sm">
-                    <span className="text-muted-foreground">Subtotal</span>
-                    <span>{formatPrice(total)}</span>
+                {breakdownLoading ? (
+                  <div className="space-y-2">
+                    <div className="h-4 bg-muted rounded animate-pulse" />
+                    <div className="h-4 bg-muted rounded animate-pulse" />
                   </div>
-                </div>
+                ) : breakdownData ? (
+                  <div className="space-y-2">
+                    <div className="flex justify-between text-xs md:text-sm">
+                      <span className="text-muted-foreground">Subtotal</span>
+                      <span>{formatPrice(breakdownData.subtotal)}</span>
+                    </div>
+                    <div className="flex justify-between text-xs md:text-sm">
+                      <span className="text-muted-foreground">VAT</span>
+                      <span>{formatPrice(breakdownData.tax)}</span>
+                    </div>
+                    {breakdownData.shipping ? (
+                      <div className="flex justify-between text-xs md:text-sm">
+                        <span className="text-muted-foreground">Shipping</span>
+                        <span>{formatPrice(breakdownData.shipping)}</span>
+                      </div>
+                    ) : null}
+                  </div>
+                ) : (
+                  <div className="space-y-2">
+                    <div className="flex justify-between text-xs md:text-sm">
+                      <span className="text-muted-foreground">Subtotal</span>
+                      <span>{formatPrice(total)}</span>
+                    </div>
+                  </div>
+                )}
 
                 <Separator />
 
                 <div className="flex justify-between text-base md:text-lg font-bold">
                   <span>Total</span>
-                  <span>{formatPrice(total)}</span>
+                  <span>{formatPrice(breakdownData?.total || total)}</span>
                 </div>
               </CardContent>
             </Card>

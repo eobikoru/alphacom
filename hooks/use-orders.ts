@@ -9,6 +9,8 @@ import {
   type GuestCheckoutRequest,
   type AuthenticatedCheckoutRequest,
   type TrackOrderRequest,
+  OrderBreakdownRequest,
+  orderBreakdown,
 } from "@/lib/api/orders"
 import { toast } from "sonner"
 
@@ -76,6 +78,19 @@ export function useTrackOrder() {
     onError: (error: any) => {
       const errorMessage = getErrorMessage(error)
       console.log(errorMessage,"errorMessage")
+      toast.error(errorMessage)
+    },
+  })
+}
+export function useOrderBreakdown() {
+  return useMutation({
+    mutationFn: (data: OrderBreakdownRequest) => orderBreakdown(data),
+    onSuccess: (data) => {
+      // toast.success("Order breakdown calculated!")
+    },
+    onError: (error: any) => {
+      const errorMessage = getErrorMessage(error)
+      console.log(errorMessage, "errorMessage")
       toast.error(errorMessage)
     },
   })

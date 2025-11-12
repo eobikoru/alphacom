@@ -6,7 +6,13 @@ export interface CheckoutItem {
   product_id: string
   quantity: number
 }
-
+export interface OrderBreakdownItem {
+  product_id: string
+  quantity: number
+  name: string
+  price: number
+  subtotal: number
+}
 export interface ShippingAddress {
   street: string
   city: string
@@ -70,6 +76,18 @@ export interface TrackOrderResponse {
   items: any[]
   timeline: OrderTimeline[]
 }
+export interface OrderBreakdownRequest {
+  items: CheckoutItem[]
+}
+
+export interface OrderBreakdownResponse {
+  data(data: any): unknown
+  items: OrderBreakdownItem[]
+  subtotal: number
+  tax: number
+  shipping: number
+  total: number
+}
 
 export const guestCheckout = async (data: GuestCheckoutRequest): Promise<CheckoutResponse> => {
   const response = await apiClient.post("/api/v1/orders/checkout/guest", data)
@@ -88,5 +106,9 @@ export const verifyPayment = async (reference: string): Promise<PaymentVerificat
 
 export const trackOrder = async (data: TrackOrderRequest): Promise<TrackOrderResponse> => {
   const response = await apiClient.post("/api/v1/orders/track", data)
+  return response.data
+}
+export const orderBreakdown = async (data: OrderBreakdownRequest): Promise<OrderBreakdownResponse> => {
+  const response = await apiClient.post("/api/v1/orders/breakdown", data)
   return response.data
 }
