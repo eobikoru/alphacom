@@ -306,12 +306,12 @@ export function HeroSection() {
           </div>
         </div>
       </div>
-
+{/* 
       <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce">
         <div className="h-12 w-6 border-2 border-white/30 rounded-full flex justify-center backdrop-blur-sm">
           <div className="h-3 w-1 bg-gradient-to-b from-cyan-400 to-purple-400 rounded-full mt-2 animate-pulse" />
-        </div>
-      </div>
+        </div> */}
+      {/* </div> */}
     </section>
   )
 }
