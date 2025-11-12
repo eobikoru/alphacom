@@ -373,7 +373,7 @@ export default function CheckoutPage() {
                       <span>{formatPrice(breakdownData.subtotal)}</span>
                     </div>
                     <div className="flex justify-between text-xs md:text-sm">
-                      <span className="text-muted-foreground">VAT</span>
+                      <span className="text-muted-foreground">VAT(7.5%)</span>
                       <span>{formatPrice(breakdownData.tax)}</span>
                     </div>
                     {breakdownData.shipping ? (
