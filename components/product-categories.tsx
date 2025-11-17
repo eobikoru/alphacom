@@ -2,7 +2,7 @@
 
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { ArrowRight, Package } from "lucide-react"
+import { ArrowRight, Package } from 'lucide-react'
 import Link from "next/link"
 import { useEffect, useState } from "react"
 import { getCategoriesWithProducts, type CategoryWithProducts } from "@/lib/api/categories"
@@ -63,16 +63,16 @@ export function ProductCategories() {
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-10">
+        <div className="grid md:grid-cols-3 lg:grid-cols-5 gap-4 lg:gap-6">
           {categories.map((category) => (
             <Link key={category.id} href={`/categories/${category.slug}`}>
-              <Card className="group hover:shadow-2xl hover:shadow-cyan-500/10 transition-all duration-500 border-0 bg-gradient-to-br from-card/80 to-card/40 backdrop-blur-xl cursor-pointer overflow-hidden relative">
+              <Card className="group hover:shadow-2xl hover:shadow-cyan-500/10 transition-all duration-500 border-0 bg-gradient-to-br from-card/80 to-card/40 backdrop-blur-xl cursor-pointer overflow-hidden relative h-full">
                 <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/20 via-transparent to-purple-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-lg"></div>
                 <div className="absolute inset-[1px] bg-card/90 backdrop-blur-xl rounded-lg"></div>
 
-                <CardContent className="p-0 relative z-10">
-                  <div className="relative overflow-hidden">
-                    <div className="relative h-56 lg:h-64 overflow-hidden">
+                <CardContent className="p-0 relative z-10 flex flex-col h-full">
+                  <div className="relative overflow-hidden flex-shrink-0">
+                    <div className="relative h-24 lg:h-32 overflow-hidden">
                       <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/20 to-purple-500/20 opacity-60 group-hover:opacity-80 transition-all duration-500" />
                       <img
                         src={category.image_url || "/placeholder.svg?height=400&width=600"}
@@ -80,15 +80,15 @@ export function ProductCategories() {
                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                       />
 
-                      <div className="absolute top-6 left-6">
-                        <div className="bg-background/90 backdrop-blur-xl border border-white/20 p-3 rounded-2xl group-hover:scale-110 transition-transform duration-300">
-                          <Package className="h-6 w-6 text-primary" />
+                      <div className="absolute top-2 left-2">
+                        <div className="bg-background/90 backdrop-blur-xl border border-white/20 p-1.5 rounded-lg group-hover:scale-110 transition-transform duration-300">
+                          <Package className="h-3 w-3 text-primary" />
                         </div>
                       </div>
 
-                      <div className="absolute top-6 right-6">
-                        <div className="bg-background/90 backdrop-blur-xl border border-white/20 px-4 py-2 rounded-full text-sm font-semibold">
-                          {category.total_product_count} items
+                      <div className="absolute top-2 right-2">
+                        <div className="bg-background/90 backdrop-blur-xl border border-white/20 px-2 py-1 rounded-full text-xs font-semibold">
+                          {category.total_product_count}
                         </div>
                       </div>
 
@@ -96,28 +96,28 @@ export function ProductCategories() {
                     </div>
                   </div>
 
-                  <div className="p-8">
-                    <h3 className="text-2xl font-normal mb-3 group-hover:bg-gradient-to-r group-hover:from-cyan-400 group-hover:to-purple-400 group-hover:bg-clip-text group-hover:text-transparent transition-all duration-300">
+                  <div className="p-3 flex-grow flex flex-col">
+                    <h3 className="text-base font-normal mb-2 group-hover:bg-gradient-to-r group-hover:from-cyan-400 group-hover:to-purple-400 group-hover:bg-clip-text group-hover:text-transparent transition-all duration-300 line-clamp-2">
                       {category.name}
                     </h3>
-                    <p className="text-muted-foreground mb-4 text-base leading-relaxed line-clamp-2">
+                    <p className="text-muted-foreground mb-2 text-xs leading-snug line-clamp-1">
                       {category.description || "Explore our collection"}
                     </p>
 
                     {category.subcategories.length > 0 && (
-                      <p className="text-sm text-muted-foreground mb-6">
+                      <p className="text-xs text-muted-foreground mb-2">
                         {category.subcategories.length} subcategories
                       </p>
                     )}
 
                     <Button
                       variant="ghost"
-                      className="p-0 h-auto font-semibold text-primary hover:text-primary/80 group/btn"
+                      className="p-0 h-auto font-semibold text-primary hover:text-primary/80 group/btn text-xs mt-auto"
                     >
                       <span className="bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent">
-                        Shop Now
+                        Shop
                       </span>
-                      <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-2 group-hover:text-cyan-400 transition-all duration-300" />
+                      <ArrowRight className="ml-1 h-3 w-3 group-hover:translate-x-1 group-hover:text-cyan-400 transition-all duration-300" />
                     </Button>
                   </div>
                 </CardContent>

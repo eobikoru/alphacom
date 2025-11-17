@@ -14,7 +14,7 @@ export function ModernFooter() {
   const isDark = useAppSelector((state) => state.theme.isDark)
   const [categories, setCategories] = useState<CategoryWithProducts[]>([])
   const [isCategoriesLoading, setIsCategoriesLoading] = useState(true)
-
+  const currentYear = new Date().getFullYear()
   useEffect(() => {
     const fetchCategories = async () => {
       try {
@@ -202,7 +202,7 @@ export function ModernFooter() {
       {/* Bottom Footer */}
       <div className="container mx-auto px-4 py-6">
         <div className="flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-muted-foreground">
-          <p>© 2024 Alphacom Online Store. All rights reserved.</p>
+          <p>© {currentYear} Alphacom Online Store. All rights reserved.</p>
           <div className="flex items-center gap-6">
             <span>Secure payments powered by</span>
             <div className="flex items-center gap-2">

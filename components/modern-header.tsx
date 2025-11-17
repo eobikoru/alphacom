@@ -1,14 +1,14 @@
 "use client"
 
 import type React from "react"
-import { Search, User, Menu, MapPin, LogOut, Mail, Shield, ChevronDown, Package } from "lucide-react"
+import { Search, User, Menu, MapPin, LogOut, Mail, Shield, ChevronDown, Package } from 'lucide-react'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Separator } from "@/components/ui/separator"
 import { Skeleton } from "@/components/ui/skeleton"
 import Link from "next/link"
-import { useRouter } from "next/navigation"
+import { useRouter } from 'next/navigation'
 import { ThemeToggle } from "@/components/theme-toggle"
 import { CartDrawer, type CartDrawerRef } from "@/components/cart-drawer"
 import { useState, useRef, useEffect } from "react"
@@ -262,7 +262,7 @@ export function ModernHeader({ blackNavbar }: ModernHeaderProps) {
         </div>
 
         {isMobileMenuOpen && (
-          <div className="md:hidden mt-4 p-4 rounded-lg border bg-card border-border">
+          <div className="md:hidden mt-4 p-4 rounded-lg border bg-card border-border max-h-64 overflow-y-auto">
             {/* Mobile Search */}
             {/* <div className="mb-4">
               <form onSubmit={handleSearch} className="relative">

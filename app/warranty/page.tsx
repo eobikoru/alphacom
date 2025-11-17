@@ -55,25 +55,23 @@ export default function WarrantyPage() {
                   <h4 className="font-semibold text-card-foreground mb-2">Manufacturing Defects</h4>
                   <ul className="text-muted-foreground space-y-1 ml-4">
                     <li>• Hardware failures due to manufacturing defects</li>
-                    <li>• Component malfunctions under normal use</li>
-                    <li>• Software issues related to pre-installed programs</li>
                     <li>• Performance issues not meeting specifications</li>
                   </ul>
                 </div>
                 <div>
                   <h4 className="font-semibold text-card-foreground mb-2">Parts and Labor</h4>
                   <ul className="text-muted-foreground space-y-1 ml-4">
-                    <li>• Replacement parts at no additional cost</li>
+           
                     <li>• Labor costs for authorized repairs</li>
                     <li>• Diagnostic services</li>
-                    <li>• Return shipping for warranty repairs</li>
+           
                   </ul>
                 </div>
               </CardContent>
             </Card>
 
             {/* Warranty Periods */}
-            <Card className="bg-card border-border">
+            {/* <Card className="bg-card border-border">
               <CardHeader>
                 <CardTitle className="flex items-center gap-3 text-card-foreground">
                   <Clock className="h-6 w-6 text-primary" />
@@ -112,7 +110,7 @@ export default function WarrantyPage() {
                   </div>
                 </div>
               </CardContent>
-            </Card>
+            </Card> */}
 
             {/* What's Not Covered */}
             <Card className="bg-card border-border">
@@ -206,7 +204,7 @@ export default function WarrantyPage() {
             </Card>
 
             {/* Contact Information */}
-            <Card className="bg-card border-border">
+            {/* <Card className="bg-card border-border">
               <CardHeader>
                 <CardTitle className="flex items-center gap-3 text-card-foreground">
                   <Mail className="h-6 w-6 text-primary" />
@@ -245,10 +243,10 @@ export default function WarrantyPage() {
                   </div>
                 </div>
               </CardContent>
-            </Card>
+            </Card> */}
 
             {/* Important Notes */}
-            <Card className="bg-muted/50 border-border">
+            {/* <Card className="bg-muted/50 border-border">
               <CardContent className="p-6">
                 <h4 className="font-semibold text-card-foreground mb-2">Important Notes</h4>
                 <ul className="text-muted-foreground space-y-1">
@@ -259,7 +257,7 @@ export default function WarrantyPage() {
                   <li>• Some products may require registration for warranty activation</li>
                 </ul>
               </CardContent>
-            </Card>
+            </Card> */}
           </div>
         </div>
       </div>

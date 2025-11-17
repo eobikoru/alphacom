@@ -30,7 +30,7 @@ export default function TermsPage() {
             <Card className="bg-muted/50 border-border">
               <CardContent className="p-6">
                 <p className="text-sm text-muted-foreground">
-                  <strong>Last Updated:</strong> January 1, 2024
+                  {/* <strong>Last Updated:</strong> January 1, 2024 */}
                 </p>
                 <p className="text-sm text-muted-foreground mt-2">
                   These Terms and Conditions govern your use of Alphacom Online Store and the purchase of our products.
@@ -124,7 +124,7 @@ export default function TermsPage() {
                   <li>• Shipping costs are calculated at checkout</li>
                   <li>• Risk of loss passes to customer upon delivery</li>
                   <li>• We are not responsible for delays caused by shipping carriers</li>
-                  <li>• Customers must inspect packages upon delivery</li>
+                  <li>• Customers must inspect packages upon receipt  </li>
                 </ul>
               </CardContent>
             </Card>
@@ -248,7 +248,7 @@ export default function TermsPage() {
                 <p className="text-muted-foreground mb-4">
                   If you have questions about these Terms and Conditions, please contact us:
                 </p>
-                <div className="space-y-2 text-muted-foreground">
+                {/* <div className="space-y-2 text-muted-foreground">
                   <p>
                     <strong>Email:</strong> legal@alphacomonline.com
                   </p>
@@ -258,7 +258,7 @@ export default function TermsPage() {
                   <p>
                     <strong>Address:</strong> No 3 Adepele street, off Medical road, Computer village Ikeja, Lagos
                   </p>
-                </div>
+                </div> */}
               </CardContent>
             </Card>
 

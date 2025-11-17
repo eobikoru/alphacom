@@ -36,7 +36,7 @@ export default function ReturnPolicyPage() {
               </CardHeader>
               <CardContent>
                 <p className="text-muted-foreground text-lg">
-                  We offer a 7-day return policy on most items. If you're not completely satisfied with your purchase,
+                  We offer a 24 hours return policy on most items. If you're not completely satisfied with your purchase,
                   we'll make it right.
                 </p>
               </CardContent>
@@ -54,10 +54,10 @@ export default function ReturnPolicyPage() {
                 <div className="grid md:grid-cols-3 gap-6">
                   <div className="text-center">
                     <div className="w-16 h-16 bg-cyan-500 rounded-full flex items-center justify-center mx-auto mb-4">
-                      <span className="text-white font-bold text-xl">7</span>
+                      <span className="text-white font-bold text-xl">24</span>
                     </div>
                     <h4 className="font-semibold text-card-foreground mb-2">Days to Return</h4>
-                    <p className="text-muted-foreground text-sm">You have 7 days from delivery to initiate a return</p>
+                    <p className="text-muted-foreground text-sm">You have 24 hours from delivery to initiate a return</p>
                   </div>
                   <div className="text-center">
                     <div className="w-16 h-16 bg-purple-500 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -77,7 +77,7 @@ export default function ReturnPolicyPage() {
               </CardContent>
             </Card>
 
-            {/* Returnable Items */}
+            {/* Returnable Items
             <Card className="bg-card border-border">
               <CardHeader>
                 <CardTitle className="flex items-center gap-3 text-card-foreground">
@@ -105,10 +105,10 @@ export default function ReturnPolicyPage() {
                   </ul>
                 </div>
               </CardContent>
-            </Card>
+            </Card> */}
 
             {/* Non-Returnable Items */}
-            <Card className="bg-card border-border">
+            {/* <Card className="bg-card border-border">
               <CardHeader>
                 <CardTitle className="flex items-center gap-3 text-card-foreground">
                   <XCircle className="h-6 w-6 text-red-500" />
@@ -127,10 +127,10 @@ export default function ReturnPolicyPage() {
                   <li>• Items that have been registered or activated</li>
                 </ul>
               </CardContent>
-            </Card>
+            </Card> */}
 
             {/* Return Process */}
-            <Card className="bg-card border-border">
+            {/* <Card className="bg-card border-border">
               <CardHeader>
                 <CardTitle className="flex items-center gap-3 text-card-foreground">
                   <Package className="h-6 w-6 text-primary" />
@@ -179,10 +179,10 @@ export default function ReturnPolicyPage() {
                   </ul>
                 </div>
               </CardContent>
-            </Card>
+            </Card> */}
 
             {/* Shipping Information */}
-            <Card className="bg-card border-border">
+            {/* <Card className="bg-card border-border">
               <CardHeader>
                 <CardTitle className="text-card-foreground">Return Shipping</CardTitle>
               </CardHeader>
@@ -206,10 +206,10 @@ export default function ReturnPolicyPage() {
                   </ul>
                 </div>
               </CardContent>
-            </Card>
+            </Card> */}
 
             {/* Refund Information */}
-            <Card className="bg-card border-border">
+            {/* <Card className="bg-card border-border">
               <CardHeader>
                 <CardTitle className="text-card-foreground">Refund Process</CardTitle>
               </CardHeader>
@@ -233,10 +233,10 @@ export default function ReturnPolicyPage() {
                   </ul>
                 </div>
               </CardContent>
-            </Card>
+            </Card> */}
 
             {/* Exchanges */}
-            <Card className="bg-gradient-to-r from-cyan-50 to-purple-50 dark:from-cyan-900/20 dark:to-purple-900/20 border-cyan-200 dark:border-cyan-800">
+            {/* <Card className="bg-gradient-to-r from-cyan-50 to-purple-50 dark:from-cyan-900/20 dark:to-purple-900/20 border-cyan-200 dark:border-cyan-800">
               <CardHeader>
                 <CardTitle className="text-card-foreground">Exchanges</CardTitle>
               </CardHeader>
@@ -252,10 +252,10 @@ export default function ReturnPolicyPage() {
                   <li>• Free shipping for defective item exchanges</li>
                 </ul>
               </CardContent>
-            </Card>
+            </Card> */}
 
             {/* Contact Information */}
-            <Card className="bg-card border-border">
+            {/* <Card className="bg-card border-border">
               <CardHeader>
                 <CardTitle className="flex items-center gap-3 text-card-foreground">
                   <Mail className="h-6 w-6 text-primary" />
@@ -290,10 +290,10 @@ export default function ReturnPolicyPage() {
                   </div>
                 </div>
               </CardContent>
-            </Card>
+            </Card> */}
 
             {/* Important Notes */}
-            <Card className="bg-muted/50 border-border">
+            {/* <Card className="bg-muted/50 border-border">
               <CardContent className="p-6">
                 <h4 className="font-semibold text-card-foreground mb-2">Important Notes</h4>
                 <ul className="text-muted-foreground space-y-1">
@@ -304,7 +304,7 @@ export default function ReturnPolicyPage() {
                   <li>• Special orders and custom items are generally non-returnable</li>
                 </ul>
               </CardContent>
-            </Card>
+            </Card> */}
           </div>
         </div>
       </div>

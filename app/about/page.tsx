@@ -45,17 +45,25 @@ const team = [
     description: "With over 23 years of experience in the ICT industry, Mr. Alphonsus Ejidike is a visionary leader and the driving force behind Alphacom Investment. ",
   },
   {
-    name: "Uzoma Ejidike",
-    role: "Chief Operating Officer",
-    image: "/ceowife.jpeg",
-    description: "Uzoma Ejidike is a seasoned professional with extensive experience in Human Resources and Business Management. ",
-  },
-  {
     name: "Anthony",
     role: "Chief Technology Consultant",
     image: "/davi.png",
     description: "Anthony is a seasoned Information and Communication Technology Consultant with over 18years experience. ",
   },
+  {
+    name: "Hephzibah Kolawole",
+    role: "Manager, Finance & Administration",
+    image: "/kola.jpeg",
+    description: "Hephzibah is a skilled finance and administrative manager with a strong background in financial planning, budgeting, and organizational coordination.",
+  },
+  {
+    name: "Ewaoluwa Hammed",
+    role: "Manager, E-commerce",
+    image: "/ewa.jpeg",
+    description: "Ewaoluwa is a strategic e-commerce professional with extensive experience in managing digital sales channels, product listings, and customer engagement systems.",
+  },
+ 
+ 
   
 ]
 
@@ -201,9 +209,7 @@ export default function AboutPage() {
                     <MapPin className="w-12 h-12 text-cyan-600 mx-auto mb-4" />
                     <h3 className="text-lg font-bold mb-3 text-foreground">Main Store</h3>
                     <p className="text-sm text-muted-foreground">
-                      Shop 45, Computer Village
-                      <br />
-                      Ikeja, Lagos State
+                    No 3 Adepele street, off Medical road, Computer village  <br />  Ikeja, Lagos State
                       <br />
                       Nigeria
                     </p>
@@ -215,9 +221,9 @@ export default function AboutPage() {
                     <Phone className="w-12 h-12 text-cyan-600 mx-auto mb-4" />
                     <h3 className="text-lg font-bold mb-3 text-foreground">Phone</h3>
                     <p className="text-sm text-muted-foreground">
-                      +234 803 123 4567
+                     +234 702 638 4967
                       <br />
-                      +234 701 234 5678
+                      +234 812 345 3411
                       <br />
                       Mon - Sat: 8AM - 7PM
                     </p>
@@ -229,11 +235,8 @@ export default function AboutPage() {
                     <Mail className="w-12 h-12 text-cyan-600 mx-auto mb-4" />
                     <h3 className="text-lg font-bold mb-3 text-foreground">Email</h3>
                     <p className="text-sm text-muted-foreground">
-                      info@alphacom.ng
-                      <br />
-                      support@alphacom.ng
-                      <br />
-                      sales@alphacom.ng
+                     Alphacomonline@gmail.com
+                     
                     </p>
                   </CardContent>
                 </Card>

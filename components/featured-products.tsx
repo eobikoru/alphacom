@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Heart, Star, ShoppingCart } from "lucide-react"
+import { Heart, Star, ShoppingCart } from 'lucide-react'
 import { useAppSelector } from "@/store/hooks"
 import { useWishlist } from "@/hooks/use-wishlist"
 import { useCart } from "@/hooks/use-cart"
@@ -12,7 +12,7 @@ import Link from "next/link"
 import { useState, useEffect, startTransition } from "react"
 import { getFeaturedProducts, type FeaturedProduct } from "@/lib/api/products"
 import { ProductCardSkeleton } from "@/components/skeletons/product-card-skeleton"
-import { useRouter } from "next/navigation"
+import { useRouter } from 'next/navigation'
 import NProgress from "nprogress"
 export function FeaturedProducts() {
   const [products, setProducts] = useState<FeaturedProduct[]>([])
@@ -149,7 +149,7 @@ export function FeaturedProducts() {
                       <img
                         src={product.main_image || "/placeholder.svg?height=256&width=256&query=premium tech product"}
                         alt={product.name}
-                        className="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-500"
+                        className="w-full h-40 object-cover group-hover:scale-110 transition-transform duration-500"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                       {product.discount_percentage && (
@@ -181,17 +181,17 @@ export function FeaturedProducts() {
                       )}
                     </div>
 
-                    <div className="p-6">
-                      <div className="mb-2">
+                    <div className="p-4">
+                      <div className="mb-1">
                         <p
-                          className={`text-sm transition-colors duration-300 ${
+                          className={`text-xs transition-colors duration-300 ${
                             isDark ? "text-gray-400" : "text-gray-500"
                           }`}
                         >
                           {product.brand}
                         </p>
                         <h3
-                          className={`font-semibold text-lg leading-tight group-hover:text-cyan-500 transition-colors duration-300 ${
+                          className={`font-semibold text-base leading-tight group-hover:text-cyan-500 transition-colors duration-300 ${
                             isDark ? "text-white" : "text-gray-900"
                           }`}
                         >
@@ -200,11 +200,11 @@ export function FeaturedProducts() {
                       </div>
 
                       {product.rating && (
-                        <div className="flex items-center gap-2 mb-3">
+                        <div className="flex items-center gap-2 mb-2">
                           <div className="flex items-center gap-1">
                             <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
                             <span
-                              className={`text-sm font-medium transition-colors duration-300 ${
+                              className={`text-xs font-medium transition-colors duration-300 ${
                                 isDark ? "text-white" : "text-gray-900"
                               }`}
                             >
@@ -213,7 +213,7 @@ export function FeaturedProducts() {
                           </div>
                           {product.review_count && (
                             <span
-                              className={`text-sm transition-colors duration-300 ${
+                              className={`text-xs transition-colors duration-300 ${
                                 isDark ? "text-gray-400" : "text-gray-500"
                               }`}
                             >
@@ -223,11 +223,11 @@ export function FeaturedProducts() {
                         </div>
                       )}
 
-                      <div className="flex items-center gap-2 mb-4">
-                        <span className="text-xl font-bold text-cyan-500">{formatPrice(product.price)}</span>
+                      <div className="flex items-center gap-2 mb-3">
+                        <span className="text-lg font-bold text-cyan-500">{formatPrice(product.price)}</span>
                         {product.original_price && (
                           <span
-                            className={`text-sm line-through transition-colors duration-300 ${
+                            className={`text-xs line-through transition-colors duration-300 ${
                               isDark ? "text-gray-400" : "text-gray-500"
                             }`}
                           >
