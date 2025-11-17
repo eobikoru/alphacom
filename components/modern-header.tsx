@@ -262,7 +262,7 @@ export function ModernHeader({ blackNavbar }: ModernHeaderProps) {
         </div>
 
         {isMobileMenuOpen && (
-          <div className="md:hidden mt-4 p-4 rounded-lg border bg-card border-border max-h-64 overflow-y-auto">
+          <div className="md:hidden mt-4 p-4 rounded-lg border bg-card border-border max-h-64 overflow-y-auto no-scrollbar">
             {/* Mobile Search */}
             {/* <div className="mb-4">
               <form onSubmit={handleSearch} className="relative">
@@ -301,7 +301,7 @@ export function ModernHeader({ blackNavbar }: ModernHeaderProps) {
       {/* Navigation */}
       <div className="border-t bg-card/50 border-border">
         <div className="container mx-auto px-4">
-          <nav className="flex items-center gap-8 py-3 overflow-x-auto">
+          <nav className="flex items-center gap-8 py-3 overflow-x-auto no-scrollbar">
             <Link
               href="/categories"
               onClick={handleNavClick}

@@ -7,7 +7,7 @@ interface ThemeState {
 }
 
 const initialState: ThemeState = {
-  isDark: true,
+  isDark: false,
   isHydrated: false,
   mode: undefined
 }
@@ -34,7 +34,7 @@ const loadFromLocalStorage = (): boolean => {
       console.error("Failed to load theme from localStorage:", error)
     }
   }
-  return true // Default to dark theme
+  return false // Default to light theme
 }
 
 const themeSlice = createSlice({
