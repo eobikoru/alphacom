@@ -185,7 +185,7 @@ export default function WarrantyPage() {
             </Card>
 
             {/* Extended Warranty */}
-            <Card className="bg-gradient-to-r from-cyan-50 to-purple-50 dark:from-cyan-900/20 dark:to-purple-900/20 border-cyan-200 dark:border-cyan-800">
+            {/* <Card className="bg-gradient-to-r from-cyan-50 to-purple-50 dark:from-cyan-900/20 dark:to-purple-900/20 border-cyan-200 dark:border-cyan-800">
               <CardHeader>
                 <CardTitle className="text-card-foreground">Extended Warranty Options</CardTitle>
               </CardHeader>
@@ -201,7 +201,7 @@ export default function WarrantyPage() {
                 </ul>
                 <p className="text-muted-foreground mt-4">Contact us for extended warranty pricing and availability.</p>
               </CardContent>
-            </Card>
+            </Card> */}
 
             {/* Contact Information */}
             {/* <Card className="bg-card border-border">

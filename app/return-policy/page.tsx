@@ -56,8 +56,8 @@ export default function ReturnPolicyPage() {
                     <div className="w-16 h-16 bg-cyan-500 rounded-full flex items-center justify-center mx-auto mb-4">
                       <span className="text-white font-bold text-xl">24</span>
                     </div>
-                    <h4 className="font-semibold text-card-foreground mb-2">Days to Return</h4>
-                    <p className="text-muted-foreground text-sm">You have 24 hours from delivery to initiate a return</p>
+                    <h4 className="font-semibold text-card-foreground mb-2">hours to Return</h4>
+                    <p className="text-muted-foreground text-sm">You have 1 day from reciept to  of initiate a return. Call us to initiate a return </p>
                   </div>
                   <div className="text-center">
                     <div className="w-16 h-16 bg-purple-500 rounded-full flex items-center justify-center mx-auto mb-4">

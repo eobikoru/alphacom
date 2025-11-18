@@ -136,7 +136,7 @@ export default function TermsPage() {
               </CardHeader>
               <CardContent>
                 <ul className="text-muted-foreground space-y-2">
-                  <li>• Returns must be initiated within 7 days of delivery</li>
+                  <li>• Returns must be initiated within 24hrs  of receipt</li>
                   <li>• Items must be in original condition with all packaging</li>
                   <li>• Customer is responsible for return shipping costs</li>
                   <li>• Refunds will be processed within 5-10 business days</li>

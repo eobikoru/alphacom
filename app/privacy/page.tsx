@@ -30,7 +30,7 @@ export default function PrivacyPolicyPage() {
             <Card className="bg-muted/50 border-border">
               <CardContent className="p-6">
                 <p className="text-sm text-muted-foreground">
-                  <strong>Last Updated:</strong> January 1, 2024
+                  <strong>Last Updated:</strong> January 1, 2025
                 </p>
                 <p className="text-sm text-muted-foreground mt-2">
                   This Privacy Policy explains how Alphacom Online Store collects, uses, and protects your information.
@@ -190,10 +190,10 @@ export default function PrivacyPolicyPage() {
                 </p>
                 <div className="space-y-2 text-muted-foreground">
                   <p>
-                    <strong>Email:</strong> privacy@alphacomonline.com
+                    <strong>Email:</strong> Alphacomonline.com
                   </p>
                   <p>
-                    <strong>Phone:</strong> +234 702 6384 967
+                    <strong>Phone:</strong> +234 702 638 4967
                   </p>
                   <p>
                     <strong>Address:</strong> No 3 Adepele street, off Medical road, Computer village Ikeja, Lagos
