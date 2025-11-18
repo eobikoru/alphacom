@@ -185,12 +185,12 @@ export function ModernFooter() {
                 <Phone className="h-4 w-4 text-primary flex-shrink-0" />
                 <div className="text-muted-foreground">
                   <p>+234 702 6384 967</p>
-                  <p>+234 811 0001 228</p>
+                  <p>+234 812 345 3411</p>
                 </div>
               </div>
               <div className="flex items-center gap-3">
                 <Mail className="h-4 w-4 text-primary flex-shrink-0" />
-                <p className="text-muted-foreground">info@alphacomonline.com</p>
+                <p className="text-muted-foreground">Alphacomonline.gmail.com</p>
               </div>
             </div>
           </div>
