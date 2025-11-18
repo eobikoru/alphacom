@@ -134,7 +134,7 @@ export default function StoreLocatorPage() {
                           {store.phone}
                         </p>
                         <p className="text-card-foreground" itemProp="telephone">
-                          +234 811 0001 228
+                          +234 812 345 3411
                         </p>
                       </div>
                     </div>
@@ -152,7 +152,7 @@ export default function StoreLocatorPage() {
                       <Phone className="h-5 w-5 text-primary mt-1" />
                       <div>
                         <p className="text-card-foreground" itemProp="email">
-                          info@alphacomonline.com
+                          Alphacomonline.gmail.com
                         </p>
                       </div>
                     </div>
