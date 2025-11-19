@@ -190,7 +190,7 @@ export function ModernFooter() {
               </div>
               <div className="flex items-center gap-3">
                 <Mail className="h-4 w-4 text-primary flex-shrink-0" />
-                <p className="text-muted-foreground">Alphacomonline.gmail.com</p>
+                <p className="text-muted-foreground">alphacomonline@gmail.com</p>
               </div>
             </div>
           </div>

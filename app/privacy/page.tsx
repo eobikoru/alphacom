@@ -190,7 +190,7 @@ export default function PrivacyPolicyPage() {
                 </p>
                 <div className="space-y-2 text-muted-foreground">
                   <p>
-                    <strong>Email:</strong> Alphacomonline.com
+                    <strong>Email:</strong> alphacomonline@gmail.com
                   </p>
                   <p>
                     <strong>Phone:</strong> +234 702 638 4967

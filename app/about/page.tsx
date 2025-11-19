@@ -235,7 +235,7 @@ export default function AboutPage() {
                     <Mail className="w-12 h-12 text-cyan-600 mx-auto mb-4" />
                     <h3 className="text-lg font-bold mb-3 text-foreground">Email</h3>
                     <p className="text-sm text-muted-foreground">
-                     Alphacomonline@gmail.com
+                     alphacomonline@gmail.com
                      
                     </p>
                   </CardContent>

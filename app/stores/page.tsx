@@ -152,7 +152,7 @@ export default function StoreLocatorPage() {
                       <Phone className="h-5 w-5 text-primary mt-1" />
                       <div>
                         <p className="text-card-foreground" itemProp="email">
-                          Alphacomonline.gmail.com
+                          alphacomonline@gmail.com
                         </p>
                       </div>
                     </div>

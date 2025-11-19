@@ -151,7 +151,7 @@ export default function RootLayout({
                 "Premium technology store offering quality electronics, computers, and accessories with expert support",
               priceRange: "$$",
               telephone: "+234 702 6384 967",
-              email: "info@alphacomonline.com",
+              email: "alphacomonline@gmail.com",
               address: {
                 "@type": "PostalAddress",
                 streetAddress: "No 3 Adepele street, off Medical road",

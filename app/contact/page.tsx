@@ -132,7 +132,7 @@ export default function ContactPage() {
                     <div>
                       <h3 className="font-semibold text-card-foreground">Email</h3>
                       <p className="text-muted-foreground" itemProp="email">
-                        info@alphacomonline.com
+                        alphacomonline@gmail.com
                       </p>
                     </div>
                   </div>
