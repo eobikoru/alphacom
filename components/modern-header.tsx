@@ -132,7 +132,7 @@ export function ModernHeader({ blackNavbar }: ModernHeaderProps) {
               </Link>
             </div>
             <div className="text-xs sm:text-sm text-center sm:text-right">
-              <span>Free shipping on orders over ₦100,000</span>
+              <span>Free shipping on orders over ₦50,000</span>
             </div>
           </div>
         </div>

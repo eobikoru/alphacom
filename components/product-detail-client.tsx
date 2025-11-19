@@ -281,7 +281,7 @@ export function ProductDetailClient({ slug, productId }: ProductDetailClientProp
               <Card className={isDark ? "bg-gray-800" : "bg-white"}>
                 <CardContent className="p-4 text-center">
                   <Truck className={`h-6 w-6 mx-auto mb-2 ${isDark ? "text-cyan-400" : "text-cyan-600"}`} />
-                  <p className={`text-sm ${isDark ? "text-gray-300" : "text-gray-700"}`}>Free Delivery above 100,000</p>
+                  <p className={`text-sm ${isDark ? "text-gray-300" : "text-gray-700"}`}>Free Delivery above 50,000</p>
                 </CardContent>
               </Card>
               <Card className={isDark ? "bg-gray-800" : "bg-white"}>

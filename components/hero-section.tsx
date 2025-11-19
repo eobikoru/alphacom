@@ -224,7 +224,7 @@ export function HeroSection() {
                     Free Shipping
                   </p>
                   <p className="text-sm text-slate-300" itemProp="description">
-                    Orders over ₦100k
+                    Orders over ₦50k
                   </p>
                 </div>
               </div>

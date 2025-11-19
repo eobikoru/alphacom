@@ -56,7 +56,7 @@ export function SimpleHeader() {
               </div>
             </div>
             <div className="flex items-center gap-4">
-              <span>Free shipping on orders over ₦100,000</span>
+              <span>Free shipping on orders over ₦50,000</span>
             </div>
           </div>
         </div>
