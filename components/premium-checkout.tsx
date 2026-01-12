@@ -406,7 +406,7 @@ export function PremiumCheckout() {
                 </div>
                 <div className="flex items-center gap-3 text-sm text-muted-foreground">
                   <Truck className="w-4 h-4 text-blue-600" />
-                  <span>Free shipping & returns</span>
+                  {/* <span>Free shipping & returns</span> */}
                 </div>
                 <div className="flex items-center gap-3 text-sm text-muted-foreground">
                   <Check className="w-4 h-4 text-purple-600" />
