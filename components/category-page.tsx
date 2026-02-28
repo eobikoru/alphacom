@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useMemo, useEffect } from "react"
-import { Search, Filter, Grid3X3, List, ChevronDown, Star, Heart, ShoppingCart } from "lucide-react"
+import { Search, Filter, Grid3X3, List, ChevronDown, Heart, ShoppingCart } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
@@ -232,10 +232,16 @@ export function CategoryPage({ categorySlug, selectedSubcategory }: CategoryPage
         {/* Results Count Skeleton */}
         <Skeleton className="h-5 w-48 mb-6" />
 
-        {/* Products Grid Skeleton */}
-        <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {[...Array(8)].map((_, i) => (
-            <ProductCardSkeleton key={i} />
+        {/* Products Grid Skeleton - small cards */}
+        <div className="grid gap-3 grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6">
+          {[...Array(12)].map((_, i) => (
+            <div key={i} className="rounded-lg border border-border overflow-hidden">
+              <Skeleton className="w-full aspect-[4/3]" />
+              <div className="p-2 space-y-2">
+                <Skeleton className="h-3 w-full" />
+                <Skeleton className="h-4 w-2/3" />
+              </div>
+            </div>
           ))}
         </div>
       </div>
@@ -502,10 +508,12 @@ export function CategoryPage({ categorySlug, selectedSubcategory }: CategoryPage
         </p>
       </div>
 
-      {/* Products Grid */}
+      {/* Products Grid - small cards */}
       <div
-        className={`grid gap-6 ${
-          viewMode === "grid" ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4" : "grid-cols-1"
+        className={`grid gap-3 ${
+          viewMode === "grid"
+            ? "grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6"
+            : "grid-cols-1 max-w-xl"
         }`}
       >
         {sortedProducts.map((product) => {
@@ -517,106 +525,61 @@ export function CategoryPage({ categorySlug, selectedSubcategory }: CategoryPage
           return (
             <Card
               key={product.id}
-              className="group hover:shadow-xl transition-all duration-300 border-border hover:border-cyan-200 overflow-hidden bg-card"
+              className="group hover:shadow-md transition-all duration-300 border-border overflow-hidden bg-card"
             >
               <div className="relative">
-                <div className="aspect-square overflow-hidden bg-muted">
-                  <img
-                    src={product.main_image || "/placeholder.svg"}
-                    alt={product.name}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
+                <div className="w-full aspect-[4/3] overflow-hidden bg-muted">
+                  <Link href={`/products/id/${product.id}`} className="block w-full h-full">
+                    <img
+                      src={product.main_image || "/placeholder.svg"}
+                      alt={product.name}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    />
+                  </Link>
                 </div>
-
-                {/* Badges */}
-                <div className="absolute top-3 left-3 flex flex-col gap-2">
-                  {product.is_featured && (
-                    <Badge className="bg-green-500 hover:bg-green-600 text-white">Featured</Badge>
-                  )}
-                  {product.discount_percentage > 0 && (
-                    <Badge className="bg-red-500 hover:bg-red-600 text-white">-{product.discount_percentage}%</Badge>
-                  )}
-                  {!inStock && (
-                    <Badge variant="secondary" className="bg-slate-500 text-white">
-                      {product.stock_status || "Out of Stock"}
-                    </Badge>
-                  )}
-                </div>
-
-                {/* Quick Actions */}
-                <div className="absolute top-3 right-3 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <Button
-                    size="sm"
-                    variant="secondary"
-                    className="h-8 w-8 p-0 bg-background/90 hover:bg-background"
-                    onClick={() => toggleWishlist(product)}
-                  >
-                    <Heart className={`h-4 w-4 ${productInWishlist ? "fill-red-500 text-red-500" : ""}`} />
-                  </Button>
-                </div>
+                {product.discount_percentage > 0 && (
+                  <span className="absolute top-1 right-1 rounded bg-amber-600 px-1.5 py-0.5 text-[10px] font-bold text-white">
+                    -{Math.round(product.discount_percentage)}%
+                  </span>
+                )}
+                {!inStock && (
+                  <span className="absolute inset-0 flex items-center justify-center bg-black/50 text-[10px] font-medium text-white">
+                    Out of Stock
+                  </span>
+                )}
+                <Button
+                  size="sm"
+                  variant="secondary"
+                  className="absolute top-1 left-1 h-7 w-7 p-0 rounded-full bg-background/90 hover:bg-background opacity-0 group-hover:opacity-100 transition-opacity"
+                  onClick={() => toggleWishlist(product)}
+                >
+                  <Heart className={`h-3.5 w-3.5 ${productInWishlist ? "fill-red-500 text-red-500" : ""}`} />
+                </Button>
               </div>
-
-              <CardContent className="p-4">
-                <div className="space-y-3">
-                  {/* Brand */}
-                  {product.brand && <p className="text-sm text-cyan-600 font-medium">{product.brand}</p>}
-
-                  {/* Product Name */}
-                  <h3 className="font-semibold text-card-foreground line-clamp-2 group-hover:text-cyan-600 transition-colors">
+              <CardContent className="p-2">
+                <Link href={`/products/id/${product.id}`}>
+                  <p className="text-xs font-medium text-foreground line-clamp-2 leading-tight hover:text-primary">
                     {product.name}
-                  </h3>
-
-                  {/* Rating */}
-                  {product.rating && (
-                    <div className="flex items-center gap-2">
-                      <div className="flex items-center">
-                        {[...Array(5)].map((_, i) => (
-                          <Star
-                            key={i}
-                            className={`h-4 w-4 ${
-                              i < Math.floor(product.rating) ? "text-yellow-400 fill-current" : "text-muted"
-                            }`}
-                          />
-                        ))}
-                      </div>
-                      <span className="text-sm text-muted-foreground">({product.rating})</span>
-                    </div>
+                  </p>
+                </Link>
+                <div className="mt-1 flex items-center gap-1">
+                  <span className="text-sm font-bold text-foreground">{formatPrice(product.price)}</span>
+                  {product.discount_percentage > 0 && product.original_price && (
+                    <span className="text-[10px] text-muted-foreground line-through">
+                      {formatPrice(product.original_price)}
+                    </span>
                   )}
-
-                  {/* Price */}
-                  <div className="flex items-center gap-2">
-                    <span className="text-xl font-bold text-card-foreground">{formatPrice(product.price)}</span>
-                    {product.discount_percentage > 0 && product.original_price && (
-                      <span className="text-sm text-muted-foreground line-through">
-                        {formatPrice(product.original_price)}
-                      </span>
-                    )}
-                  </div>
-
-                  {/* Add to Cart Button */}
-                  <div className="pt-2 space-y-2">
-                    <Button
-                      onClick={() => handleAddToCart(product)}
-                      disabled={!inStock}
-                      className="w-full"
-                      variant={productInCart ? "secondary" : "default"}
-                    >
-                      <ShoppingCart className="h-4 w-4 mr-2" />
-                      {!inStock
-                        ? product.stock_status || "Out of Stock"
-                        : productInCart
-                          ? `In Cart (${cartQuantity})`
-                          : "Add to Cart"}
-                    </Button>
-
-                    {/* View Details Button */}
-                    <Link href={`/products/id/${product.id}`} className="block">
-                      <Button variant="outline" className="w-full bg-transparent">
-                        View Details
-                      </Button>
-                    </Link>
-                  </div>
                 </div>
+                <Button
+                  onClick={() => handleAddToCart(product)}
+                  disabled={!inStock}
+                  size="sm"
+                  className="mt-2 h-7 w-full text-xs"
+                  variant={productInCart ? "secondary" : "default"}
+                >
+                  <ShoppingCart className="h-3 w-3 mr-1" />
+                  {!inStock ? "Out" : productInCart ? cartQuantity : "Cart"}
+                </Button>
               </CardContent>
             </Card>
           )

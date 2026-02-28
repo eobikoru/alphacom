@@ -34,20 +34,20 @@ export function ModernFooter() {
 
   return (
     <footer className={`border-t transition-colors duration-300 ${isDark ? "bg-card" : "bg-white"}`}>
-      {/* Newsletter */}
-      <div className={`transition-colors duration-300 ${isDark ? "bg-primary" : "bg-gray-900"}`}>
+      {/* Newsletter - blends with footer */}
+      <div className="border-t border-border bg-muted/40 dark:bg-muted/20 transition-colors duration-300">
         <div className="container mx-auto px-4 py-12">
           <div className="max-w-2xl mx-auto text-center">
-            <h3 className="text-2xl font-bold text-primary-foreground mb-4">Stay Updated with Latest Tech</h3>
-            <p className="text-primary-foreground/80 mb-6">
+            <h3 className="text-2xl font-bold text-foreground mb-4">Stay Updated with Latest Tech</h3>
+            <p className="text-muted-foreground mb-6">
               Get exclusive deals, new product launches, and tech insights delivered to your inbox
             </p>
             <div className="flex gap-4 max-w-md mx-auto">
               <Input
                 placeholder="Enter your email address"
-                className="bg-primary-foreground/10 border-primary-foreground/20 text-primary-foreground placeholder:text-primary-foreground/60"
+                className="bg-background border-border"
               />
-              <Button variant="secondary" className="px-8">
+              <Button className="px-8">
                 Subscribe
               </Button>
             </div>
