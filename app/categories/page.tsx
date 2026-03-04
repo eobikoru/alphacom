@@ -1,12 +1,27 @@
 "use client"
 
 import Link from "next/link"
-import { ChevronRight, Package, X } from "lucide-react"
+import { ChevronRight, Package, Tag, X } from "lucide-react"
 import { AppLayout } from "@/components/app-layout"
-import { useEffect, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { getCategoriesWithProducts, type CategoryWithProducts } from "@/lib/api/categories"
 
 const MOBILE_BREAKPOINT = 768
+
+function getBrandsFromCategories(categories: CategoryWithProducts[]): string[] {
+  const set = new Set<string>()
+  for (const cat of categories) {
+    for (const p of cat.direct_products || []) {
+      if (p.brand?.trim()) set.add(p.brand.trim())
+    }
+    for (const sub of cat.subcategories || []) {
+      for (const p of sub.products || []) {
+        if (p.brand?.trim()) set.add(p.brand.trim())
+      }
+    }
+  }
+  return Array.from(set).sort((a, b) => a.localeCompare(b))
+}
 
 export default function CategoriesPage() {
   const [categories, setCategories] = useState<CategoryWithProducts[]>([])
@@ -14,6 +29,8 @@ export default function CategoriesPage() {
   const [error, setError] = useState<string | null>(null)
   const [openCategoryId, setOpenCategoryId] = useState<string | null>(null)
   const [isMobile, setIsMobile] = useState(false)
+
+  const brands = useMemo(() => getBrandsFromCategories(categories), [categories])
 
   useEffect(() => {
     const check = () => setIsMobile(typeof window !== "undefined" && window.innerWidth < MOBILE_BREAKPOINT)
@@ -48,9 +65,9 @@ export default function CategoriesPage() {
       <div className="min-h-screen bg-background">
         <div className="container mx-auto px-4 py-8">
           {/* Page Header */}
-          <div className="text-center mb-6 sm:mb-10 px-1">
+          <div className="mb-6 sm:mb-10 px-1">
             <h1 className="text-2xl sm:text-3xl font-semibold mb-1.5 sm:mb-2 text-foreground">Shop by Category</h1>
-            <p className="text-muted-foreground max-w-2xl mx-auto text-xs sm:text-sm">
+            <p className="text-muted-foreground max-w-2xl text-xs sm:text-sm">
               Discover our range of technology products by category
             </p>
           </div>
@@ -58,11 +75,8 @@ export default function CategoriesPage() {
           {isLoading && (
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4">
               {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
-                <div key={i} className="rounded-lg border border-border overflow-hidden bg-card">
-                  <div className="aspect-[4/3] w-full bg-muted animate-pulse" />
-                  <div className="p-2 sm:p-2.5">
-                    <div className="h-3 w-full bg-muted rounded animate-pulse" />
-                  </div>
+                <div key={i} className="rounded-lg border border-border overflow-hidden bg-card p-3 sm:p-4">
+                  <div className="h-5 w-3/4 bg-muted rounded animate-pulse" />
                 </div>
               ))}
             </div>
@@ -97,7 +111,7 @@ export default function CategoriesPage() {
                   >
                     <Link
                       href={hasSubcategories && isMobile ? "#" : `/categories/${category.slug}`}
-                      className="block"
+                      className="flex items-center gap-2 p-3 sm:p-4"
                       onClick={(e) => {
                         if (hasSubcategories && isMobile) {
                           e.preventDefault()
@@ -107,24 +121,10 @@ export default function CategoriesPage() {
                         }
                       }}
                     >
-                      <div className="aspect-[4/3] w-full bg-muted overflow-hidden">
-                        {category.image_url ? (
-                          <img
-                            src={category.image_url}
-                            alt={category.name}
-                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                          />
-                        ) : (
-                          <div className="w-full h-full flex items-center justify-center bg-muted">
-                            <Package className="w-6 h-6 sm:w-8 sm:h-8 text-muted-foreground" />
-                          </div>
-                        )}
-                      </div>
-                      <div className="p-2 sm:p-2.5">
-                        <p className="text-xs sm:text-xs font-medium text-foreground line-clamp-2 leading-tight group-hover:text-primary transition-colors min-h-[2rem] sm:min-h-0">
-                          {category.name}
-                        </p>
-                      </div>
+                      <Package className="w-4 h-4 sm:w-5 sm:h-5 text-muted-foreground shrink-0" />
+                      <p className="text-xs sm:text-sm font-medium text-foreground line-clamp-2 leading-tight group-hover:text-primary transition-colors">
+                        {category.name}
+                      </p>
                     </Link>
 
                     {/* Subcategories: hover on desktop, open state on mobile */}
@@ -158,9 +158,6 @@ export default function CategoriesPage() {
                               className="block text-xs py-2.5 sm:py-1.5 px-2 rounded-md hover:bg-accent active:bg-accent text-foreground hover:text-primary transition-colors touch-manipulation min-h-[44px] sm:min-h-0 flex items-center"
                             >
                               {sub.name}
-                              {sub.product_count != null && (
-                                <span className="text-muted-foreground ml-1">({sub.product_count})</span>
-                              )}
                             </Link>
                           ))}
                           {category.subcategories.length > 10 && (
@@ -182,6 +179,25 @@ export default function CategoriesPage() {
                   </div>
                 )
               })}
+            </div>
+          )}
+
+          {/* Shop by Brands */}
+          {!isLoading && !error && brands.length > 0 && (
+            <div className="mt-6 sm:mt-8">
+              <h2 className="text-lg sm:text-xl font-semibold text-foreground mb-3 sm:mb-4">Shop by Brand</h2>
+              <div className="flex flex-wrap gap-2 sm:gap-3">
+                {brands.map((brand) => (
+                  <Link
+                    key={brand}
+                    href={`/brands/${encodeURIComponent(brand)}`}
+                    className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-medium text-foreground hover:bg-accent hover:border-primary/30 hover:text-primary transition-colors"
+                  >
+                    <Tag className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-muted-foreground shrink-0" />
+                    {brand}
+                  </Link>
+                ))}
+              </div>
             </div>
           )}
 

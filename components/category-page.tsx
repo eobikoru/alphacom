@@ -4,7 +4,6 @@ import { useState, useMemo, useEffect } from "react"
 import { Search, Filter, Grid3X3, List, ChevronDown, Heart, ShoppingCart } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Badge } from "@/components/ui/badge"
 import { Card, CardContent } from "@/components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -307,7 +306,7 @@ export function CategoryPage({ categorySlug, selectedSubcategory }: CategoryPage
                 <SelectItem value="all">All Categories</SelectItem>
                 {subcategories.map((subcategory: any) => (
                   <SelectItem key={subcategory.id} value={subcategory.slug}>
-                    {subcategory.name} ({subcategory.product_count || 0} items)
+                    {subcategory.name}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -348,16 +347,6 @@ export function CategoryPage({ categorySlug, selectedSubcategory }: CategoryPage
                   >
                     {subcategory.name}
                   </span>
-                  <Badge
-                    variant="secondary"
-                    className={`text-xs px-2 py-0.5 ${
-                      selectedSubcategory === subcategory.slug
-                        ? "bg-cyan-100 text-cyan-600 border-cyan-200"
-                        : "bg-muted text-muted-foreground group-hover:bg-cyan-100 group-hover:text-cyan-600"
-                    }`}
-                  >
-                    {subcategory.product_count || 0}
-                  </Badge>
                 </div>
               </Link>
             ))}
