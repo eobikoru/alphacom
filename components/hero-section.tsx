@@ -9,23 +9,16 @@ const heroSlides = [
   {
     id: 1,
     title: "Your Reliable",
-    highlight: "Tech Partner",
-    subtitle: "100% Warranty · Premium gadgets & support",
-    image: "/camera-equipment.jpg",
+    highlight: "Logitech Partner",
+    subtitle: "Official Logitech store with warranty-backed peripherals and dedicated support.",
+    image: "/logitech.jpeg",
   },
   {
     id: 2,
-    title: "Premium",
-    highlight: "Gaming Setup",
-    subtitle: "High-performance devices & accessories",
-    image: "/gaming-setup.jpg",
-  },
-  {
-    id: 3,
-    title: "Complete Your",
-    highlight: "Setup",
-    subtitle: "Cases, cables, chargers & more — for every device",
-    image: "/slide5.jpg",
+    title: "Your Reliable",
+    highlight: "Sandisk Partner",
+    subtitle: "Trusted Sandisk storage solutions with authentic products and warranty.",
+    image: "/sandisk.jpeg",
   },
 ]
 
