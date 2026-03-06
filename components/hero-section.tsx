@@ -10,15 +10,16 @@ const heroSlides = [
     id: 1,
     title: "Your Reliable",
     highlight: "Logitech Partner",
-    subtitle: "Official Logitech store with warranty-backed peripherals and dedicated support.",
-    image: "/logitech.jpeg",
+    subtitle: "Trusted Logitech products and warranty.",
+    image: "/sandisk.jpeg",
+
   },
   {
     id: 2,
     title: "Your Reliable",
     highlight: "Sandisk Partner",
-    subtitle: "Trusted Sandisk storage solutions with authentic products and warranty.",
-    image: "/sandisk.jpeg",
+    subtitle: "Trusted Sandisk products and warranty.",
+    image: "/logitech.jpeg",
   },
 ]
 
