@@ -79,7 +79,7 @@ export function FlashSales() {
                 Flash Sales
               </div>
               <p className="text-white/90 text-sm tabular-nums">Time Left: {timeLeft}</p>
-              <span className="text-white/90 text-sm">See All</span>
+              <Link href="/flash-sales" className="text-white/90 text-sm hover:underline">See All</Link>
             </div>
           </div>
           <div className="bg-white dark:bg-card px-4 py-4">
@@ -110,7 +110,7 @@ export function FlashSales() {
             Time Left: <span className="font-semibold">{timeLeft}</span>
           </p>
           <Link
-            href="/categories"
+            href="/flash-sales"
             className="text-white font-medium text-sm hover:underline flex items-center gap-0.5"
           >
             See All <span className="ml-0.5">&gt;</span>

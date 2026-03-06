@@ -57,7 +57,7 @@ export function TopSales() {
                 <TrendingUp className="h-5 w-5" />
                 Top Sales
               </div>
-              <span className="text-sm text-white/90">See All</span>
+              <Link href="/top-sales" className="text-sm text-white/90 hover:underline">See All</Link>
             </div>
           </div>
           <div className="bg-white dark:bg-card px-4 py-4">
@@ -83,7 +83,7 @@ export function TopSales() {
               <TrendingUp className="h-5 w-5" />
               Top Sales
             </div>
-            <Link href="/categories" className="text-sm text-white/90 hover:underline flex items-center gap-0.5">
+            <Link href="/top-sales" className="text-sm text-white/90 hover:underline flex items-center gap-0.5">
               See All <span>&gt;</span>
             </Link>
           </div>
