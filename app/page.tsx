@@ -5,18 +5,19 @@ import { ShopByBrands } from "@/components/shop-by-brands"
 import { FlashSales } from "@/components/flash-sales"
 import { TopSales } from "@/components/top-sales"
 import { FeaturedProducts } from "@/components/featured-products"
+import { LandingScrollAnimations } from "@/components/landing-scroll-animations"
 
 export default function HomePage() {
   return (
     <AppLayout>
-      <main>
+      <LandingScrollAnimations>
         <HeroSection />
         <FlashSales />
         <TopSales />
         <ProductCategories />
         <ShopByBrands />
         <FeaturedProducts />
-      </main>
+      </LandingScrollAnimations>
     </AppLayout>
   )
 }

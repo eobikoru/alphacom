@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button"
 import { ArrowRight, Shield, Truck, Headphones, ChevronLeft, ChevronRight } from "lucide-react"
 import { useState, useEffect, useRef } from "react"
 import Link from "next/link"
+import gsap from "gsap"
 
 const heroSlides = [
   {
@@ -29,6 +30,10 @@ export function HeroSection() {
   const [currentSlide, setCurrentSlide] = useState(0)
   const [isAutoPlaying, setIsAutoPlaying] = useState(true)
   const resumeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const titleRef = useRef<HTMLSpanElement>(null)
+  const highlightRef = useRef<HTMLSpanElement>(null)
+  const subtitleRef = useRef<HTMLParagraphElement>(null)
+  const imageRef = useRef<HTMLElement>(null)
 
   useEffect(() => {
     if (!isAutoPlaying) return
@@ -37,6 +42,20 @@ export function HeroSection() {
     }, 5000)
     return () => clearInterval(interval)
   }, [isAutoPlaying])
+
+  useEffect(() => {
+    const textNodes = [titleRef.current, highlightRef.current, subtitleRef.current].filter(Boolean) as HTMLElement[]
+    const imageEl = imageRef.current
+    if (textNodes.length === 0 && !imageEl) return
+
+    const tl = gsap.timeline({ defaults: { ease: "power2.out" } })
+    if (textNodes.length > 0) {
+      tl.fromTo(textNodes, { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.55, stagger: 0.1 })
+    }
+    if (imageEl) {
+      tl.fromTo(imageEl, { opacity: 0, scale: 0.96, x: 24 }, { opacity: 1, scale: 1, x: 0, duration: 0.6 }, textNodes.length > 0 ? "-=0.35" : 0)
+    }
+  }, [currentSlide])
 
   const handleHeroMouseEnter = () => {
     if (resumeTimeoutRef.current) clearTimeout(resumeTimeoutRef.current)
@@ -78,14 +97,17 @@ export function HeroSection() {
         <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
           {/* Copy + CTAs */}
           <div className="space-y-6 text-center lg:text-left">
-            <header className="space-y-2">
+            <header className="space-y-2 overflow-hidden">
               <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground leading-tight" itemProp="headline">
-                <span className="font-normal">{currentSlideData.title} </span>
-                <span className="bg-gradient-to-r from-orange-500 to-rose-500 bg-clip-text text-transparent">
+                <span ref={titleRef} className="font-normal inline-block">{currentSlideData.title} </span>
+                <span
+                  ref={highlightRef}
+                  className="bg-gradient-to-r from-orange-500 to-rose-500 bg-clip-text text-transparent inline-block"
+                >
                   {currentSlideData.highlight}
                 </span>
               </h1>
-              <p className="text-muted-foreground text-sm sm:text-base max-w-md mx-auto lg:mx-0">
+              <p ref={subtitleRef} className="text-muted-foreground text-sm sm:text-base max-w-md mx-auto lg:mx-0">
                 {currentSlideData.subtitle}
               </p>
             </header>
@@ -145,7 +167,10 @@ export function HeroSection() {
           {/* Carousel image - compact */}
           <div className="relative group">
             <div className="absolute -inset-2 bg-gradient-to-r from-orange-400/20 to-rose-500/20 rounded-2xl blur-xl opacity-60 group-hover:opacity-80 transition-opacity" />
-            <figure className="relative overflow-hidden rounded-2xl border border-border bg-muted shadow-lg aspect-[4/3] max-h-[280px] lg:max-h-[320px]">
+            <figure
+              ref={imageRef}
+              className="relative overflow-hidden rounded-2xl border border-border bg-muted shadow-lg aspect-[4/3] max-h-[280px] lg:max-h-[320px]"
+            >
               <img
                 src={currentSlideData.image || "/placeholder.svg?height=320&width=480"}
                 alt={`${currentSlideData.title} ${currentSlideData.highlight}`}
