@@ -59,6 +59,9 @@ export function HeroSection() {
 
   const currentSlideData = heroSlides[currentSlide]
 
+
+
+  
   return (
     <section
       className="relative overflow-hidden rounded-b-2xl bg-gradient-to-br from-orange-400/15 via-background to-rose-500/15 border-b border-border"
