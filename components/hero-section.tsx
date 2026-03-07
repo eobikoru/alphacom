@@ -148,8 +148,8 @@ export function HeroSection() {
                   <Truck className="h-5 w-5 text-orange-500" aria-hidden />
                 </div>
                 <div>
-                  <p className="font-medium text-foreground text-xs sm:text-sm" itemProp="name">Free Shipping</p>
-                  <p className="text-[10px] sm:text-xs text-muted-foreground" itemProp="description">Orders over ₦50k</p>
+                  <p className="font-medium text-foreground text-xs sm:text-sm" itemProp="name">Fast Shipping</p>
+                  <p className="text-[10px] sm:text-xs text-muted-foreground" itemProp="description">Nationwide delivery</p>
                 </div>
               </div>
               <div className="flex flex-col sm:flex-row items-center gap-2 text-center sm:text-left" itemScope itemType="https://schema.org/Service">
