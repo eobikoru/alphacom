@@ -1,5 +1,7 @@
+import { SITE_URL, SEO_BRANDS } from "@/lib/site"
+
 export async function GET(): Promise<Response> {
-  const baseUrl = "https://your-domain.com"
+  const baseUrl = SITE_URL
   const currentDate = new Date().toISOString()
 
   // Static pages with priorities and change frequencies
@@ -9,11 +11,20 @@ export async function GET(): Promise<Response> {
     { url: "/contact", priority: 0.8, changefreq: "monthly", lastmod: currentDate },
     { url: "/stores", priority: 0.7, changefreq: "weekly", lastmod: currentDate },
     { url: "/categories", priority: 0.9, changefreq: "daily", lastmod: currentDate },
+    { url: "/products", priority: 0.9, changefreq: "daily", lastmod: currentDate },
     { url: "/privacy", priority: 0.3, changefreq: "yearly", lastmod: currentDate },
     { url: "/terms", priority: 0.3, changefreq: "yearly", lastmod: currentDate },
     { url: "/return-policy", priority: 0.4, changefreq: "monthly", lastmod: currentDate },
     { url: "/warranty", priority: 0.4, changefreq: "monthly", lastmod: currentDate },
   ]
+
+  // Brand pages – so "Logitech", "Anker", etc. surface in search
+  const brandUrls = SEO_BRANDS.map((b) => ({
+    url: `/brands/${encodeURIComponent(b.slug)}`,
+    priority: 0.9,
+    changefreq: "weekly" as const,
+    lastmod: currentDate,
+  }))
 
   // Dynamic category pages
   const categories = [
@@ -57,8 +68,8 @@ export async function GET(): Promise<Response> {
     lastmod: currentDate,
   }))
 
-  // Combine all URLs
-  const allUrls = [...staticPages, ...categoryUrls, ...subcategoryUrls]
+  // Combine all URLs (brands included for Logitech, Anker, SanDisk, Micropack)
+  const allUrls = [...staticPages, ...brandUrls, ...categoryUrls, ...subcategoryUrls]
 
   const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"

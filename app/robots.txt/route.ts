@@ -47,6 +47,7 @@ Disallow: /*?page=*
 # Allow important directories
 Allow: /categories/
 Allow: /products/
+Allow: /brands/
 Allow: /images/
 Allow: /about/
 Allow: /contact/
@@ -64,12 +65,11 @@ Allow: /*.css$
 Allow: /*.js$
 
 # Sitemap locations
-Sitemap: https://your-domain.com/sitemap.xml
-Sitemap: https://your-domain.com/sitemap-products.xml
-Sitemap: https://your-domain.com/sitemap-categories.xml
+Sitemap: https://alphacomonline.com/sitemap.xml
+Sitemap: https://alphacomonline.com/sitemap-products.xml
 
 # Host directive
-Host: https://your-domain.com`
+Host: https://alphacomonline.com`
 
   return new Response(robotsTxt, {
     headers: {

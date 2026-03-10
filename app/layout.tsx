@@ -12,28 +12,35 @@ import NextTopLoader from "nextjs-toploader"
 import { WhatsAppWidget } from "@/components/whatsapp-widget"
 import { QueryProvider } from "@/lib/providers/query-provider"
 import { Toaster } from "@/components/ui/sonner"
+import { SITE_URL } from "@/lib/site"
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://www.alphacomonline.com"),
+  metadataBase: new URL(SITE_URL),
   title: {
     default: "AlphaCom Online | Premium Technology Store - Computer Village Lagos",
     template: "%s | AlphaCom Online",
   },
   description:
-    "Premium technology store in Computer Village, Lagos. Shop electronics, computers, accessories & more with expert support, competitive prices & fast delivery across Nigeria.",
+    "Premium technology store in Computer Village, Lagos. Shop Logitech, Anker, SanDisk, Micropack & more. Electronics, computers, accessories with 100% warranty, expert support & fast delivery across Nigeria.",
   keywords: [
     "alphacom online",
     "computer village lagos",
     "technology store nigeria",
+    "Logitech Nigeria",
+    "Logitech Lagos",
+    "Anker Nigeria",
+    "SanDisk Nigeria",
+    "Micropack Nigeria",
     "electronics shop ikeja",
     "computers lagos",
     "tech accessories",
     "premium electronics",
-    "nigeria technology",
+    "authorized Logitech",
+    "authorized Anker",
     "computer village store",
     "tech support lagos",
   ],
-  authors: [{ name: "AlphaCom Online", url: "https://www.alphacomonline.com" }],
+  authors: [{ name: "AlphaCom Online", url: SITE_URL }],
   creator: "AlphaCom Online",
   publisher: "AlphaCom Online",
   formatDetection: {
@@ -44,14 +51,14 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: "https://www.alphacomonline.com",
+    url: SITE_URL,
     siteName: "AlphaCom Online",
-    title: "AlphaCom Online | Premium Technology Store Lagos",
+    title: "AlphaCom Online | Premium Technology Store - Logitech, Anker, SanDisk Partner Lagos",
     description:
-      "Premium technology store in Computer Village, Lagos. Expert support, competitive prices & fast delivery across Nigeria.",
+      "Premium technology store in Computer Village, Lagos. Shop Logitech, Anker, SanDisk, Micropack. Expert support, 100% warranty & fast delivery across Nigeria.",
     images: [
       {
-        url: "https://www.alphacomonline.com/og-image.jpg",
+        url: `${SITE_URL}/og-image.jpg`,
         width: 1200,
         height: 630,
         alt: "AlphaCom Online - Premium Technology Store Lagos",
@@ -61,8 +68,8 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "AlphaCom Online | Premium Technology Store Lagos",
-    description: "Premium technology store in Computer Village, Lagos. Expert support & competitive prices.",
-    images: ["https://www.alphacomonline.com/twitter-image.jpg"],
+    description: "Premium technology store in Computer Village, Lagos. Logitech, Anker, SanDisk & more. Expert support & competitive prices.",
+    images: [`${SITE_URL}/twitter-image.jpg`],
     creator: "@alphacomonline",
   },
   robots: {
@@ -77,12 +84,12 @@ export const metadata: Metadata = {
     },
   },
   verification: {
-    google: "your-google-verification-code",
+    google: "c8oQppTwjVGtJpAyfFXvq-Io27nJKOCHmWbx0qhL8Xc",
     yandex: "your-yandex-verification-code",
     yahoo: "your-yahoo-verification-code",
   },
   alternates: {
-    canonical: "https://www.alphacomonline.com",
+    canonical: SITE_URL,
   },
   category: "technology",
 }
@@ -106,6 +113,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
+        <meta name="google-site-verification" content="c8oQppTwjVGtJpAyfFXvq-Io27nJKOCHmWbx0qhL8Xc" />
         <link rel="icon" href="/alphacomwhitelogo.ico" sizes="any" />
         <link rel="icon" href="/alphacomwhitelogo.ico" type="image/svg+xml" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
@@ -119,12 +127,12 @@ export default function RootLayout({
               "@context": "https://schema.org",
               "@type": "WebSite",
               name: "AlphaCom Online",
-              url: "https://www.alphacomonline.com",
+              url: SITE_URL,
               description:
-                "Premium technology store in Computer Village, Lagos offering quality electronics and expert support",
+                "Premium technology store in Computer Village, Lagos. Authorized partner for Logitech, Anker, SanDisk, Micropack. Quality electronics and expert support.",
               potentialAction: {
                 "@type": "SearchAction",
-                target: "https://www.alphacomonline.com/search?q={search_term_string}",
+                target: `${SITE_URL}/search?q={search_term_string}`,
                 "query-input": "required name=search_term_string",
               },
               sameAs: [
@@ -142,13 +150,13 @@ export default function RootLayout({
             __html: JSON.stringify({
               "@context": "https://schema.org",
               "@type": "LocalBusiness",
-              "@id": "https://www.alphacomonline.com/#organization",
+              "@id": `${SITE_URL}/#organization`,
               name: "AlphaCom Online",
-              url: "https://www.alphacomonline.com",
-              logo: "https://www.alphacomonline.com/logo.png",
-              image: "https://www.alphacomonline.com/og-image.jpg",
+              url: SITE_URL,
+              logo: `${SITE_URL}/logo.png`,
+              image: `${SITE_URL}/og-image.jpg`,
               description:
-                "Premium technology store offering quality electronics, computers, and accessories with expert support",
+                "Premium technology store. Authorized Logitech, Anker, SanDisk, Micropack partner. Computer Village Ikeja, Lagos. Quality electronics, computers & accessories with expert support.",
               priceRange: "$$",
               telephone: "+234 702 6384 967",
               email: "info@alphacomonline.com",

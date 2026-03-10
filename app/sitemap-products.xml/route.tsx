@@ -1,5 +1,7 @@
+import { SITE_URL } from "@/lib/site"
+
 export async function GET(): Promise<Response> {
-  const baseUrl = "https://your-domain.com"
+  const baseUrl = SITE_URL
   const currentDate = new Date().toISOString()
 
   // In a real app, fetch from database
