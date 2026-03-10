@@ -43,20 +43,28 @@ export interface CategoriesWithProductsResponse {
   data: CategoryWithProducts[]
 }
 
-/** All unique brand names from categories (for case-insensitive brand URL resolution). */
+/** All unique brand names from categories (case-insensitive dedup: "Logitech" and "logitech" → one entry). */
 export function getBrandsFromCategories(categories: CategoryWithProducts[]): string[] {
-  const set = new Set<string>()
+  const byLower = new Map<string, string>()
   for (const cat of categories) {
     for (const p of cat.direct_products || []) {
-      if (p.brand?.trim()) set.add(p.brand.trim())
+      const b = p.brand?.trim()
+      if (b) {
+        const key = b.toLowerCase()
+        if (!byLower.has(key)) byLower.set(key, b)
+      }
     }
     for (const sub of cat.subcategories || []) {
       for (const p of sub.products || []) {
-        if (p.brand?.trim()) set.add(p.brand.trim())
+        const b = p.brand?.trim()
+        if (b) {
+          const key = b.toLowerCase()
+          if (!byLower.has(key)) byLower.set(key, b)
+        }
       }
     }
   }
-  return Array.from(set).sort((a, b) => a.localeCompare(b))
+  return Array.from(byLower.values()).sort((a, b) => a.localeCompare(b, undefined, { sensitivity: "base" }))
 }
 
 export interface SubcategoriesResponse {
