@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 
-const FEATURED_BRANDS = [
+export const FEATURED_BRANDS = [
   {
     name: "Logitech",
     slug: "Logitech",
@@ -50,6 +50,8 @@ export function ShopByBrands() {
                 <img
                   src={brand.logoUrl}
                   alt={brand.name}
+                  loading="lazy"
+                  decoding="async"
                   className="max-w-full max-h-full w-auto h-auto object-contain opacity-90 group-hover:opacity-100 transition-opacity"
                 />
               </div>

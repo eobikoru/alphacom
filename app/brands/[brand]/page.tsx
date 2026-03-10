@@ -2,6 +2,7 @@
 
 import { useParams, useRouter } from "next/navigation"
 import Link from "next/link"
+import { useMemo } from "react"
 import { ArrowLeft } from "lucide-react"
 import { AppLayout } from "@/components/app-layout"
 import { Button } from "@/components/ui/button"
@@ -11,19 +12,59 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { ShoppingCart } from "lucide-react"
 import { useQuery } from "@tanstack/react-query"
 import { getProductsWithCategories } from "@/lib/api/products"
+import { getCategoriesWithProducts, getBrandsFromCategories } from "@/lib/api/categories"
 import { useCart } from "@/hooks/use-cart"
 import { toast } from "sonner"
+import { FEATURED_BRANDS } from "@/components/shop-by-brands"
 
 export default function BrandPage() {
   const params = useParams()
   const router = useRouter()
-  const brandName = typeof params.brand === "string" ? decodeURIComponent(params.brand) : ""
+  const urlBrand = typeof params.brand === "string" ? decodeURIComponent(params.brand) : ""
   const { addItem } = useCart()
+
+  const featuredMatch = useMemo(
+    () => FEATURED_BRANDS.find((b) => b.slug.toLowerCase() === urlBrand.toLowerCase())?.slug,
+    [urlBrand]
+  )
+
+  const { data: categoriesData } = useQuery({
+    queryKey: ["categories-with-products"],
+    queryFn: () => getCategoriesWithProducts(),
+    enabled: !!urlBrand && !featuredMatch,
+  })
+
+  const allBrands = useMemo(() => {
+    if (!categoriesData?.success || !categoriesData?.data) return []
+    return getBrandsFromCategories(categoriesData.data)
+  }, [categoriesData])
+
+  const brandName = useMemo(() => {
+    if (featuredMatch) return featuredMatch
+    const fromCategories = allBrands.find((b) => b.toLowerCase() === urlBrand.toLowerCase())
+    return fromCategories ?? urlBrand
+  }, [featuredMatch, allBrands, urlBrand])
+
+  const productsReady = !!urlBrand && (!!featuredMatch || (categoriesData !== undefined && categoriesData?.success))
 
   const { data, isLoading, error } = useQuery({
     queryKey: ["products", "brand", brandName],
-    queryFn: () => getProductsWithCategories({ page: 1, per_page: 24, search: brandName }),
-    enabled: !!brandName,
+    queryFn: async () => {
+      const first = await getProductsWithCategories({ page: 1, per_page: 100, search: brandName })
+      const totalPages = first.pagination.total_pages
+      if (totalPages <= 1) return first
+      const rest = await Promise.all(
+        Array.from({ length: totalPages - 1 }, (_, i) =>
+          getProductsWithCategories({ page: i + 2, per_page: 100, search: brandName })
+        )
+      )
+      return {
+        ...first,
+        data: [...first.data, ...rest.flatMap((r) => r.data)],
+        pagination: { ...first.pagination, total_pages: 1, has_next: false, has_prev: false },
+      }
+    },
+    enabled: productsReady,
   })
 
   const handleAddToCart = (product: any) => {

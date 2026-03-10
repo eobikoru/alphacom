@@ -35,6 +35,8 @@ export function SaleProductCard({
         <img
           src={product.main_image || "/placeholder.svg?height=96&width=144"}
           alt={product.name}
+          loading="lazy"
+          decoding="async"
           className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-300"
         />
         {product.discount_percentage != null && product.discount_percentage > 0 && (

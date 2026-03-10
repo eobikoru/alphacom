@@ -4,24 +4,9 @@ import Link from "next/link"
 import { ChevronRight, Package, Tag, X } from "lucide-react"
 import { AppLayout } from "@/components/app-layout"
 import { useEffect, useMemo, useState } from "react"
-import { getCategoriesWithProducts, type CategoryWithProducts } from "@/lib/api/categories"
+import { getCategoriesWithProducts, getBrandsFromCategories, type CategoryWithProducts } from "@/lib/api/categories"
 
 const MOBILE_BREAKPOINT = 768
-
-function getBrandsFromCategories(categories: CategoryWithProducts[]): string[] {
-  const set = new Set<string>()
-  for (const cat of categories) {
-    for (const p of cat.direct_products || []) {
-      if (p.brand?.trim()) set.add(p.brand.trim())
-    }
-    for (const sub of cat.subcategories || []) {
-      for (const p of sub.products || []) {
-        if (p.brand?.trim()) set.add(p.brand.trim())
-      }
-    }
-  }
-  return Array.from(set).sort((a, b) => a.localeCompare(b))
-}
 
 export default function CategoriesPage() {
   const [categories, setCategories] = useState<CategoryWithProducts[]>([])

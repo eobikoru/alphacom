@@ -43,6 +43,22 @@ export interface CategoriesWithProductsResponse {
   data: CategoryWithProducts[]
 }
 
+/** All unique brand names from categories (for case-insensitive brand URL resolution). */
+export function getBrandsFromCategories(categories: CategoryWithProducts[]): string[] {
+  const set = new Set<string>()
+  for (const cat of categories) {
+    for (const p of cat.direct_products || []) {
+      if (p.brand?.trim()) set.add(p.brand.trim())
+    }
+    for (const sub of cat.subcategories || []) {
+      for (const p of sub.products || []) {
+        if (p.brand?.trim()) set.add(p.brand.trim())
+      }
+    }
+  }
+  return Array.from(set).sort((a, b) => a.localeCompare(b))
+}
+
 export interface SubcategoriesResponse {
   success: boolean
   message: string

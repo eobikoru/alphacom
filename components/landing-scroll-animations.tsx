@@ -1,63 +1,45 @@
 "use client"
 
-import { useRef, useLayoutEffect, type ReactNode } from "react"
-import gsap from "gsap"
-import { ScrollTrigger } from "gsap/ScrollTrigger"
+import { useRef, useEffect, Children, type ReactNode } from "react"
 
-gsap.registerPlugin(ScrollTrigger)
-
-type SectionConfig = {
-  y?: number
-  x?: number
-  scale?: number
-  opacity?: number
-  duration?: number
-  ease?: string
-  rotate?: number
-}
-
-const sectionAnimations: SectionConfig[] = [
-  { scale: 0.98, opacity: 0, duration: 1, ease: "power3.out" },
-  { y: 80, opacity: 0, duration: 0.95, ease: "power3.out" },
-  { x: 80, opacity: 0, duration: 0.95, ease: "power3.out" },
-  { y: 70, opacity: 0, scale: 0.98, duration: 1, ease: "power3.out" },
-  { x: -80, opacity: 0, duration: 0.95, ease: "power3.out" },
-  { y: 60, opacity: 0, scale: 0.97, duration: 1, ease: "power3.out" },
-]
+const ROOT_MARGIN = "120px"
+const THRESHOLD = 0.01
 
 export function LandingScrollAnimations({ children }: { children: ReactNode }) {
   const mainRef = useRef<HTMLDivElement>(null)
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     const main = mainRef.current
     if (!main) return
 
-    const sections = gsap.utils.toArray<HTMLElement>(main.children)
-    const ctx = gsap.context(() => {
-      sections.forEach((section, i) => {
-        const config = sectionAnimations[i % sectionAnimations.length]
-        const fromVars: gsap.TweenVars = {
-          opacity: config.opacity ?? 0,
-          duration: config.duration ?? 0.85,
-          ease: (config.ease as gsap.EaseString) ?? "power3.out",
-          scrollTrigger: {
-            trigger: section,
-            start: "top 88%",
-            end: "bottom 15%",
-            toggleActions: "play none none reverse",
-          },
+    const wrappers = main.querySelectorAll<HTMLElement>("[data-landing-section]")
+    if (wrappers.length === 0) return
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          const el = entry.target as HTMLElement
+          if (entry.isIntersecting) el.classList.add("landing-section-visible")
         }
-        if (config.y != null) fromVars.y = config.y
-        if (config.x != null) fromVars.x = config.x
-        if (config.scale != null) fromVars.scale = config.scale
-        if (config.rotate != null) fromVars.rotation = config.rotate
+      },
+      { rootMargin: ROOT_MARGIN, threshold: THRESHOLD }
+    )
 
-        gsap.from(section, fromVars)
-      })
-    }, main)
-
-    return () => ctx.revert()
+    wrappers.forEach((el) => observer.observe(el))
+    return () => observer.disconnect()
   }, [])
 
-  return <main ref={mainRef}>{children}</main>
+  return (
+    <main ref={mainRef} className="landing-main">
+      {Children.map(children, (child, i) => (
+        <div
+          key={i}
+          data-landing-section
+          className={`landing-section-wrapper${i === 0 ? " landing-section-visible" : ""}`}
+        >
+          {child}
+        </div>
+      ))}
+    </main>
+  )
 }

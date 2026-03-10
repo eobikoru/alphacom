@@ -4,9 +4,9 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  --background: oklch(1 0 0);
+  --background: #F0F4F8;
   --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
+  --card: #F0F4F8;
   --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.145 0 0);
@@ -40,9 +40,9 @@
 }
 
 .light {
-  --background: oklch(1 0 0);
+  --background: #F0F4F8;
   --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
+  --card: #F0F4F8;
   --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.145 0 0);
@@ -223,5 +223,21 @@
 
   .no-scrollbar::-webkit-scrollbar {
     display: none;
+  }
+
+  /* Landing scroll: GPU-friendly reveal + content-visibility for smoother scroll */
+  .landing-section-wrapper {
+    content-visibility: auto;
+    contain-intrinsic-size: auto 200px;
+    opacity: 0;
+    transform: translateY(24px);
+    transition:
+      opacity 0.45s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+      transform 0.45s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+
+  .landing-section-wrapper.landing-section-visible {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
