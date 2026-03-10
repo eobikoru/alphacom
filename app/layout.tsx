@@ -21,7 +21,7 @@ export const metadata: Metadata = {
     template: "%s | AlphaCom Online",
   },
   description:
-    "Premium technology store in Computer Village, Lagos. Shop Logitech, Anker, SanDisk, Micropack & more. Electronics, computers, accessories with 100% warranty, expert support & fast delivery across Nigeria.",
+    "Premium technology store in Computer Village, Lagos. Shop Logitech, Anker, SanDisk, Samsung, Apple, Dell, HP, Canon, Sony & more. Electronics, computers, accessories with 100% warranty, expert support & fast delivery across Nigeria.",
   keywords: [
     "alphacom online",
     "computer village lagos",
@@ -30,7 +30,13 @@ export const metadata: Metadata = {
     "Logitech Lagos",
     "Anker Nigeria",
     "SanDisk Nigeria",
-    "Micropack Nigeria",
+    "Samsung Nigeria",
+    "Samsung Lagos",
+    "Apple accessories Lagos",
+    "Dell Lagos",
+    "HP Lagos",
+    "Canon Lagos",
+    "Sony Nigeria",
     "electronics shop ikeja",
     "computers lagos",
     "tech accessories",
@@ -53,9 +59,9 @@ export const metadata: Metadata = {
     locale: "en_US",
     url: SITE_URL,
     siteName: "AlphaCom Online",
-    title: "AlphaCom Online | Premium Technology Store - Logitech, Anker, SanDisk Partner Lagos",
+    title: "AlphaCom Online | Premium Technology Store - Logitech, Samsung, Apple, Dell, HP Partner Lagos",
     description:
-      "Premium technology store in Computer Village, Lagos. Shop Logitech, Anker, SanDisk, Micropack. Expert support, 100% warranty & fast delivery across Nigeria.",
+      "Premium technology store in Computer Village, Lagos. Shop Logitech, Anker, SanDisk, Samsung, Apple, Dell, HP, Canon, Sony & more. Expert support, 100% warranty & fast delivery across Nigeria.",
     images: [
       {
         url: `${SITE_URL}/og-image.jpg`,
@@ -68,7 +74,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "AlphaCom Online | Premium Technology Store Lagos",
-    description: "Premium technology store in Computer Village, Lagos. Logitech, Anker, SanDisk & more. Expert support & competitive prices.",
+    description: "Premium technology store in Computer Village, Lagos. Logitech, Samsung, Apple, Dell, HP, Canon, Sony & more. Expert support & competitive prices.",
     images: [`${SITE_URL}/twitter-image.jpg`],
     creator: "@alphacomonline",
   },
@@ -129,7 +135,7 @@ export default function RootLayout({
               name: "AlphaCom Online",
               url: SITE_URL,
               description:
-                "Premium technology store in Computer Village, Lagos. Authorized partner for Logitech, Anker, SanDisk, Micropack. Quality electronics and expert support.",
+                "Premium technology store in Computer Village, Lagos. Authorized partner for Logitech, Anker, SanDisk, Samsung, Apple, Dell, HP, Canon, Sony, Micropack & more. Quality electronics and expert support.",
               potentialAction: {
                 "@type": "SearchAction",
                 target: `${SITE_URL}/search?q={search_term_string}`,
@@ -156,7 +162,7 @@ export default function RootLayout({
               logo: `${SITE_URL}/logo.png`,
               image: `${SITE_URL}/og-image.jpg`,
               description:
-                "Premium technology store. Authorized Logitech, Anker, SanDisk, Micropack partner. Computer Village Ikeja, Lagos. Quality electronics, computers & accessories with expert support.",
+                "Premium technology store. Authorized partner for Logitech, Anker, SanDisk, Samsung, Apple, Dell, HP, Canon, Sony, Micropack & more. Computer Village Ikeja, Lagos. Quality electronics, computers & accessories with expert support.",
               priceRange: "$$",
               telephone: "+234 702 6384 967",
               email: "info@alphacomonline.com",
