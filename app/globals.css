@@ -212,6 +212,34 @@
     opacity: 0;
   }
 
+  /* Floating bubbles for Shop by Brand – gentle upward flow */
+  @keyframes bubble-float {
+    0% {
+      transform: translate(0, 0) scale(1);
+      opacity: 0.35;
+    }
+    25% {
+      transform: translate(6px, -25px) scale(1.02);
+      opacity: 0.5;
+    }
+    50% {
+      transform: translate(-6px, -55px) scale(0.98);
+      opacity: 0.4;
+    }
+    75% {
+      transform: translate(8px, -85px) scale(1.01);
+      opacity: 0.45;
+    }
+    100% {
+      transform: translate(0, -110px) scale(1);
+      opacity: 0.3;
+    }
+  }
+
+  .animate-bubble-float {
+    animation: bubble-float 10s ease-in-out infinite;
+  }
+
   .bg-300 {
     background-size: 300% 300%;
   }

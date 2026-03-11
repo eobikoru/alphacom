@@ -14,8 +14,8 @@ export default function HomePage() {
         <HeroSection />
         <FlashSales />
         <TopSales />
-        <ProductCategories />
         <ShopByBrands />
+        <ProductCategories />
         <FeaturedProducts />
       </LandingScrollAnimations>
     </AppLayout>
