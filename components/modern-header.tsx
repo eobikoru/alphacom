@@ -8,7 +8,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Separator } from "@/components/ui/separator"
 import { Skeleton } from "@/components/ui/skeleton"
 import Link from "next/link"
-import { useRouter } from "next/navigation"
+import { useRouter, usePathname } from "next/navigation"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { CartDrawer, type CartDrawerRef } from "@/components/cart-drawer"
 import { useState, useRef, useEffect, useMemo } from "react"
@@ -38,6 +38,8 @@ export function ModernHeader({ blackNavbar }: ModernHeaderProps) {
   const searchRef = useRef<HTMLDivElement>(null)
   const searchDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const router = useRouter()
+  const pathname = usePathname()
+  const isLandingPage = pathname === "/"
   const { isAuthenticated, user, logout } = useAuth()
   const isDark = useAppSelector((state) => state.theme.isDark)
 
@@ -215,7 +217,7 @@ export function ModernHeader({ blackNavbar }: ModernHeaderProps) {
             )}
           </Link>
 
-          {/* Search - categories, subcategories, products */}
+          {/* Search - categories, subcategories, products (desktop) */}
           <div ref={searchRef} className="flex-1 max-w-xl mx-4 hidden md:block relative">
             <form onSubmit={handleSearch} className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
@@ -225,6 +227,7 @@ export function ModernHeader({ blackNavbar }: ModernHeaderProps) {
                 onChange={(e) => {
                   setSearchQuery(e.target.value)
                   if (e.target.value.trim().length >= MIN_QUERY_LENGTH) setIsSearchOpen(true)
+                  else setIsSearchOpen(false)
                 }}
                 onFocus={() => searchQuery.trim().length >= MIN_QUERY_LENGTH && setIsSearchOpen(true)}
                 className="pl-10 pr-4 h-10 rounded-lg border bg-muted/50 focus-visible:ring-2 focus-visible:ring-primary"
@@ -405,9 +408,84 @@ export function ModernHeader({ blackNavbar }: ModernHeaderProps) {
           </div>
         </div>
 
+        {/* Landing page only: show search input on mobile (same as inside hamburger) */}
+        {isLandingPage && (
+          <div ref={searchRef} className="mt-3 md:hidden">
+            <form onSubmit={handleSearch} className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
+              <Input
+                placeholder="Search categories, subcategories & products..."
+                value={searchQuery}
+                onChange={(e) => {
+                  setSearchQuery(e.target.value)
+                  if (e.target.value.trim().length >= MIN_QUERY_LENGTH) setIsSearchOpen(true)
+                  else setIsSearchOpen(false)
+                }}
+                onFocus={() => searchQuery.trim().length >= MIN_QUERY_LENGTH && setIsSearchOpen(true)}
+                className="pl-10 pr-4 h-10 rounded-lg border bg-muted/60 focus-visible:ring-2 focus-visible:ring-primary"
+              />
+            </form>
+            {isSearchOpen && q.length >= MIN_QUERY_LENGTH && (
+              <div className="mt-2 rounded-lg border border-border bg-popover shadow-lg max-h-64 overflow-y-auto z-50">
+                <div className="p-2">
+                  {matchedCategories.length > 0 && (
+                    <div className="mb-2">
+                      <p className="px-2 py-1 text-xs font-semibold text-muted-foreground flex items-center gap-1.5">
+                        <FolderTree className="h-3.5 w-3.5" /> Categories
+                      </p>
+                      {matchedCategories.slice(0, 5).map((c) => (
+                        <Link key={c.id} href={`/categories/${c.slug}`} onClick={() => { setIsSearchOpen(false); setSearchQuery(""); handleNavClick(); }} className="block px-3 py-2 text-sm rounded-md hover:bg-accent">
+                          {c.name}
+                        </Link>
+                      ))}
+                    </div>
+                  )}
+                  {matchedSubcategories.length > 0 && (
+                    <div className="mb-2">
+                      <p className="px-2 py-1 text-xs font-semibold text-muted-foreground flex items-center gap-1.5">
+                        <Layers className="h-3.5 w-3.5" /> Subcategories
+                      </p>
+                      {matchedSubcategories.slice(0, 5).map((s, i) => (
+                        <Link key={`${s.categorySlug}-${s.slug}-${i}`} href={`/categories/${s.categorySlug}/${s.slug}`} onClick={() => { setIsSearchOpen(false); setSearchQuery(""); handleNavClick(); }} className="block px-3 py-2 text-sm rounded-md hover:bg-accent">
+                          {s.name}
+                        </Link>
+                      ))}
+                    </div>
+                  )}
+                  {(searchProducts.length > 0 || productsSearchLoading) && (
+                    <div>
+                      <p className="px-2 py-1 text-xs font-semibold text-muted-foreground flex items-center gap-1.5">
+                        <ShoppingBag className="h-3.5 w-3.5" /> Products
+                      </p>
+                      {productsSearchLoading ? (
+                        <div className="px-3 py-2 text-sm text-muted-foreground">Searching...</div>
+                      ) : (
+                        searchProducts.slice(0, 5).map((p) => (
+                          <Link key={p.id} href={`/products/${p.id}`} onClick={() => { setIsSearchOpen(false); setSearchQuery(""); handleNavClick(); }} className="flex items-center gap-3 px-3 py-2 text-sm rounded-md hover:bg-accent">
+                            {p.main_image && <img src={p.main_image} alt="" className="h-10 w-10 rounded object-cover shrink-0" />}
+                            <span className="truncate">{p.name}</span>
+                          </Link>
+                        ))
+                      )}
+                    </div>
+                  )}
+                  {!productsSearchLoading && matchedCategories.length === 0 && matchedSubcategories.length === 0 && searchProducts.length === 0 && (
+                    <div className="px-3 py-3 text-sm text-muted-foreground">No results.</div>
+                  )}
+                </div>
+                <div className="border-t border-border p-2">
+                  <Link href={`/search?q=${encodeURIComponent(searchQuery.trim())}`} onClick={() => { setIsSearchOpen(false); setSearchQuery(""); handleNavClick(); }} className="block w-full text-center text-sm font-medium text-primary hover:underline">
+                    View all results
+                  </Link>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
         {isMobileMenuOpen && (
           <div className="md:hidden mt-4 p-4 rounded-lg border bg-card border-border max-h-[80vh] overflow-y-auto no-scrollbar">
-            {/* Mobile Search */}
+            {/* Mobile Search (same as landing block above) */}
             <div className="mb-4" ref={searchRef}>
               <form onSubmit={handleSearch} className="relative">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -417,6 +495,7 @@ export function ModernHeader({ blackNavbar }: ModernHeaderProps) {
                   onChange={(e) => {
                     setSearchQuery(e.target.value)
                     if (e.target.value.trim().length >= MIN_QUERY_LENGTH) setIsSearchOpen(true)
+                    else setIsSearchOpen(false)
                   }}
                   onFocus={() => searchQuery.trim().length >= MIN_QUERY_LENGTH && setIsSearchOpen(true)}
                   className="pl-10 pr-4 h-11 rounded-lg bg-muted/50"
