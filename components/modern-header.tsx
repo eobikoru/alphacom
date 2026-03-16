@@ -217,8 +217,8 @@ export function ModernHeader({ blackNavbar }: ModernHeaderProps) {
             )}
           </Link>
 
-          {/* Search - categories, subcategories, products (desktop) */}
-          <div ref={searchRef} className="flex-1 max-w-xl mx-4 hidden md:block relative">
+          {/* Search - categories, subcategories, products (desktop; hidden on landing so one search shows below for all devices) */}
+          <div ref={searchRef} className={`flex-1 max-w-xl mx-4 relative ${isLandingPage ? "hidden" : "hidden md:block"}`}>
             <form onSubmit={handleSearch} className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
               <Input
@@ -245,7 +245,13 @@ export function ModernHeader({ blackNavbar }: ModernHeaderProps) {
                         <Link
                           key={c.id}
                           href={`/categories/${c.slug}`}
-                          onClick={() => { setIsSearchOpen(false); setSearchQuery(""); handleNavClick(); }}
+                          onClick={(e) => {
+                            e.preventDefault()
+                            setIsSearchOpen(false)
+                            setSearchQuery("")
+                            handleNavClick()
+                            router.push(`/categories/${c.slug}`)
+                          }}
                           className="block px-3 py-2 text-sm rounded-md hover:bg-accent"
                         >
                           {c.name}
@@ -262,7 +268,13 @@ export function ModernHeader({ blackNavbar }: ModernHeaderProps) {
                         <Link
                           key={`${s.categorySlug}-${s.slug}-${i}`}
                           href={`/categories/${s.categorySlug}/${s.slug}`}
-                          onClick={() => { setIsSearchOpen(false); setSearchQuery(""); handleNavClick(); }}
+                          onClick={(e) => {
+                            e.preventDefault()
+                            setIsSearchOpen(false)
+                            setSearchQuery("")
+                            handleNavClick()
+                            router.push(`/categories/${s.categorySlug}/${s.slug}`)
+                          }}
                           className="block px-3 py-2 text-sm rounded-md hover:bg-accent"
                         >
                           {s.name}
@@ -281,8 +293,14 @@ export function ModernHeader({ blackNavbar }: ModernHeaderProps) {
                         searchProducts.map((p) => (
                           <Link
                             key={p.id}
-                            href={`/products/${p.id}`}
-                            onClick={() => { setIsSearchOpen(false); setSearchQuery(""); handleNavClick(); }}
+                            href={`/products/id/${p.id}`}
+                            onClick={(e) => {
+                              e.preventDefault()
+                              setIsSearchOpen(false)
+                              setSearchQuery("")
+                              handleNavClick()
+                              router.push(`/products/id/${p.id}`)
+                            }}
                             className="flex items-center gap-3 px-3 py-2 text-sm rounded-md hover:bg-accent"
                           >
                             {p.main_image && (
@@ -301,7 +319,13 @@ export function ModernHeader({ blackNavbar }: ModernHeaderProps) {
                 <div className="border-t border-border p-2">
                   <Link
                     href={`/search?q=${encodeURIComponent(searchQuery.trim())}`}
-                    onClick={() => { setIsSearchOpen(false); setSearchQuery(""); handleNavClick(); }}
+                    onClick={(e) => {
+                      e.preventDefault()
+                      setIsSearchOpen(false)
+                      setSearchQuery("")
+                      handleNavClick()
+                      router.push(`/search?q=${encodeURIComponent(searchQuery.trim())}`)
+                    }}
                     className="block w-full text-center text-sm font-medium text-primary hover:underline"
                   >
                     View all results for &quot;{searchQuery.trim()}&quot;
@@ -408,9 +432,9 @@ export function ModernHeader({ blackNavbar }: ModernHeaderProps) {
           </div>
         </div>
 
-        {/* Landing page only: show search input on mobile (same as inside hamburger) */}
+        {/* Landing page only: show search input for all devices */}
         {isLandingPage && (
-          <div ref={searchRef} className="mt-3 md:hidden">
+          <div ref={searchRef} className="mt-3 max-w-full md:max-w-md lg:max-w-sm relative">
             <form onSubmit={handleSearch} className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
               <Input
@@ -422,11 +446,11 @@ export function ModernHeader({ blackNavbar }: ModernHeaderProps) {
                   else setIsSearchOpen(false)
                 }}
                 onFocus={() => searchQuery.trim().length >= MIN_QUERY_LENGTH && setIsSearchOpen(true)}
-                className="pl-10 pr-4 h-10 rounded-lg border bg-muted/60 focus-visible:ring-2 focus-visible:ring-primary"
+                className="pl-10 pr-4 h-10 md:h-9 text-sm rounded-lg border bg-muted/60 focus-visible:ring-2 focus-visible:ring-primary"
               />
             </form>
             {isSearchOpen && q.length >= MIN_QUERY_LENGTH && (
-              <div className="mt-2 rounded-lg border border-border bg-popover shadow-lg max-h-64 overflow-y-auto z-50">
+              <div className="absolute top-full left-0 right-0 mt-1 rounded-lg border border-border bg-popover shadow-lg max-h-64 overflow-y-auto z-[100] w-full md:shadow-xl">
                 <div className="p-2">
                   {matchedCategories.length > 0 && (
                     <div className="mb-2">
@@ -434,7 +458,12 @@ export function ModernHeader({ blackNavbar }: ModernHeaderProps) {
                         <FolderTree className="h-3.5 w-3.5" /> Categories
                       </p>
                       {matchedCategories.slice(0, 5).map((c) => (
-                        <Link key={c.id} href={`/categories/${c.slug}`} onClick={() => { setIsSearchOpen(false); setSearchQuery(""); handleNavClick(); }} className="block px-3 py-2 text-sm rounded-md hover:bg-accent">
+                        <Link
+                          key={c.id}
+                          href={`/categories/${c.slug}`}
+                          onClick={(e) => { e.preventDefault(); setIsSearchOpen(false); setSearchQuery(""); handleNavClick(); router.push(`/categories/${c.slug}`); }}
+                          className="block px-3 py-2 text-sm rounded-md hover:bg-accent"
+                        >
                           {c.name}
                         </Link>
                       ))}
@@ -446,7 +475,12 @@ export function ModernHeader({ blackNavbar }: ModernHeaderProps) {
                         <Layers className="h-3.5 w-3.5" /> Subcategories
                       </p>
                       {matchedSubcategories.slice(0, 5).map((s, i) => (
-                        <Link key={`${s.categorySlug}-${s.slug}-${i}`} href={`/categories/${s.categorySlug}/${s.slug}`} onClick={() => { setIsSearchOpen(false); setSearchQuery(""); handleNavClick(); }} className="block px-3 py-2 text-sm rounded-md hover:bg-accent">
+                        <Link
+                          key={`${s.categorySlug}-${s.slug}-${i}`}
+                          href={`/categories/${s.categorySlug}/${s.slug}`}
+                          onClick={(e) => { e.preventDefault(); setIsSearchOpen(false); setSearchQuery(""); handleNavClick(); router.push(`/categories/${s.categorySlug}/${s.slug}`); }}
+                          className="block px-3 py-2 text-sm rounded-md hover:bg-accent"
+                        >
                           {s.name}
                         </Link>
                       ))}
@@ -461,7 +495,12 @@ export function ModernHeader({ blackNavbar }: ModernHeaderProps) {
                         <div className="px-3 py-2 text-sm text-muted-foreground">Searching...</div>
                       ) : (
                         searchProducts.slice(0, 5).map((p) => (
-                          <Link key={p.id} href={`/products/${p.id}`} onClick={() => { setIsSearchOpen(false); setSearchQuery(""); handleNavClick(); }} className="flex items-center gap-3 px-3 py-2 text-sm rounded-md hover:bg-accent">
+                          <Link
+                            key={p.id}
+                            href={`/products/id/${p.id}`}
+                            onClick={(e) => { e.preventDefault(); setIsSearchOpen(false); setSearchQuery(""); handleNavClick(); router.push(`/products/id/${p.id}`); }}
+                            className="flex items-center gap-3 px-3 py-2 text-sm rounded-md hover:bg-accent"
+                          >
                             {p.main_image && <img src={p.main_image} alt="" className="h-10 w-10 rounded object-cover shrink-0" />}
                             <span className="truncate">{p.name}</span>
                           </Link>
@@ -474,7 +513,11 @@ export function ModernHeader({ blackNavbar }: ModernHeaderProps) {
                   )}
                 </div>
                 <div className="border-t border-border p-2">
-                  <Link href={`/search?q=${encodeURIComponent(searchQuery.trim())}`} onClick={() => { setIsSearchOpen(false); setSearchQuery(""); handleNavClick(); }} className="block w-full text-center text-sm font-medium text-primary hover:underline">
+                  <Link
+                    href={`/search?q=${encodeURIComponent(searchQuery.trim())}`}
+                    onClick={(e) => { e.preventDefault(); setIsSearchOpen(false); setSearchQuery(""); handleNavClick(); router.push(`/search?q=${encodeURIComponent(searchQuery.trim())}`); }}
+                    className="block w-full text-center text-sm font-medium text-primary hover:underline"
+                  >
                     View all results
                   </Link>
                 </div>

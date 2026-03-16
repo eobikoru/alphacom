@@ -6,11 +6,14 @@ import Link from "next/link"
 import { AppLayout } from "@/components/app-layout"
 import { getCategoriesWithProducts, type CategoryWithProducts } from "@/lib/api/categories"
 import { getProductsWithCategories, type Product } from "@/lib/api/products"
+import { getCanonicalSearchQuery, SEO_BRANDS } from "@/lib/site"
 import { FolderTree, Layers, ShoppingBag, Search } from "lucide-react"
 
 export default function SearchPage() {
   const searchParams = useSearchParams()
-  const q = (searchParams.get("q") || "").trim().toLowerCase()
+  const rawQ = (searchParams.get("q") || "").trim()
+  const q = rawQ.toLowerCase()
+  const canonicalQuery = getCanonicalSearchQuery(rawQ)
   const [categories, setCategories] = useState<CategoryWithProducts[]>([])
   const [products, setProducts] = useState<Product[]>([])
   const [productsLoading, setProductsLoading] = useState(false)
@@ -45,14 +48,26 @@ export default function SearchPage() {
       return
     }
     setProductsLoading(true)
-    getProductsWithCategories({ search: q, per_page: 24 })
-      .then((res) => {
-        if (res.success && res.data) setProducts(res.data)
-        else setProducts([])
-      })
+    const isBrandSearch = SEO_BRANDS.some((b) => b.slug.toLowerCase() === q)
+    const fetchAll = async () => {
+      const first = await getProductsWithCategories({ search: canonicalQuery, page: 1, per_page: 100 })
+      if (!first.success || !first.data) return []
+      const totalPages = first.pagination.total_pages
+      if (totalPages <= 1) return first.data
+      const rest = await Promise.all(
+        Array.from({ length: totalPages - 1 }, (_, i) =>
+          getProductsWithCategories({ search: canonicalQuery, page: i + 2, per_page: 100 })
+        )
+      )
+      return [...first.data, ...rest.flatMap((r) => r.data)]
+    }
+    const fetchPage = () => getProductsWithCategories({ search: canonicalQuery, per_page: 24 }).then((r) => (r.success && r.data ? r.data : []))
+
+    ;(isBrandSearch ? fetchAll() : fetchPage())
+      .then(setProducts)
       .catch(() => setProducts([]))
       .finally(() => setProductsLoading(false))
-  }, [q])
+  }, [q, canonicalQuery])
 
   const formatPrice = (price: number) =>
     new Intl.NumberFormat("en-NG", { style: "currency", currency: "NGN", minimumFractionDigits: 0 }).format(price)
@@ -62,7 +77,7 @@ export default function SearchPage() {
       <div className="container mx-auto px-4 py-8">
         <h1 className="text-2xl font-semibold mb-6 flex items-center gap-2">
           <Search className="h-6 w-6" />
-          Search results{q ? ` for "${searchParams.get("q")}"` : ""}
+          Search results{q ? ` for "${SEO_BRANDS.some((b) => b.slug.toLowerCase() === q) ? canonicalQuery : rawQ}"` : ""}
         </h1>
 
         {!q ? (
@@ -125,7 +140,7 @@ export default function SearchPage() {
                   {products.map((p) => (
                     <li key={p.id}>
                       <Link
-                        href={`/products/${p.id}`}
+                        href={`/products/id/${p.id}`}
                         className="block rounded-lg border border-border bg-card overflow-hidden hover:shadow-md transition-shadow"
                       >
                         <div className="aspect-square bg-muted relative">

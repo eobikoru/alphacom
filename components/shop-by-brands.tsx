@@ -21,12 +21,12 @@ export const FEATURED_BRANDS = [
   {
     name: "Aicon",
     slug: "Aicon",
-    logoUrl: "/aicon-logo.svg",
+    logoUrl: "/iacon.jpeg",
   },
   {
     name: "Micropack",
     slug: "Micropack",
-    logoUrl: "https://www.micropackhk.com/cdn/shop/files/MicropackLogo_small.png",
+    logoUrl: "/mag.jpeg",
   },
   {
     name: "SanDisk",

@@ -1,4 +1,5 @@
 import apiClient from "../api-client"
+import { getCanonicalSearchQuery } from "../site"
 
 export interface ProductCategory {
   id: string
@@ -74,9 +75,12 @@ export interface GetProductsParams {
   search?: string
 }
 
-// Get products with categories
+// Get products with categories (search normalized so e.g. "logitech" → "Logitech" for known brands)
 export const getProductsWithCategories = async (params?: GetProductsParams): Promise<ProductsResponse> => {
-  const response = await apiClient.get("/api/v1/products/with-categories", { params })
+  const search = params?.search ? getCanonicalSearchQuery(params.search) : undefined
+  const response = await apiClient.get("/api/v1/products/with-categories", {
+    params: { ...params, search },
+  })
   return response.data
 }
 
