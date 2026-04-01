@@ -114,6 +114,7 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <head>
         <meta name="google-site-verification" content="c8oQppTwjVGtJpAyfFXvq-Io27nJKOCHmWbx0qhL8Xc" />
+        <meta name="google-site-verification" content="-COsajGLA6SWredQtuZIW6HVEDgUknSc0F9ADCb4HVE" />
         <link rel="icon" href="/alphacomwhitelogo.ico" sizes="any" />
         <link rel="icon" href="/alphacomwhitelogo.ico" type="image/svg+xml" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
