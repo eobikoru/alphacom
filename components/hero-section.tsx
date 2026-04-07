@@ -5,20 +5,20 @@ import { ArrowRight, Shield, Truck, Headphones, ChevronLeft, ChevronRight } from
 import { useState, useEffect, useRef } from "react"
 import Link from "next/link"
 import gsap from "gsap"
+import { useQuery } from "@tanstack/react-query"
+import apiClient from "@/lib/api-client"
+import { Skeleton } from "@/components/ui/skeleton"
 
-const heroSlides = [
+const fallbackSlides = [
   {
     id: 1,
     title: "Your Reliable",
-    highlight: "Logitech Partner",
     subtitle: "Trusted Logitech products and warranty.",
     image: "/sandisk.jpeg",
-
   },
   {
     id: 2,
     title: "Your Reliable",
-    highlight: "Sandisk Partner",
     subtitle: "Trusted Sandisk products and warranty.",
     image: "/logitech.jpeg",
   },
@@ -26,14 +26,60 @@ const heroSlides = [
 
 const AUTO_PLAY_RESUME_MS = 4000
 
+interface BannerItem {
+  id: string
+  title: string
+  subtitle: string
+  image_url: string
+}
+
+interface BannersResponse {
+  data: BannerItem[]
+  message: string
+  success: boolean
+  total: number
+}
+
+function splitTitleForHighlight(title: string): { start: string; end: string } {
+  const words = title.trim().split(/\s+/).filter(Boolean)
+  if (words.length <= 2) return { start: "", end: title.trim() }
+
+  const splitIndex = words.length - 2
+  return {
+    start: words.slice(0, splitIndex).join(" "),
+    end: words.slice(splitIndex).join(" "),
+  }
+}
+
 export function HeroSection() {
   const [currentSlide, setCurrentSlide] = useState(0)
   const [isAutoPlaying, setIsAutoPlaying] = useState(true)
   const resumeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const titleRef = useRef<HTMLSpanElement>(null)
-  const highlightRef = useRef<HTMLSpanElement>(null)
   const subtitleRef = useRef<HTMLParagraphElement>(null)
   const imageRef = useRef<HTMLElement>(null)
+
+  const { data, isLoading } = useQuery({
+    queryKey: ["hero-banners"],
+    queryFn: async () => {
+      const response = await apiClient.get<BannersResponse>("/api/v1/banners")
+      return response.data
+    },
+  })
+
+  const heroSlides =
+    data?.success && Array.isArray(data.data) && data.data.length > 0
+      ? data.data.map((banner, index) => ({
+          id: index + 1,
+          title: banner.title || "Featured Products",
+          subtitle: banner.subtitle || "Shop premium tech products with warranty.",
+          image: banner.image_url || "/placeholder.svg",
+        }))
+      : fallbackSlides
+
+  useEffect(() => {
+    if (currentSlide >= heroSlides.length) setCurrentSlide(0)
+  }, [currentSlide, heroSlides.length])
 
   useEffect(() => {
     if (!isAutoPlaying) return
@@ -41,10 +87,10 @@ export function HeroSection() {
       setCurrentSlide((prev) => (prev + 1) % heroSlides.length)
     }, 5000)
     return () => clearInterval(interval)
-  }, [isAutoPlaying])
+  }, [isAutoPlaying, heroSlides.length])
 
   useEffect(() => {
-    const textNodes = [titleRef.current, highlightRef.current, subtitleRef.current].filter(Boolean) as HTMLElement[]
+    const textNodes = [titleRef.current, subtitleRef.current].filter(Boolean) as HTMLElement[]
     const imageEl = imageRef.current
     if (textNodes.length === 0 && !imageEl) return
 
@@ -77,10 +123,8 @@ export function HeroSection() {
   }
 
   const currentSlideData = heroSlides[currentSlide]
+  const titleParts = splitTitleForHighlight(currentSlideData.title)
 
-
-
-  
   return (
     <section
       className="relative overflow-hidden rounded-b-2xl bg-gradient-to-br from-orange-400/15 via-background to-rose-500/15 border-b border-border"
@@ -98,18 +142,26 @@ export function HeroSection() {
           {/* Copy + CTAs */}
           <div className="space-y-6 text-center lg:text-left">
             <header className="space-y-2 overflow-hidden">
-              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground leading-tight" itemProp="headline">
-                <span ref={titleRef} className="font-normal inline-block">{currentSlideData.title} </span>
-                <span
-                  ref={highlightRef}
-                  className="bg-gradient-to-r from-orange-500 to-rose-500 bg-clip-text text-transparent inline-block"
-                >
-                  {currentSlideData.highlight}
-                </span>
-              </h1>
-              <p ref={subtitleRef} className="text-muted-foreground text-sm sm:text-base max-w-md mx-auto lg:mx-0">
-                {currentSlideData.subtitle}
-              </p>
+              {isLoading ? (
+                <div className="space-y-3 max-w-md mx-auto lg:mx-0">
+                  <Skeleton className="h-10 sm:h-12 lg:h-14 w-full" />
+                  <Skeleton className="h-4 w-5/6" />
+                </div>
+              ) : (
+                <>
+                  <h1 className="text-2xl sm:text-4xl lg:text-5xl font-semi-bold text-foreground leading-tight" itemProp="headline">
+                    <span ref={titleRef} className="inline-block">
+                      {titleParts.start ? `${titleParts.start} ` : ""}
+                      <span className="bg-gradient-to-r from-orange-400 via-orange-500 to-amber-500 bg-clip-text text-transparent">
+                        {titleParts.end}
+                      </span>
+                    </span>
+                  </h1>
+                  <p ref={subtitleRef} className="text-muted-foreground text-sm sm:text-base max-w-md mx-auto lg:mx-0">
+                    {currentSlideData.subtitle}
+                  </p>
+                </>
+              )}
             </header>
             <nav className="flex flex-wrap items-center justify-center lg:justify-start gap-3" aria-label="Main navigation">
               <Link href="/categories" aria-label="Start shopping">
@@ -171,15 +223,19 @@ export function HeroSection() {
               ref={imageRef}
               className="relative overflow-hidden rounded-2xl border border-border bg-muted shadow-lg aspect-[4/3] max-h-[280px] lg:max-h-[320px]"
             >
-              <img
-                src={currentSlideData.image || "/placeholder.svg?height=320&width=480"}
-                alt={`${currentSlideData.title} ${currentSlideData.highlight}`}
-                width={480}
-                height={320}
-                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-              />
+              {isLoading ? (
+                <Skeleton className="w-full h-full" />
+              ) : (
+                <img
+                  src={currentSlideData.image || "/placeholder.svg?height=320&width=480"}
+                  alt={currentSlideData.title}
+                  width={480}
+                  height={320}
+                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                />
+              )}
               <figcaption className="sr-only">
-                {currentSlideData.title} {currentSlideData.highlight} - {currentSlideData.subtitle}
+                {currentSlideData.title} - {currentSlideData.subtitle}
               </figcaption>
             </figure>
             <button
