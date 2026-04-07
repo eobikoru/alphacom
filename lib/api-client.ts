@@ -10,6 +10,8 @@ const apiClient = axios.create({
 // Request interceptor to add auth token
 apiClient.interceptors.request.use(
   (config) => {
+    if (typeof window === "undefined") return config
+
     const token = localStorage.getItem("auth_token")
     if (token) {
       config.headers.Authorization = `Bearer ${token}`
@@ -26,6 +28,10 @@ apiClient.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config
+
+    if (typeof window === "undefined") {
+      return Promise.reject(error)
+    }
 
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true
