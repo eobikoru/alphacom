@@ -13,6 +13,9 @@ import { WhatsAppWidget } from "@/components/whatsapp-widget"
 import { QueryProvider } from "@/lib/providers/query-provider"
 import { Toaster } from "@/components/ui/sonner"
 import { SITE_URL } from "@/lib/site"
+import Script from "next/script"
+
+const GOOGLE_TAG_ID = "GT-KVFVKX32"
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -121,6 +124,19 @@ export default function RootLayout({
         <link rel="manifest" href="/manifest.json" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        {/* Google tag (gtag.js) */}
+        <Script
+          src={`https://www.googletagmanager.com/gtag/js?id=${GOOGLE_TAG_ID}`}
+          strategy="afterInteractive"
+        />
+        <Script id="google-tag-gtag" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', '${GOOGLE_TAG_ID}');
+          `}
+        </Script>
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
