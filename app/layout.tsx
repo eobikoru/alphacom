@@ -175,7 +175,7 @@ export default function RootLayout({
               description:
                 "Premium technology store. Authorized Logitech, Anker, SanDisk, Micropack partner. Computer Village Ikeja, Lagos. Quality electronics, computers & accessories with expert support.",
               priceRange: "$$",
-              telephone: "+234 702 6384 967",
+              telephone: "+234 702 638 4967, +234 813 733 1005",
               email: "info@alphacomonline.com",
               address: {
                 "@type": "PostalAddress",

@@ -197,8 +197,8 @@ export function SimpleFooter() {
               <div className="flex items-center gap-3">
                 <Phone className="h-4 w-4 text-primary flex-shrink-0" />
                 <div className="text-muted-foreground">
-                  <p>+234 702 6384 967</p>
-                  <p>+234 811 0001 228</p>
+                  <p>+234 702 638 4967</p>
+                  <p>+234 813 733 1005</p>
                 </div>
               </div>
               <div className="flex items-center gap-3">

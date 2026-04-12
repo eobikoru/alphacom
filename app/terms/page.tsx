@@ -253,7 +253,7 @@ export default function TermsPage() {
                     <strong>Email:</strong> legal@alphacomonline.com
                   </p>
                   <p>
-                    <strong>Phone:</strong> +234 702 6384 967
+                    <strong>Phone:</strong> +234 702 638 4967, +234 813 733 1005
                   </p>
                   <p>
                     <strong>Address:</strong> No 3 Adepele street, off Medical road, Computer village Ikeja, Lagos

@@ -223,7 +223,7 @@ export default function AboutPage() {
                     <p className="text-sm text-muted-foreground">
                      +234 702 638 4967
                       <br />
-                      +234 812 345 3411
+                      +234 813 733 1005
                       <br />
                       Mon - Sat: 8AM - 7PM
                     </p>

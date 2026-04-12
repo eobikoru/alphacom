@@ -271,10 +271,10 @@ export default function ReturnPolicyPage() {
                         <strong>Email:</strong> returns@alphacomonline.com
                       </p>
                       <p>
-                        <strong>Phone:</strong> +234 702 6384 967
+                        <strong>Phone:</strong> +234 702 638 4967, +234 813 733 1005
                       </p>
                       <p>
-                        <strong>WhatsApp:</strong> +234 702 6384 967
+                        <strong>WhatsApp:</strong> +234 702 638 4967, +234 813 733 1005
                       </p>
                     </div>
                   </div>

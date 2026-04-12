@@ -34,7 +34,7 @@ const stores: Store[] = [
     city: "Computer village Ikeja",
     state: "Lagos",
     zip: "",
-    phone: "+234 702 6384 967",
+    phone: "+234 702 638 4967",
     hours: {
       weekdays: "9:00 AM - 6:00 PM",
       saturday: "10:00 AM - 4:00 PM",
@@ -134,7 +134,7 @@ export default function StoreLocatorPage() {
                           {store.phone}
                         </p>
                         <p className="text-card-foreground" itemProp="telephone">
-                          +234 812 345 3411
+                          +234 813 733 1005
                         </p>
                       </div>
                     </div>
