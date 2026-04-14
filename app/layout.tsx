@@ -15,7 +15,8 @@ import { Toaster } from "@/components/ui/sonner"
 import { SITE_URL } from "@/lib/site"
 import Script from "next/script"
 
-const GOOGLE_TAG_ID = "GT-KVFVKX32"
+const GOOGLE_TAG_ID = "AW-937925676"
+
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
