@@ -221,9 +221,9 @@ export default function AboutPage() {
                     <Phone className="w-12 h-12 text-cyan-600 mx-auto mb-4" />
                     <h3 className="text-lg font-bold mb-3 text-foreground">Phone</h3>
                     <p className="text-sm text-muted-foreground">
-                     +234 702 638 4967
+                     +2347026384967
                       <br />
-                      +234 813 733 1005
+                      +2348137331005
                       <br />
                       Mon - Sat: 8AM - 7PM
                     </p>

@@ -121,8 +121,8 @@ export default function ContactPage() {
                     <div>
                       <h3 className="font-semibold text-card-foreground">Phone</h3>
                       <div className="text-muted-foreground">
-                        <p itemProp="telephone">+234 702 638 4967</p>
-                        <p itemProp="telephone">+234 813 733 1005</p>
+                        <p itemProp="telephone">+2347026384967</p>
+                        <p itemProp="telephone">+2348137331005</p>
                       </div>
                     </div>
                   </div>

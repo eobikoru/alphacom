@@ -193,7 +193,7 @@ export default function PrivacyPolicyPage() {
                     <strong>Email:</strong> alphacomonline@gmail.com
                   </p>
                   <p>
-                    <strong>Phone:</strong> +234 702 638 4967, +234 813 733 1005
+                    <strong>Phone:</strong> +2347026384967, +2348137331005
                   </p>
                   <p>
                     <strong>Address:</strong> No 3 Adepele street, off Medical road, Computer village Ikeja, Lagos
