@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button"
 import { CheckCircle2, XCircle, Loader2 } from "lucide-react"
 import Link from "next/link"
 import { useCart } from "@/hooks/use-cart"
+import { reportGoogleAdsConversion } from "@/lib/google-ads"
 
 export default function PaymentVerifyPage() {
   const router = useRouter()
@@ -45,6 +46,24 @@ export default function PaymentVerifyPage() {
 
     verify()
   }, [reference, clearAllItems])
+
+  useEffect(() => {
+    if (!verificationResult) {
+      return
+    }
+
+    const isSuccessfulPayment = verificationResult.status === "success" && verificationResult.payment_status === "completed"
+    if (!isSuccessfulPayment) {
+      return
+    }
+
+    const transactionId = verificationResult.order_number || reference
+    if (!transactionId) {
+      return
+    }
+
+    reportGoogleAdsConversion(transactionId)
+  }, [verificationResult, reference])
 
   if (isLoading) {
     return (
