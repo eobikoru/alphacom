@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { verifyPayment, type PaymentVerificationResponse } from "@/lib/api/orders"
 import { Card, CardContent } from "@/components/ui/card"
@@ -19,6 +19,7 @@ export default function PaymentVerifyPage() {
   const [verificationResult, setVerificationResult] = useState<PaymentVerificationResponse | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const reportedTransactionIdsRef = useRef<Set<string>>(new Set())
 
   useEffect(() => {
     const verify = async () => {
@@ -62,7 +63,16 @@ export default function PaymentVerifyPage() {
       return
     }
 
-    reportGoogleAdsConversion(transactionId)
+    if (reportedTransactionIdsRef.current.has(transactionId)) {
+      return
+    }
+
+    reportGoogleAdsConversion({
+      transactionId,
+      value: Number(verificationResult.amount) || 0,
+      currency: "NGN",
+    })
+    reportedTransactionIdsRef.current.add(transactionId)
   }, [verificationResult, reference])
 
   if (isLoading) {
