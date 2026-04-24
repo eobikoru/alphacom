@@ -5,6 +5,7 @@ type GtagArgs = [command: "event", eventName: string, params: Record<string, unk
 declare global {
   interface Window {
     gtag?: (...args: GtagArgs) => void
+    dataLayer?: unknown[]
   }
 }
 
@@ -15,14 +16,23 @@ type GoogleAdsConversionParams = {
 }
 
 export function reportGoogleAdsConversion({ transactionId, value, currency }: GoogleAdsConversionParams) {
-  if (typeof window === "undefined" || typeof window.gtag !== "function") {
+  if (typeof window === "undefined") {
     return
   }
 
-  window.gtag("event", "conversion", {
+  const conversionPayload = {
     send_to: GOOGLE_ADS_SEND_TO,
     value,
     currency,
     transaction_id: transactionId,
-  })
+  }
+
+  if (typeof window.gtag === "function") {
+    window.gtag("event", "conversion", conversionPayload)
+    return
+  }
+
+  // If gtag is still booting, queue the event so it is processed when the tag initializes.
+  window.dataLayer = window.dataLayer || []
+  window.dataLayer.push(["event", "conversion", conversionPayload])
 }
