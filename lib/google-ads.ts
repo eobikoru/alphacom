@@ -1,4 +1,4 @@
-const GOOGLE_ADS_SEND_TO = "AW-937925676/uBMMCNqm6aEcEKy4nr8D"
+const GOOGLE_ADS_SEND_TO = "AW-937925676/RrnFCOOb_qEcEKy4nr8D"
 
 type GtagArgs = [command: "event", eventName: string, params: Record<string, unknown>]
 
