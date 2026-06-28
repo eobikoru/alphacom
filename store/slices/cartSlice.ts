@@ -16,6 +16,12 @@ interface CartState {
   itemCount: number
 }
 
+const emptyCartState: CartState = {
+  items: [],
+  total: 0,
+  itemCount: 0,
+}
+
 const loadCartFromStorage = (): CartState => {
   if (typeof window !== "undefined") {
     try {
@@ -27,14 +33,10 @@ const loadCartFromStorage = (): CartState => {
       console.error("Error loading cart from localStorage:", error)
     }
   }
-  return {
-    items: [],
-    total: 0,
-    itemCount: 0,
-  }
+  return emptyCartState
 }
 
-const initialState: CartState = loadCartFromStorage()
+const initialState: CartState = emptyCartState
 
 const calculateTotals = (items: CartItem[]) => {
   const itemCount = items.reduce((sum, item) => sum + item.quantity, 0)
@@ -56,6 +58,12 @@ const cartSlice = createSlice({
   name: "cart",
   initialState,
   reducers: {
+    hydrate: (state) => {
+      const saved = loadCartFromStorage()
+      state.items = saved.items
+      state.total = saved.total
+      state.itemCount = saved.itemCount
+    },
     addToCart: (state, action: PayloadAction<Omit<CartItem, "quantity">>) => {
       const existingItem = state.items.find((item) => item.id === action.payload.id)
 
@@ -107,5 +115,5 @@ const cartSlice = createSlice({
   },
 })
 
-export const { addToCart, removeFromCart, updateQuantity, clearCart } = cartSlice.actions
+export const { hydrate, addToCart, removeFromCart, updateQuantity, clearCart } = cartSlice.actions
 export default cartSlice.reducer

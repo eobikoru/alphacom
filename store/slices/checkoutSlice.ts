@@ -14,6 +14,18 @@ interface CheckoutState {
   formData: CheckoutFormData
 }
 
+const emptyCheckoutState: CheckoutState = {
+  formData: {
+    email: "",
+    name: "",
+    phone: "",
+    street: "",
+    city: "",
+    state: "",
+    notes: "",
+  },
+}
+
 const loadCheckoutFromStorage = (): CheckoutState => {
   if (typeof window !== "undefined") {
     try {
@@ -25,20 +37,10 @@ const loadCheckoutFromStorage = (): CheckoutState => {
       console.error("Error loading checkout from localStorage:", error)
     }
   }
-  return {
-    formData: {
-      email: "",
-      name: "",
-      phone: "",
-      street: "",
-      city: "",
-      state: "",
-      notes: "",
-    },
-  }
+  return emptyCheckoutState
 }
 
-const initialState: CheckoutState = loadCheckoutFromStorage()
+const initialState: CheckoutState = emptyCheckoutState
 
 const saveCheckoutToStorage = (state: CheckoutState) => {
   if (typeof window !== "undefined") {
@@ -54,6 +56,10 @@ const checkoutSlice = createSlice({
   name: "checkout",
   initialState,
   reducers: {
+    hydrate: (state) => {
+      const saved = loadCheckoutFromStorage()
+      state.formData = saved.formData
+    },
     updateCheckoutField: (state, action: PayloadAction<{ field: keyof CheckoutFormData; value: string }>) => {
       state.formData[action.payload.field] = action.payload.value
       saveCheckoutToStorage(state)
@@ -79,5 +85,5 @@ const checkoutSlice = createSlice({
   },
 })
 
-export const { updateCheckoutField, updateCheckoutForm, clearCheckoutForm } = checkoutSlice.actions
+export const { hydrate, updateCheckoutField, updateCheckoutForm, clearCheckoutForm } = checkoutSlice.actions
 export default checkoutSlice.reducer

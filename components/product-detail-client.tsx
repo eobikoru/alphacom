@@ -8,7 +8,7 @@ import { getProductBySlug, getProductById, type Product } from "@/lib/api/produc
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent } from "@/components/ui/card"
-import { Heart, ShoppingCart, Truck, Shield, RefreshCw } from "lucide-react"
+import { Heart, ShoppingCart, Shield, RefreshCw } from "lucide-react"
 import { toast } from "sonner"
 import Link from "next/link"
 import { Skeleton } from "@/components/ui/skeleton"
@@ -277,13 +277,7 @@ export function ProductDetailClient({ slug, productId }: ProductDetailClientProp
               </Button>
             </div>
 
-            <div className="grid grid-cols-3 gap-4 mb-8">
-              <Card className={isDark ? "bg-gray-800" : "bg-white"}>
-                <CardContent className="p-4 text-center">
-                  <Truck className={`h-6 w-6 mx-auto mb-2 ${isDark ? "text-cyan-400" : "text-cyan-600"}`} />
-                  <p className={`text-sm ${isDark ? "text-gray-300" : "text-gray-700"}`}>Free Delivery above 50,000</p>
-                </CardContent>
-              </Card>
+            <div className="grid grid-cols-2 gap-4 mb-8">
               <Card className={isDark ? "bg-gray-800" : "bg-white"}>
                 <CardContent className="p-4 text-center">
                   <Shield className={`h-6 w-6 mx-auto mb-2 ${isDark ? "text-cyan-400" : "text-cyan-600"}`} />
