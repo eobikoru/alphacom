@@ -1,4 +1,5 @@
 import type { Metadata } from "next"
+import { AppLayout } from "@/components/app-layout"
 import { ProductDetailClient } from "@/components/product-detail-client"
 
 interface ProductPageProps {
@@ -15,5 +16,9 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
 }
 
 export default function ProductPage({ params }: ProductPageProps) {
-  return <ProductDetailClient slug={params.slug} />
+  return (
+    <AppLayout>
+      <ProductDetailClient slug={params.slug} />
+    </AppLayout>
+  )
 }

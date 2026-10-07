@@ -16,7 +16,11 @@ export interface CartDrawerRef {
   close: () => void
 }
 
-export const CartDrawer = forwardRef<CartDrawerRef>((props, ref) => {
+interface CartDrawerProps {
+  hideTrigger?: boolean
+}
+
+export const CartDrawer = forwardRef<CartDrawerRef, CartDrawerProps>(({ hideTrigger = false }, ref) => {
   const [isOpen, setIsOpen] = useState(false)
   const { items, total, itemCount, removeItem, updateItemQuantity, clearAllItems, formatPrice } = useCart()
 
@@ -46,19 +50,21 @@ export const CartDrawer = forwardRef<CartDrawerRef>((props, ref) => {
 
   return (
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
-      <SheetTrigger asChild>
-        <Button variant="outline" size="sm" className="relative bg-transparent">
-          <ShoppingCart className="h-4 w-4" />
-          {itemCount > 0 && (
-            <Badge
-              variant="destructive"
-              className="absolute -top-2 -right-2 h-5 w-5 rounded-full p-0 flex items-center justify-center text-xs"
-            >
-              {itemCount}
-            </Badge>
-          )}
-        </Button>
-      </SheetTrigger>
+      {!hideTrigger && (
+        <SheetTrigger asChild>
+          <Button variant="outline" size="sm" className="relative bg-transparent">
+            <ShoppingCart className="h-4 w-4" />
+            {itemCount > 0 && (
+              <Badge
+                variant="destructive"
+                className="absolute -top-2 -right-2 h-5 w-5 rounded-full p-0 flex items-center justify-center text-xs"
+              >
+                {itemCount}
+              </Badge>
+            )}
+          </Button>
+        </SheetTrigger>
+      )}
       <SheetContent className="w-full sm:max-w-lg flex flex-col px-6">
         <SheetHeader className="flex-shrink-0">
           <SheetTitle className="flex items-center gap-2">
@@ -73,7 +79,9 @@ export const CartDrawer = forwardRef<CartDrawerRef>((props, ref) => {
             <ShoppingCart className="h-16 w-16 text-muted-foreground mb-4" />
             <h3 className="text-lg font-semibold text-foreground mb-2">Your cart is empty</h3>
             <p className="text-muted-foreground mb-4">Add some products to get started!</p>
-            <Button onClick={() => setIsOpen(false)}>Continue Shopping</Button>
+            <Link href="/" onClick={() => setIsOpen(false)}>
+              <Button>Continue Shopping</Button>
+            </Link>
           </div>
         ) : (
           <div className="flex flex-col flex-1 min-h-0">
@@ -149,9 +157,11 @@ export const CartDrawer = forwardRef<CartDrawerRef>((props, ref) => {
                     Proceed to Checkout
                   </Button>
                 </Link>
-                <Button variant="outline" className="w-full bg-transparent" onClick={() => setIsOpen(false)}>
-                  Continue Shopping
-                </Button>
+                <Link href="/" onClick={() => setIsOpen(false)} className="block">
+                  <Button variant="outline" className="w-full bg-transparent">
+                    Continue Shopping
+                  </Button>
+                </Link>
                 {items.length > 0 && (
                   <Button
                     variant="ghost"

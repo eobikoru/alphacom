@@ -60,6 +60,15 @@ export function ModernHeader({ blackNavbar }: ModernHeaderProps) {
     fetchCategories()
   }, [])
 
+  useEffect(() => {
+    const openCart = () => {
+      setIsUserMenuOpen(false)
+      cartDrawerRef.current?.open()
+    }
+    window.addEventListener("open-cart-drawer", openCart)
+    return () => window.removeEventListener("open-cart-drawer", openCart)
+  }, [])
+
   const q = searchQuery.trim().toLowerCase()
   const matchedCategories = useMemo(() => {
     if (q.length < MIN_QUERY_LENGTH) return []
