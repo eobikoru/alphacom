@@ -33,9 +33,6 @@ function getErrorMessage(error: any): string {
 export function useGuestCheckout() {
   return useMutation({
     mutationFn: (data: GuestCheckoutRequest) => guestCheckout(data),
-    onSuccess: (data) => {
-      toast.success("Redirecting to payment...")
-    },
     onError: (error: any) => {
      
       const errorMessage = getErrorMessage(error)
@@ -48,9 +45,6 @@ export function useGuestCheckout() {
 export function useAuthenticatedCheckout() {
   return useMutation({
     mutationFn: (data: AuthenticatedCheckoutRequest) => authenticatedCheckout(data),
-    onSuccess: (data) => {
-      toast.success("Redirecting to payment...")
-    },
     onError: (error: any) => {
       const errorMessage = getErrorMessage(error)
       console.log(errorMessage,"errorMessage")

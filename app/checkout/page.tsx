@@ -11,12 +11,36 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
-import { ShoppingCart, CreditCard, Truck, ArrowLeft } from "lucide-react"
+import { ShoppingCart, ArrowLeft, Landmark, Lock } from "lucide-react"
 import { useGuestCheckout, useAuthenticatedCheckout, useOrderBreakdown } from "@/hooks/use-orders"
-import type { CheckoutItem, ShippingAddress } from "@/lib/api/orders"
+import type { CheckoutItem, CheckoutResponse, ShippingAddress } from "@/lib/api/orders"
 import Link from "next/link"
+import { toast } from "sonner"
+import { BankTransferModal } from "@/components/bank-transfer-modal"
+
+const inputClass =
+  "h-11 rounded-xl border-gray-200 bg-white text-sm shadow-none focus-visible:ring-2 focus-visible:ring-gray-900/10 dark:border-gray-800 dark:bg-gray-950"
+const labelClass = "mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-300"
+const panelClass =
+  "rounded-2xl border border-gray-200/80 bg-white p-5 shadow-[0_10px_40px_rgba(15,23,42,0.05)] md:p-6 dark:border-gray-800 dark:bg-gray-900"
+
+type RequiredField = "email" | "name" | "phone" | "street" | "city" | "state"
+
+function SectionHeading({ step, title, description }: { step: number; title: string; description: string }) {
+  return (
+    <div className="mb-5 flex items-start gap-3">
+      <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-gray-950 text-xs font-semibold text-white dark:bg-white dark:text-gray-950">
+        {step}
+      </span>
+      <div>
+        <h2 className="text-base font-semibold text-gray-950 dark:text-white">{title}</h2>
+        <p className="text-sm text-gray-500 dark:text-gray-400">{description}</p>
+      </div>
+    </div>
+  )
+}
 
 export default function CheckoutPage() {
   const router = useRouter()
@@ -27,6 +51,11 @@ export default function CheckoutPage() {
   const [phoneError, setPhoneError] = useState("")
   const [breakdownData, setBreakdownData] = useState<any>(null)
   const [breakdownLoading, setBreakdownLoading] = useState(false)
+  const [transferOpen, setTransferOpen] = useState(false)
+  const [invalidFields, setInvalidFields] = useState<RequiredField[]>([])
+  const [shaking, setShaking] = useState(false)
+  const [transferOrder, setTransferOrder] = useState<CheckoutResponse | null>(null)
+  const [pendingAction, setPendingAction] = useState<"payment" | "transfer" | null>(null)
 
   const guestCheckoutMutation = useGuestCheckout()
   const authenticatedCheckoutMutation = useAuthenticatedCheckout()
@@ -96,15 +125,58 @@ export default function CheckoutPage() {
     )
   }
 
-  const handleCheckout = async (e: React.FormEvent) => {
-    e.preventDefault()
+  const filled = (value?: string) => (value ?? "").trim() !== ""
+  const isEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test((formData.email ?? "").trim())
+  const summaryTotal = breakdownData?.subtotal || total
 
-    if (!formData.phone || formData.phone.length !== 11) {
-      setPhoneError("Phone number must be exactly 11 digits")
-      return
+  const getInvalidFields = (): RequiredField[] => {
+    const invalid: RequiredField[] = []
+    if (!isAuthenticated) {
+      if (!isEmailValid) invalid.push("email")
+      if (!filled(formData.name)) invalid.push("name")
     }
+    if ((formData.phone ?? "").length !== 11) invalid.push("phone")
+    if (!filled(formData.street)) invalid.push("street")
+    if (!filled(formData.city)) invalid.push("city")
+    if (!filled(formData.state)) invalid.push("state")
+    return invalid
+  }
 
-    // Prepare checkout items
+  const validateForm = () => {
+    const invalid = getInvalidFields()
+    setInvalidFields(invalid)
+    if (invalid.length === 0) return true
+
+    if ((formData.phone ?? "").length !== 11) {
+      setPhoneError("Phone number must be exactly 11 digits")
+    }
+    setShaking(false)
+    requestAnimationFrame(() => setShaking(true))
+    window.setTimeout(() => setShaking(false), 450)
+
+    const firstId = invalid[0] === "phone" && isAuthenticated ? "phone-auth" : invalid[0]
+    const firstInput = document.getElementById(firstId)
+    firstInput?.scrollIntoView({ behavior: "smooth", block: "center" })
+    firstInput?.focus({ preventScroll: true })
+    return false
+  }
+
+  const handleFieldChange = (field: RequiredField | "notes", value: string) => {
+    updateField(field, value)
+    if (invalidFields.includes(field as RequiredField)) {
+      setInvalidFields((prev) => prev.filter((f) => f !== field))
+    }
+  }
+
+  const fieldClass = (field: RequiredField) =>
+    invalidFields.includes(field)
+      ? `${inputClass} border-red-500 focus-visible:ring-red-500/20 dark:border-red-500 ${shaking ? "animate-shake" : ""}`
+      : inputClass
+
+  const fieldError = (field: RequiredField, message: string) =>
+    invalidFields.includes(field) ? <p className="mt-1 text-xs text-red-500">{message}</p> : null
+
+  const placeOrder = async (): Promise<CheckoutResponse | undefined> => {
     const checkoutItems: CheckoutItem[] = items.map((item) => ({
       product_id: item.id,
       quantity: item.quantity,
@@ -119,20 +191,15 @@ export default function CheckoutPage() {
 
     const callbackUrl = `https://alphacomonline.com/payment/verify`
 
-    if (isAuthenticated) {
-      const response = await authenticatedCheckoutMutation.mutateAsync({
-        callback_url: callbackUrl,
-        items: checkoutItems,
-        shipping_address: shippingAddress,
-      })
-
-      // Redirect to Paystack payment page
-      if (response?.payment_url) {
-        clearForm()
-        window.location.href = response.payment_url
+    try {
+      if (isAuthenticated) {
+        return await authenticatedCheckoutMutation.mutateAsync({
+          callback_url: callbackUrl,
+          items: checkoutItems,
+          shipping_address: shippingAddress,
+        })
       }
-    } else {
-      const response = await guestCheckoutMutation.mutateAsync({
+      return await guestCheckoutMutation.mutateAsync({
         callback_url: callbackUrl,
         email: formData.email,
         name: formData.name,
@@ -141,110 +208,137 @@ export default function CheckoutPage() {
         shipping_address: shippingAddress,
         notes: formData.notes,
       })
-
-      // Redirect to Paystack payment page
-      if (response?.payment_url) {
-        clearForm()
-        window.location.href = response.payment_url
-      }
+    } catch {
+      // The mutation hooks already surface the error as a toast.
+      return undefined
     }
   }
 
-  return (
-    <div className="container mx-auto px-4 py-6 md:py-8 lg:py-12">
-      <div className="max-w-6xl mx-auto">
-        {/* Header */}
-        <div className="mb-6 md:mb-8">
-          <Link href="/categories">
-            <Button variant="ghost" size="sm" className="mb-3 md:mb-4">
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Continue Shopping
-            </Button>
-          </Link>
-          <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold">Checkout</h1>
-          <p className="text-sm md:text-base text-muted-foreground">Complete your order</p>
-        </div>
+  const handleCheckout = async (e: React.FormEvent) => {
+    e.preventDefault()
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8">
-          <div className="lg:col-span-2">
-            <form onSubmit={handleCheckout} className="space-y-4 md:space-y-6">
-              {/* Contact Information */}
+    if (!validateForm()) return
+
+    setPendingAction("payment")
+    const response = await placeOrder()
+    setPendingAction(null)
+
+    // Redirect to Paystack payment page
+    if (response?.payment_url) {
+      toast.success("Redirecting to payment...")
+      clearForm()
+      window.location.href = response.payment_url
+    }
+  }
+
+  const handleTransferClick = async () => {
+    if (!validateForm()) return
+
+    if (!transferOrder) {
+      setPendingAction("transfer")
+      const response = await placeOrder()
+      setPendingAction(null)
+      if (!response) return
+      setTransferOrder(response)
+    }
+    setTransferOpen(true)
+  }
+
+  return (
+    <div className="min-h-screen bg-[#F0F4F8] dark:bg-gray-950">
+      <BankTransferModal
+        open={transferOpen}
+        onOpenChange={setTransferOpen}
+        items={items}
+        total={summaryTotal}
+        formatPrice={formatPrice}
+        orderNumber={transferOrder?.order_number}
+      />
+      <div className="container mx-auto px-4 py-8 lg:py-12">
+        <div className="mx-auto max-w-6xl">
+          <div className="mb-8">
+            <Link
+              href="/categories"
+              className="mb-4 inline-flex items-center gap-1.5 text-sm text-gray-500 transition-colors hover:text-gray-950 dark:text-gray-400 dark:hover:text-white"
+            >
+              <ArrowLeft className="h-4 w-4" />
+              Continue shopping
+            </Link>
+            <h1 className="text-3xl font-semibold tracking-tight text-gray-950 md:text-4xl dark:text-white">Checkout</h1>
+            <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">Complete your details to place your order.</p>
+          </div>
+
+          <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-[minmax(0,1fr)_400px] lg:gap-8">
+            <form id="checkout-form" onSubmit={handleCheckout} noValidate className="space-y-6">
               {!isAuthenticated && (
-                <Card>
-                  <CardHeader className="pb-3 md:pb-4">
-                    <CardTitle className="flex items-center gap-2 text-lg md:text-xl">
-                      <CreditCard className="h-5 w-5" />
-                      Contact Information
-                    </CardTitle>
-                    <CardDescription className="text-xs md:text-sm">
-                      We'll use this to send you order updates
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="space-y-3 md:space-y-4">
+                <section className={panelClass}>
+                  <SectionHeading step={1} title="Contact information" description="We'll use this to send you order updates." />
+                  <div className="space-y-4">
                     <div>
-                      <Label htmlFor="email" className="mb-1.5 md:mb-2 block text-sm">
-                        Email *
+                      <Label htmlFor="email" className={labelClass}>
+                        Email
                       </Label>
                       <Input
                         id="email"
                         type="email"
                         value={formData.email}
-                        onChange={(e) => updateField("email", e.target.value)}
+                        onChange={(e) => handleFieldChange("email", e.target.value)}
                         required
                         placeholder="your@email.com"
-                        className="text-sm"
+                        className={fieldClass("email")}
                       />
+                      {fieldError("email", "Enter a valid email address")}
                     </div>
-                    <div>
-                      <Label htmlFor="name" className="mb-1.5 md:mb-2 block text-sm">
-                        Full Name *
-                      </Label>
-                      <Input
-                        id="name"
-                        value={formData.name}
-                        onChange={(e) => updateField("name", e.target.value)}
-                        required
-                        placeholder="John Doe"
-                        className="text-sm"
-                      />
+                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                      <div>
+                        <Label htmlFor="name" className={labelClass}>
+                          Full name
+                        </Label>
+                        <Input
+                          id="name"
+                          value={formData.name}
+                          onChange={(e) => handleFieldChange("name", e.target.value)}
+                          required
+                          placeholder="John Doe"
+                          className={fieldClass("name")}
+                        />
+                        {fieldError("name", "Full name is required")}
+                      </div>
+                      <div>
+                        <Label htmlFor="phone" className={labelClass}>
+                          Phone number
+                        </Label>
+                        <Input
+                          id="phone"
+                          type="tel"
+                          value={formData.phone}
+                          onChange={(e) => {
+                            const value = e.target.value.replace(/\D/g, "").slice(0, 11)
+                            handleFieldChange("phone", value)
+                          }}
+                          required
+                          placeholder="08012345678"
+                          maxLength={11}
+                          className={fieldClass("phone")}
+                        />
+                        {phoneError && <p className="mt-1 text-xs text-red-500">{phoneError}</p>}
+                      </div>
                     </div>
-                    <div>
-                      <Label htmlFor="phone" className="mb-1.5 md:mb-2 block text-sm">
-                        Phone Number * (11 digits)
-                      </Label>
-                      <Input
-                        id="phone"
-                        type="tel"
-                        value={formData.phone}
-                        onChange={(e) => {
-                          const value = e.target.value.replace(/\D/g, "").slice(0, 11)
-                          updateField("phone", value)
-                        }}
-                        required
-                        placeholder="08012345678"
-                        maxLength={11}
-                        className="text-sm"
-                      />
-                      {phoneError && <p className="text-red-500 text-xs md:text-sm mt-1">{phoneError}</p>}
-                    </div>
-                  </CardContent>
-                </Card>
+                  </div>
+                </section>
               )}
 
-              {/* Shipping Address */}
-              <Card>
-                <CardHeader className="pb-3 md:pb-4">
-                  <CardTitle className="flex items-center gap-2 text-lg md:text-xl">
-                    <Truck className="h-5 w-5" />
-                    Shipping Address
-                  </CardTitle>
-                  <CardDescription className="text-xs md:text-sm">Where should we deliver your order?</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-3 md:space-y-4">
+              <section className={panelClass}>
+                <SectionHeading
+                  step={isAuthenticated ? 1 : 2}
+                  title="Delivery address"
+                  description="Where should we deliver your order?"
+                />
+                <div className="space-y-4">
                   {isAuthenticated && (
                     <div>
-                      <Label htmlFor="phone-auth" className="mb-1.5 md:mb-2 block text-sm">
-                        Phone Number * (11 digits)
+                      <Label htmlFor="phone-auth" className={labelClass}>
+                        Phone number
                       </Label>
                       <Input
                         id="phone-auth"
@@ -252,60 +346,63 @@ export default function CheckoutPage() {
                         value={formData.phone}
                         onChange={(e) => {
                           const value = e.target.value.replace(/\D/g, "").slice(0, 11)
-                          updateField("phone", value)
+                          handleFieldChange("phone", value)
                         }}
                         required
                         placeholder="08012345678"
                         maxLength={11}
-                        className="text-sm"
+                        className={fieldClass("phone")}
                       />
-                      {phoneError && <p className="text-red-500 text-xs md:text-sm mt-1">{phoneError}</p>}
+                      {phoneError && <p className="mt-1 text-xs text-red-500">{phoneError}</p>}
                     </div>
                   )}
                   <div>
-                    <Label htmlFor="street" className="mb-1.5 md:mb-2 block text-sm">
-                      Street Address *
+                    <Label htmlFor="street" className={labelClass}>
+                      Street address
                     </Label>
                     <Input
                       id="street"
                       value={formData.street}
-                      onChange={(e) => updateField("street", e.target.value)}
+                      onChange={(e) => handleFieldChange("street", e.target.value)}
                       required
                       placeholder="123 Main Street"
-                      className="text-sm"
+                      className={fieldClass("street")}
                     />
+                    {fieldError("street", "Street address is required")}
                   </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4">
+                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                     <div>
-                      <Label htmlFor="city" className="mb-1.5 md:mb-2 block text-sm">
-                        City *
+                      <Label htmlFor="city" className={labelClass}>
+                        City
                       </Label>
                       <Input
                         id="city"
                         value={formData.city}
-                        onChange={(e) => updateField("city", e.target.value)}
+                        onChange={(e) => handleFieldChange("city", e.target.value)}
                         required
                         placeholder="Lagos"
-                        className="text-sm"
+                        className={fieldClass("city")}
                       />
+                      {fieldError("city", "City is required")}
                     </div>
                     <div>
-                      <Label htmlFor="state" className="mb-1.5 md:mb-2 block text-sm">
-                        State *
+                      <Label htmlFor="state" className={labelClass}>
+                        State
                       </Label>
                       <Input
                         id="state"
                         value={formData.state}
-                        onChange={(e) => updateField("state", e.target.value)}
+                        onChange={(e) => handleFieldChange("state", e.target.value)}
                         required
                         placeholder="Lagos"
-                        className="text-sm"
+                        className={fieldClass("state")}
                       />
+                      {fieldError("state", "State is required")}
                     </div>
                   </div>
                   <div>
-                    <Label htmlFor="notes" className="mb-1.5 md:mb-2 block text-sm">
-                      Delivery Notes (Optional)
+                    <Label htmlFor="notes" className={labelClass}>
+                      Delivery notes <span className="font-normal text-gray-400">(optional)</span>
                     </Label>
                     <Textarea
                       id="notes"
@@ -313,93 +410,83 @@ export default function CheckoutPage() {
                       onChange={(e) => updateField("notes", e.target.value)}
                       placeholder="Any special instructions for delivery?"
                       rows={3}
-                      className="text-sm"
+                      className="rounded-xl border-gray-200 bg-white text-sm shadow-none dark:border-gray-800 dark:bg-gray-950"
                     />
                   </div>
-                </CardContent>
-              </Card>
-
-              <Button
-                type="submit"
-                size="lg"
-                className="w-full text-sm md:text-base"
-                disabled={isLoading || phoneError !== ""}
-              >
-                {isLoading ? "Processing..." : `Proceed to Payment - ${formatPrice(breakdownData?.total || total)}`}
-              </Button>
+                </div>
+              </section>
             </form>
-          </div>
 
-          {/* Order Summary */}
-          <div className="lg:col-span-1">
-            <Card className="lg:sticky lg:top-4">
-              <CardHeader className="pb-3 md:pb-4">
-                <CardTitle className="text-lg md:text-xl">Order Summary</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3 md:space-y-4">
-                <div className="space-y-2 md:space-y-3">
+            <aside className="space-y-4 lg:sticky lg:top-28">
+              <section className={panelClass}>
+                <h2 className="mb-5 text-base font-semibold text-gray-950 dark:text-white">Order summary</h2>
+                <ul className="space-y-4">
                   {items.map((item) => (
-                    <div key={item.id} className="flex gap-2 md:gap-3">
-                      <div className="relative h-14 w-14 md:h-16 md:w-16 rounded-md overflow-hidden bg-muted flex-shrink-0">
+                    <li key={item.id} className="flex items-center gap-3">
+                      <div className="relative h-16 w-16 shrink-0 rounded-xl border border-gray-100 bg-white dark:border-gray-800">
                         <img
                           src={item.image || "/placeholder.svg"}
                           alt={item.name}
-                          className="object-cover w-full h-full"
+                          className="h-full w-full rounded-xl object-contain p-1.5"
                         />
-                        <div className="absolute -top-1 -right-1 bg-primary text-primary-foreground text-xs rounded-full h-5 w-5 flex items-center justify-center font-semibold">
+                        <span className="absolute -right-1.5 -top-1.5 flex h-5 min-w-5 items-center justify-center rounded-full bg-gray-950 px-1 text-[11px] font-semibold text-white dark:bg-white dark:text-gray-950">
                           {item.quantity}
-                        </div>
+                        </span>
                       </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="font-medium text-xs md:text-sm truncate">{item.name}</p>
-                        <p className="text-xs md:text-sm text-muted-foreground">{formatPrice(item.price)}</p>
+                      <div className="min-w-0 flex-1">
+                        <p className="truncate text-sm font-medium text-gray-950 dark:text-white">{item.name}</p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400">{formatPrice(item.price)}</p>
                       </div>
-                      <div className="text-xs md:text-sm font-semibold">{formatPrice(item.price * item.quantity)}</div>
-                    </div>
+                      <p className="text-sm font-semibold tabular-nums text-gray-950 dark:text-white">
+                        {formatPrice(item.price * item.quantity)}
+                      </p>
+                    </li>
                   ))}
+                </ul>
+
+                <Separator className="my-5" />
+
+                {!breakdownLoading && breakdownData?.shipping ? (
+                  <>
+                    <div className="flex justify-between text-sm">
+                      <span className="text-gray-500 dark:text-gray-400">Shipping</span>
+                      <span>{formatPrice(breakdownData.shipping)}</span>
+                    </div>
+                    <Separator className="my-5" />
+                  </>
+                ) : null}
+
+                <div className="flex items-baseline justify-between">
+                  <span className="text-sm font-medium text-gray-600 dark:text-gray-300">Total</span>
+                  <span className="text-2xl font-semibold tracking-tight tabular-nums text-gray-950 dark:text-white">
+                    {formatPrice(summaryTotal)}
+                  </span>
                 </div>
+              </section>
 
-                <Separator />
+              <Button
+                type="submit"
+                form="checkout-form"
+                size="lg"
+                className="h-12 w-full rounded-full bg-gray-950 text-base text-white hover:bg-gray-800 dark:bg-white dark:text-gray-950 dark:hover:bg-gray-200"
+                disabled={isLoading}
+              >
+                <Lock className="h-4 w-4" />
+                {pendingAction === "payment" ? "Processing..." : "Proceed to Payment"}
+              </Button>
 
-                {breakdownLoading ? (
-                  <div className="space-y-2">
-                    <div className="h-4 bg-muted rounded animate-pulse" />
-                    <div className="h-4 bg-muted rounded animate-pulse" />
-                  </div>
-                ) : breakdownData ? (
-                  <div className="space-y-2">
-                    <div className="flex justify-between text-xs md:text-sm">
-                      <span className="text-muted-foreground">Subtotal</span>
-                      <span>{formatPrice(breakdownData.subtotal)}</span>
-                    </div>
-                    <div className="flex justify-between text-xs md:text-sm">
-                      <span className="text-muted-foreground">VAT(7.5%)</span>
-                      <span>{formatPrice(breakdownData.tax)}</span>
-                    </div>
-                    {breakdownData.shipping ? (
-                      <div className="flex justify-between text-xs md:text-sm">
-                        <span className="text-muted-foreground">Shipping</span>
-                        <span>{formatPrice(breakdownData.shipping)}</span>
-                      </div>
-                    ) : null}
-                  </div>
-                ) : (
-                  <div className="space-y-2">
-                    <div className="flex justify-between text-xs md:text-sm">
-                      <span className="text-muted-foreground">Subtotal</span>
-                      <span>{formatPrice(total)}</span>
-                    </div>
-                  </div>
-                )}
-
-                <Separator />
-
-                <div className="flex justify-between text-base md:text-lg font-bold">
-                  <span>Total</span>
-                  <span>{formatPrice(breakdownData?.total || total)}</span>
-                </div>
-              </CardContent>
-            </Card>
+              <Button
+                type="button"
+                variant="outline"
+                size="lg"
+                onClick={handleTransferClick}
+                disabled={isLoading}
+                className="h-12 w-full rounded-full border-gray-300 bg-white text-base text-gray-950 hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-900 dark:text-white dark:hover:bg-gray-800"
+              >
+                <Landmark className="h-4 w-4" />
+                {pendingAction === "transfer" ? "Processing..." : "Transfer"}
+              </Button>
+            </aside>
           </div>
         </div>
       </div>
