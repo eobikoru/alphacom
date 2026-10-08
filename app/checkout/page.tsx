@@ -27,6 +27,14 @@ const panelClass =
   "rounded-2xl border border-gray-200/80 bg-white p-5 shadow-[0_10px_40px_rgba(15,23,42,0.05)] md:p-6 dark:border-gray-800 dark:bg-gray-900"
 
 type RequiredField = "email" | "name" | "phone" | "street" | "city" | "state"
+type MinLengthField = "name" | "street" | "city" | "state"
+
+const MIN_LENGTH: Record<MinLengthField, number> = {
+  name: 2,
+  street: 5,
+  city: 2,
+  state: 2,
+}
 
 function SectionHeading({ step, title, description }: { step: number; title: string; description: string }) {
   return (
@@ -125,7 +133,8 @@ export default function CheckoutPage() {
     )
   }
 
-  const filled = (value?: string) => (value ?? "").trim() !== ""
+  const trimmedLength = (field: MinLengthField) => (formData[field] ?? "").trim().length
+  const meetsMinLength = (field: MinLengthField) => trimmedLength(field) >= MIN_LENGTH[field]
   const isEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test((formData.email ?? "").trim())
   const summaryTotal = breakdownData?.subtotal || total
 
@@ -133,12 +142,12 @@ export default function CheckoutPage() {
     const invalid: RequiredField[] = []
     if (!isAuthenticated) {
       if (!isEmailValid) invalid.push("email")
-      if (!filled(formData.name)) invalid.push("name")
+      if (!meetsMinLength("name")) invalid.push("name")
     }
     if ((formData.phone ?? "").length !== 11) invalid.push("phone")
-    if (!filled(formData.street)) invalid.push("street")
-    if (!filled(formData.city)) invalid.push("city")
-    if (!filled(formData.state)) invalid.push("state")
+    if (!meetsMinLength("street")) invalid.push("street")
+    if (!meetsMinLength("city")) invalid.push("city")
+    if (!meetsMinLength("state")) invalid.push("state")
     return invalid
   }
 
@@ -175,6 +184,18 @@ export default function CheckoutPage() {
 
   const fieldError = (field: RequiredField, message: string) =>
     invalidFields.includes(field) ? <p className="mt-1 text-xs text-red-500">{message}</p> : null
+
+  const lengthError = (field: MinLengthField, label: string) => {
+    const length = trimmedLength(field)
+    const min = MIN_LENGTH[field]
+    if (length === 0) return fieldError(field, `${label} is required`)
+    if (length >= min) return null
+    return (
+      <p className="mt-1 text-xs text-red-500">
+        {label} must be at least {min} characters ({length}/{min})
+      </p>
+    )
+  }
 
   const placeOrder = async (): Promise<CheckoutResponse | undefined> => {
     const checkoutItems: CheckoutItem[] = items.map((item) => ({
@@ -302,7 +323,7 @@ export default function CheckoutPage() {
                           placeholder="John Doe"
                           className={fieldClass("name")}
                         />
-                        {fieldError("name", "Full name is required")}
+                        {lengthError("name", "Full name")}
                       </div>
                       <div>
                         <Label htmlFor="phone" className={labelClass}>
@@ -368,7 +389,7 @@ export default function CheckoutPage() {
                       placeholder="123 Main Street"
                       className={fieldClass("street")}
                     />
-                    {fieldError("street", "Street address is required")}
+                    {lengthError("street", "Street address")}
                   </div>
                   <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                     <div>
@@ -383,7 +404,7 @@ export default function CheckoutPage() {
                         placeholder="Lagos"
                         className={fieldClass("city")}
                       />
-                      {fieldError("city", "City is required")}
+                      {lengthError("city", "City")}
                     </div>
                     <div>
                       <Label htmlFor="state" className={labelClass}>
@@ -397,7 +418,7 @@ export default function CheckoutPage() {
                         placeholder="Lagos"
                         className={fieldClass("state")}
                       />
-                      {fieldError("state", "State is required")}
+                      {lengthError("state", "State")}
                     </div>
                   </div>
                   <div>
