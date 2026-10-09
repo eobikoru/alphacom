@@ -1,7 +1,7 @@
 "use client"
 
 import type React from "react"
-import { Search, User, Menu, MapPin, LogOut, Mail, Shield, ChevronDown, Package, FolderTree, Layers, ShoppingBag } from "lucide-react"
+import { Search, User, Menu, MapPin, LogOut, Mail, Shield, ChevronDown, Package, FolderTree, Layers, ShoppingBag, BookOpen } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
@@ -346,6 +346,21 @@ export function ModernHeader({ blackNavbar }: ModernHeaderProps) {
 
           {/* Actions */}
           <div className="flex items-center gap-4">
+            {/* <Link
+              href="/blog"
+              onClick={handleNavClick}
+              className={`relative flex items-center gap-1.5 text-sm font-medium transition-colors hover:text-foreground ${
+                pathname?.startsWith("/blog") ? "text-foreground" : "text-muted-foreground"
+              }`}
+            >
+              <BookOpen className="hidden h-4 w-4 text-foreground sm:block" />
+              Blog
+              {!pathname?.startsWith("/blog") && (
+                <span className="pointer-events-none absolute -right-3 -top-4 animate-bounce rounded-full bg-red-600 px-1.5 py-0.5 text-[9px] font-bold uppercase leading-none tracking-wider text-white shadow-sm">
+                  New
+                </span>
+              )}
+            </Link> */}
             <ThemeToggle />
 
             <CartDrawer ref={cartDrawerRef} />

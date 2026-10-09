@@ -104,6 +104,15 @@ export function ModernFooter() {
               </div>
               <div>
                 <Link
+                  href="/blog"
+                  onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+                  className="text-muted-foreground hover:text-primary transition-colors"
+                >
+                  Blog
+                </Link>
+              </div>
+              <div>
+                <Link
                   href="/privacy"
                   onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
                   className="text-muted-foreground hover:text-primary transition-colors"

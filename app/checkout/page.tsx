@@ -13,7 +13,7 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Card, CardContent } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
-import { ShoppingCart, ArrowLeft, Landmark, Lock } from "lucide-react"
+import { ShoppingCart, ArrowLeft, Landmark, Lock, CreditCard } from "lucide-react"
 import { useGuestCheckout, useAuthenticatedCheckout, useOrderBreakdown } from "@/hooks/use-orders"
 import type { CheckoutItem, CheckoutResponse, ShippingAddress } from "@/lib/api/orders"
 import Link from "next/link"
@@ -486,17 +486,6 @@ export default function CheckoutPage() {
               </section>
 
               <Button
-                type="submit"
-                form="checkout-form"
-                size="lg"
-                className="h-12 w-full rounded-full bg-gray-950 text-base text-white hover:bg-gray-800 dark:bg-white dark:text-gray-950 dark:hover:bg-gray-200"
-                disabled={isLoading}
-              >
-                <Lock className="h-4 w-4" />
-                {pendingAction === "payment" ? "Processing..." : "Proceed to Payment"}
-              </Button>
-
-              <Button
                 type="button"
                 variant="outline"
                 size="lg"
@@ -507,6 +496,21 @@ export default function CheckoutPage() {
                 <Landmark className="h-4 w-4" />
                 {pendingAction === "transfer" ? "Processing..." : "Transfer"}
               </Button>
+
+              <Button
+                type="submit"
+                form="checkout-form"
+                size="lg"
+                className="h-12 w-full rounded-full bg-gray-950 text-base text-white hover:bg-gray-800 dark:bg-white dark:text-gray-950 dark:hover:bg-gray-200"
+                disabled={isLoading}
+              >
+                <CreditCard className="h-4 w-4" />
+                {pendingAction === "payment" ? "Processing..." : "Pay with Card, USSD or Bank"}
+              </Button>
+              <p className="-mt-1 flex items-center justify-center gap-1.5 text-xs text-gray-500 dark:text-gray-400">
+                <Lock className="h-3 w-3" />
+                Secure online payment via Paystack
+              </p>
             </aside>
           </div>
         </div>
