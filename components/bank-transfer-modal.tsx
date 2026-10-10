@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import * as Dialog from "@radix-ui/react-dialog"
-import { Building2, Check, Copy, X } from "lucide-react"
+import { Building2, Check, Copy, MessageCircle, X } from "lucide-react"
 import type { CartItem } from "@/store/slices/cartSlice"
 
 const BANK_DETAILS = {
@@ -10,6 +10,9 @@ const BANK_DETAILS = {
   bankName: "Zenith Bank",
   accountNumber: "1011019407",
 }
+
+const WHATSAPP_NUMBER = "2347026384967"
+const WHATSAPP_DISPLAY = "+234 702 638 4967"
 
 interface BankTransferModalProps {
   open: boolean
@@ -22,6 +25,11 @@ interface BankTransferModalProps {
 
 export function BankTransferModal({ open, onOpenChange, items, total, formatPrice, orderNumber }: BankTransferModalProps) {
   const [copied, setCopied] = useState(false)
+
+  const whatsappMessage = orderNumber
+    ? `Hello, I have paid ${formatPrice(total)} by bank transfer for order ${orderNumber}. Here is my proof of payment.`
+    : `Hello, I have paid ${formatPrice(total)} by bank transfer. Here is my proof of payment.`
+  const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(whatsappMessage)}`
 
   const copyAccountNumber = async () => {
     try {
@@ -94,6 +102,24 @@ export function BankTransferModal({ open, onOpenChange, items, total, formatPric
                 narration.
               </p>
             )}
+
+            <div className="mt-4 rounded-2xl border border-emerald-200 bg-emerald-50 p-4 dark:border-emerald-900/60 dark:bg-emerald-950/30">
+              <p className="text-sm font-medium text-emerald-900 dark:text-emerald-200">After paying, send us your proof of payment</p>
+              <p className="mt-1 text-xs leading-relaxed text-emerald-800/80 dark:text-emerald-300/80">
+                Chat with us on WhatsApp at{" "}
+                <span className="font-semibold tabular-nums">{WHATSAPP_DISPLAY}</span> and attach a screenshot of your
+                transfer receipt so we can confirm your order quickly.
+              </p>
+              <a
+                href={whatsappUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-3 inline-flex h-9 items-center gap-2 rounded-full bg-emerald-600 px-4 text-sm font-medium text-white transition-colors hover:bg-emerald-700"
+              >
+                <MessageCircle className="h-4 w-4" />
+                Send proof on WhatsApp
+              </a>
+            </div>
 
             <ul className="mt-6 space-y-3">
               {items.map((item) => (

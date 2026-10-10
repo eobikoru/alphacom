@@ -102,7 +102,7 @@ export function ModernFooter() {
                   Contact
                 </Link>
               </div>
-              <div>
+              {/* <div>
                 <Link
                   href="/blog"
                   onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
@@ -110,7 +110,7 @@ export function ModernFooter() {
                 >
                   Blog
                 </Link>
-              </div>
+              </div> */}
               <div>
                 <Link
                   href="/privacy"
