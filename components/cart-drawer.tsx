@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, forwardRef, useImperativeHandle } from "react"
+import { useState, useEffect, forwardRef, useImperativeHandle } from "react"
 import { ShoppingCart, Plus, Minus, X, Trash2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -22,12 +22,18 @@ interface CartDrawerProps {
 
 export const CartDrawer = forwardRef<CartDrawerRef, CartDrawerProps>(({ hideTrigger = false }, ref) => {
   const [isOpen, setIsOpen] = useState(false)
+  const [hasMounted, setHasMounted] = useState(false)
   const { items, total, itemCount, removeItem, updateItemQuantity, clearAllItems, formatPrice } = useCart()
 
   useImperativeHandle(ref, () => ({
     open: () => setIsOpen(true),
     close: () => setIsOpen(false),
   }))
+
+  // Cart is restored from localStorage, so the count is unknown during server render.
+  useEffect(() => {
+    setHasMounted(true)
+  }, [])
 
   const handleQuantityChange = (id: string, newQuantity: number) => {
     if (newQuantity <= 0) {
@@ -54,7 +60,7 @@ export const CartDrawer = forwardRef<CartDrawerRef, CartDrawerProps>(({ hideTrig
         <SheetTrigger asChild>
           <Button variant="outline" size="sm" className="relative bg-transparent">
             <ShoppingCart className="h-4 w-4" />
-            {itemCount > 0 && (
+            {hasMounted && itemCount > 0 && (
               <Badge
                 variant="destructive"
                 className="absolute -top-2 -right-2 h-5 w-5 rounded-full p-0 flex items-center justify-center text-xs"

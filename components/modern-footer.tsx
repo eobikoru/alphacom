@@ -3,10 +3,11 @@
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Separator } from "@/components/ui/separator"
-import { Instagram, MapPin, Phone, Mail } from "lucide-react"
+import { Instagram, Youtube, Linkedin, MapPin, Phone, Mail } from "lucide-react"
 import { useAppSelector } from "@/store/hooks"
 import Link from "next/link"
-import { useEffect, useState } from "react"
+import { useEffect, useState, type FormEvent } from "react"
+import { toast } from "sonner"
 import { getCategoriesWithProducts, type CategoryWithProducts } from "@/lib/api/categories"
 import { Skeleton } from "@/components/ui/skeleton"
 
@@ -30,12 +31,49 @@ const SOCIAL_LINKS = [
   { label: "Instagram", href: "https://www.instagram.com/alphacom_online", Icon: Instagram },
   { label: "TikTok", href: "https://www.tiktok.com/@alphacom_online", Icon: TikTokIcon },
   { label: "X (Twitter)", href: "https://x.com/alphacom_online", Icon: XIcon },
+  { label: "YouTube", href: "https://www.youtube.com/@alphacom_online", Icon: Youtube },
+  {
+    label: "LinkedIn",
+    href: "https://www.linkedin.com/in/alphacom-interbiz-projects-limited-71959b123/",
+    Icon: Linkedin,
+  },
 ]
 
 export function ModernFooter() {
   const isDark = useAppSelector((state) => state.theme.isDark)
   const [categories, setCategories] = useState<CategoryWithProducts[]>([])
   const [isCategoriesLoading, setIsCategoriesLoading] = useState(true)
+  const [newsletterEmail, setNewsletterEmail] = useState("")
+  const [isSubscribing, setIsSubscribing] = useState(false)
+
+  const handleSubscribe = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    const email = newsletterEmail.trim()
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      toast.error("Please enter a valid email address.")
+      return
+    }
+
+    setIsSubscribing(true)
+    try {
+      const response = await fetch("/api/newsletter", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      })
+      const data = await response.json().catch(() => null)
+      if (response.ok && data?.success) {
+        toast.success(data.message ?? "You're subscribed.")
+        setNewsletterEmail("")
+      } else {
+        toast.error(data?.message ?? "We couldn't subscribe you right now. Please try again.")
+      }
+    } catch {
+      toast.error("We couldn't subscribe you right now. Please try again.")
+    } finally {
+      setIsSubscribing(false)
+    }
+  }
   const currentYear = new Date().getFullYear()
   useEffect(() => {
     const fetchCategories = async () => {
@@ -64,15 +102,21 @@ export function ModernFooter() {
             <p className="text-muted-foreground mb-6">
               Get exclusive deals, new product launches, and tech insights delivered to your inbox
             </p>
-            <div className="flex gap-4 max-w-md mx-auto">
+            <form onSubmit={handleSubscribe} noValidate className="flex gap-4 max-w-md mx-auto">
               <Input
+                type="email"
+                value={newsletterEmail}
+                onChange={(e) => setNewsletterEmail(e.target.value)}
                 placeholder="Enter your email address"
+                aria-label="Email address"
+                autoComplete="email"
+                disabled={isSubscribing}
                 className="bg-background border-border"
               />
-              <Button className="px-8">
-                Subscribe
+              <Button type="submit" className="px-8" disabled={isSubscribing}>
+                {isSubscribing ? "Subscribing..." : "Subscribe"}
               </Button>
-            </div>
+            </form>
           </div>
         </div>
       </div>
