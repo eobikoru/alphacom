@@ -1,19 +1,19 @@
 "use client"
 
+import type React from "react"
 import { useEffect, useState } from "react"
 import Link from "next/link"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
-import { ArrowRight, ChevronLeft, ChevronRight, Search, X } from "lucide-react"
+import { ArrowLeft, ArrowRight, ArrowUpRight, Search, X } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { useBlogCategories, useBlogPosts, useBlogTags } from "@/hooks/use-blog"
 import {
   BlogCard,
   BlogCardSkeleton,
-  BlogCompactCard,
-  BlogFeaturedCard,
-  BlogFeaturedSkeleton,
+  BlogHeroCard,
+  BlogHeroSkeleton,
+  EditorPickCard,
 } from "@/components/blog/blog-card"
-import { BlogSocialIcons } from "@/components/blog/blog-social"
 
 const PER_PAGE = 12
 
@@ -29,13 +29,13 @@ function pageNumbers(current: number, total: number): Array<number | "…"> {
   return pages
 }
 
-const chipClass = (active: boolean) =>
-  cn(
-    "inline-flex h-9 shrink-0 items-center whitespace-nowrap rounded-full border px-4 text-sm font-medium transition-colors",
-    active
-      ? "border-foreground bg-foreground text-background"
-      : "border-border bg-white text-foreground/80 hover:border-foreground/30 hover:text-foreground dark:bg-card",
+function Reveal({ children, delay = 0, className }: { children: React.ReactNode; delay?: number; className?: string }) {
+  return (
+    <div className={cn("animate-fade-in-up", className)} style={{ animationDelay: `${delay}ms`, animationDuration: "900ms" }}>
+      {children}
+    </div>
   )
+}
 
 export function BlogListClient() {
   const router = useRouter()
@@ -48,6 +48,11 @@ export function BlogListClient() {
   const search = searchParams.get("search") ?? ""
 
   const [searchInput, setSearchInput] = useState(search)
+  const [today, setToday] = useState("")
+
+  useEffect(() => {
+    setToday(new Date().toLocaleDateString("en-NG", { weekday: "long", day: "numeric", month: "long", year: "numeric" }))
+  }, [])
 
   const updateParams = (updates: Record<string, string | number | null>) => {
     const next = new URLSearchParams(searchParams.toString())
@@ -82,16 +87,15 @@ export function BlogListClient() {
   const allPosts = [...(data?.data ?? [])].sort(
     (a, b) => new Date(b.published_at ?? 0).getTime() - new Date(a.published_at ?? 0).getTime(),
   )
-  const hasFilters = !!(category || tag || search)
-  const showFeatured = page === 1 && !hasFilters
-  const lead = showFeatured ? allPosts[0] : undefined
+  const lead = page === 1 ? allPosts[0] : undefined
   const rest = lead ? allPosts.slice(1) : allPosts
-  const picks = lead ? rest.slice(0, 4) : []
+  const featurePair = lead ? rest.slice(0, 4) : []
   const gridPosts = lead ? rest.slice(4) : rest
   const pagination = data?.pagination
   const categories = categoriesData?.data ?? []
   const tags = tagsData?.data ?? []
-  const activeCategoryName = categories.find((item) => item.slug === category)?.name
+  const hasFilters = !!(category || tag || search)
+  const total = pagination?.total ?? allPosts.length
 
   const goToPage = (next: number) => {
     updateParams({ page: next })
@@ -103,105 +107,112 @@ export function BlogListClient() {
     router.replace(pathname, { scroll: false })
   }
 
+  const navLinkClass = (active: boolean) =>
+    cn(
+      "relative shrink-0 whitespace-nowrap py-4 text-[13px] font-medium uppercase tracking-[0.16em] transition-colors",
+      "after:absolute after:inset-x-0 after:-bottom-px after:h-px after:origin-left after:bg-stone-900 after:transition-transform after:duration-500 dark:after:bg-stone-100",
+      active
+        ? "text-stone-900 after:scale-x-100 dark:text-white"
+        : "text-stone-500 after:scale-x-0 hover:text-stone-900 hover:after:scale-x-100 dark:text-stone-400 dark:hover:text-white",
+    )
+
   return (
-    <div className="min-h-screen bg-background text-foreground">
-      <header className="border-b border-border bg-white dark:bg-card">
-        <div className="container mx-auto px-4 py-6 sm:py-8">
-          <div className="mx-auto max-w-7xl">
-            <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-xs text-muted-foreground">
-              <Link href="/" className="hover:text-foreground">
-                Home
-              </Link>
-              <ChevronRight className="h-3.5 w-3.5" />
-              <span className="font-medium text-foreground">Blog</span>
-            </nav>
+    <div className="min-h-screen bg-[#FAF8F5] text-stone-900 dark:bg-stone-950 dark:text-stone-100">
+      {/* Masthead */}
+      <header className="container mx-auto px-4 pt-6 sm:pt-8">
+        <div className="mx-auto max-w-7xl">
+          <div className="flex items-center justify-between border-b border-stone-900/90 pb-3 text-[11px] font-medium uppercase tracking-[0.22em] text-stone-500 dark:border-stone-100/80 dark:text-stone-400">
+            <span className="hidden sm:inline">{today || "\u00A0"}</span>
+            <span>Lagos · Nigeria</span>
+            <span className="hidden sm:inline">{total > 0 ? `${total} ${total === 1 ? "story" : "stories"}` : "Stories"}</span>
+          </div>
 
-            <div className="mt-3 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-              <div>
-                <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">Alphacom Blog</h1>
-                <p className="mt-2 max-w-xl text-sm text-muted-foreground sm:text-base">
-                  Buying guides, tech tips and product news from our Computer Village team.
-                </p>
-                <BlogSocialIcons className="mt-4 flex-wrap" />
-              </div>
-              <label className="relative block w-full md:w-80">
-                <Search className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                <input
-                  type="search"
-                  value={searchInput}
-                  onChange={(e) => setSearchInput(e.target.value)}
-                  placeholder="Search articles"
-                  aria-label="Search articles"
-                  className="h-11 w-full rounded-full border border-border bg-background pl-10 pr-4 text-sm outline-none transition focus:border-foreground/40 focus:ring-4 focus:ring-foreground/5"
-                />
-              </label>
-            </div>
+          <Reveal className="py-7 text-center sm:py-9 lg:py-10">
+            <p className="mb-3 text-[11px] font-medium uppercase tracking-[0.32em] text-[#8E1B2C] dark:text-rose-300">
+              Alphacom presents
+            </p>
+            <h1 className="font-bold text-[3.25rem] leading-[0.95] sm:text-6xl lg:text-7xl">
+              The <em className="not-italic text-[#8E1B2C] dark:text-rose-300">Journal</em>
+            </h1>
+            <p className="mx-auto mt-4 max-w-xl text-[15px] leading-relaxed text-stone-600 sm:text-base dark:text-stone-400">
+              Considered buying advice, practical guides and quiet observations on the technology that shapes everyday
+              life.
+            </p>
+          </Reveal>
 
-            <nav aria-label="Blog categories" className="-mx-4 mt-6 flex gap-2 overflow-x-auto px-4 pb-1 no-scrollbar sm:mx-0 sm:flex-wrap sm:px-0">
-              <button type="button" className={chipClass(!category)} onClick={() => updateParams({ category: null, page: null })}>
-                All
+          <nav
+            className="flex flex-col gap-2 border-y border-stone-900/10 sm:flex-row sm:items-center sm:justify-between sm:gap-8 dark:border-white/10"
+            aria-label="Blog categories"
+          >
+            <div className="-mx-4 flex gap-8 overflow-x-auto px-4 no-scrollbar sm:mx-0 sm:px-0">
+              <button type="button" className={navLinkClass(!category)} onClick={() => updateParams({ category: null, page: null })}>
+                All stories
               </button>
               {categories.map((item) => (
                 <button
                   key={item.id}
                   type="button"
-                  className={chipClass(category === item.slug)}
+                  className={navLinkClass(category === item.slug)}
                   onClick={() => updateParams({ category: item.slug, page: null })}
                 >
                   {item.name}
                 </button>
               ))}
-            </nav>
+            </div>
+            <label className="group flex items-center gap-2.5 border-t border-stone-900/10 py-3 sm:w-64 sm:border-t-0 sm:py-0 dark:border-white/10">
+              <Search className="h-4 w-4 shrink-0 text-stone-400 transition-colors group-focus-within:text-stone-900 dark:group-focus-within:text-white" />
+              <input
+                type="search"
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
+                placeholder="Search the journal"
+                aria-label="Search the journal"
+                className="w-full bg-transparent text-sm outline-none placeholder:text-stone-400"
+              />
+            </label>
+          </nav>
 
-            {tags.length > 0 && (
-              <div className="-mx-4 mt-3 flex items-center gap-2 overflow-x-auto px-4 no-scrollbar sm:mx-0 sm:flex-wrap sm:px-0">
-                <span className="shrink-0 text-xs font-medium text-muted-foreground">Topics:</span>
-                {tags.map((item) => (
-                  <button
-                    key={item.slug}
-                    type="button"
-                    onClick={() => updateParams({ tag: tag === item.slug ? null : item.slug, page: null })}
-                    className={cn(
-                      "shrink-0 rounded-md px-2 py-1 text-xs transition-colors",
-                      tag === item.slug
-                        ? "bg-foreground font-medium text-background"
-                        : "text-muted-foreground hover:bg-muted hover:text-foreground",
-                    )}
-                  >
-                    #{item.name}
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
+          {tags.length > 0 && (
+            <div className="mt-5 flex flex-wrap items-center gap-x-4 gap-y-2 text-[13px]">
+              <span className="text-stone-400">Topics</span>
+              {tags.map((item) => (
+                <button
+                  key={item.slug}
+                  type="button"
+                  onClick={() => updateParams({ tag: tag === item.slug ? null : item.slug, page: null })}
+                  className={cn(
+                    "transition-colors",
+                    tag === item.slug
+                      ? "font-medium text-[#8E1B2C] underline underline-offset-4 dark:text-rose-300"
+                      : "text-stone-600 hover:text-stone-900 dark:text-stone-400 dark:hover:text-white",
+                  )}
+                >
+                  #{item.name}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
       </header>
 
-      <main className="container mx-auto px-4 pb-20 pt-8 sm:pt-10">
+      <main className="container mx-auto px-4 pb-24 pt-10 sm:pt-12">
         <div className="mx-auto max-w-7xl">
           {hasFilters && (
-            <div className="mb-6 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-border bg-white px-4 py-3 dark:bg-card">
-              <p className="text-sm text-muted-foreground">
+            <div className="mb-10 flex flex-wrap items-baseline justify-between gap-4">
+              <p className="font-bold text-3xl lg:text-2xl">
                 {pagination ? (
                   <>
-                    <span className="font-semibold text-foreground">{pagination.total}</span>{" "}
-                    {pagination.total === 1 ? "article" : "articles"}
-                    {activeCategoryName && (
+                    {pagination.total} {pagination.total === 1 ? "story" : "stories"}
+                    {search && (
                       <>
                         {" "}
-                        in <span className="font-medium text-foreground">{activeCategoryName}</span>
+                        for <em className="not-italic text-[#8E1B2C] dark:text-rose-300">“{search}”</em>
                       </>
                     )}
                     {tag && (
                       <>
                         {" "}
-                        tagged <span className="font-medium text-foreground">#{tag}</span>
-                      </>
-                    )}
-                    {search && (
-                      <>
-                        {" "}
-                        matching <span className="font-medium text-foreground">“{search}”</span>
+                        on <em className="not-italic text-[#8E1B2C] dark:text-rose-300">#{tag}</em>
                       </>
                     )}
                   </>
@@ -212,52 +223,89 @@ export function BlogListClient() {
               <button
                 type="button"
                 onClick={clearFilters}
-                className="inline-flex items-center gap-1 text-sm font-medium text-foreground hover:underline"
+                className="inline-flex items-center gap-1.5 text-[13px] font-medium uppercase tracking-[0.16em] text-stone-500 transition-colors hover:text-stone-900 dark:hover:text-white"
               >
-                <X className="h-4 w-4" />
-                Clear filters
+                <X className="h-3.5 w-3.5" />
+                Clear
               </button>
             </div>
           )}
 
           {isLoading ? (
             <>
-              {showFeatured && <BlogFeaturedSkeleton />}
-              <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              <BlogHeroSkeleton />
+              <div className="mt-20 grid gap-x-10 gap-y-16 sm:grid-cols-2 lg:grid-cols-3">
                 {Array.from({ length: 3 }).map((_, i) => (
                   <BlogCardSkeleton key={i} />
                 ))}
               </div>
             </>
           ) : isError ? (
-            <EmptyState title="We couldn't load articles" body="Please check your connection and try again shortly." />
+            <div className="py-24 text-center">
+              <p className="font-bold text-4xl lg:text-3xl">The journal is resting.</p>
+              <p className="mt-3 text-stone-500">We couldn't load stories right now. Please try again shortly.</p>
+            </div>
           ) : allPosts.length === 0 ? (
-            <EmptyState
-              title="No articles found"
-              body={hasFilters ? "Try a different search or category." : "New articles are on their way."}
-              action={hasFilters ? { label: "View all articles", onClick: clearFilters } : undefined}
-            />
+            <div className="py-24 text-center">
+              <p className="font-bold text-4xl lg:text-3xl">Nothing here, yet.</p>
+              <p className="mt-3 text-stone-500">
+                {hasFilters ? "Try another search or category." : "New stories are on their way."}
+              </p>
+              {hasFilters && (
+                <button
+                  type="button"
+                  onClick={clearFilters}
+                  className="mt-8 inline-flex h-12 items-center gap-2 rounded-full bg-stone-900 px-7 text-sm font-medium text-white transition hover:bg-stone-700 dark:bg-white dark:text-stone-900"
+                >
+                  Browse all stories
+                  <ArrowRight className="h-4 w-4" />
+                </button>
+              )}
+            </div>
           ) : (
-            <div className={cn("transition-opacity", isFetching && "opacity-60")}>
-              {lead && <BlogFeaturedCard post={lead} />}
+            <div className={cn("transition-opacity duration-500", isFetching && "opacity-50")}>
+              {lead && (
+                <Reveal delay={120}>
+                  <BlogHeroCard post={lead} />
+                </Reveal>
+              )}
 
-              {picks.length > 0 && (
-                <section className="mt-12 sm:mt-14">
-                  <SectionHeading title="Editor's picks" />
-                  <div className="grid gap-5 sm:grid-cols-2 sm:gap-6 lg:grid-cols-4">
-                    {picks.map((post) => (
-                      <BlogCompactCard key={post.id} post={post} />
+              {featurePair.length > 0 && (
+                <section className="mt-16 sm:mt-24">
+                  <div className="relative flex flex-col gap-5 border-b border-stone-900/10 pb-8 sm:flex-row sm:items-end sm:justify-between dark:border-white/10">
+                    <div>
+                      <p className="mb-3 inline-flex items-center gap-3 text-[11px] font-medium uppercase tracking-[0.28em] text-stone-500">
+                        <span className="h-px w-8 bg-stone-400" />
+                        Curated selection
+                      </p>
+                      <h2 className="font-bold text-5xl leading-none lg:text-4xl">
+                        Editor&apos;s <em className="not-italic text-[#8E1B2C] dark:text-rose-300">picks</em>
+                      </h2>
+                    </div>
+                  </div>
+
+                  <div className="relative mt-10 grid sm:grid-cols-2 sm:gap-x-10 sm:gap-y-14 lg:grid-cols-4 lg:gap-x-0">
+                    {featurePair.map((post, i) => (
+                      <Reveal
+                        key={post.id}
+                        delay={i * 100}
+                        className="border-t border-stone-900/10 py-8 first:border-t-0 first:pt-0 last:pb-0 sm:border-t-0 sm:py-0 lg:border-l lg:px-8 lg:first:border-l-0 lg:first:pl-0 lg:last:pr-0 dark:border-white/10"
+                      >
+                        <EditorPickCard post={post} index={i} />
+                      </Reveal>
                     ))}
                   </div>
                 </section>
               )}
 
               {gridPosts.length > 0 && (
-                <section className={lead ? "mt-12 sm:mt-14" : undefined}>
-                  {lead && <SectionHeading title="Latest articles" />}
-                  <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                    {gridPosts.map((post) => (
-                      <BlogCard key={post.id} post={post} />
+                <section className={lead ? "mt-20 sm:mt-28" : undefined}>
+                  {lead && <SectionTitle title="More stories" />}
+                  <div className="grid gap-x-10 gap-y-16 sm:grid-cols-2 lg:grid-cols-3">
+                    {gridPosts.map((post, i) => (
+                      <Reveal key={post.id} delay={(i % 3) * 100}>
+                        <BlogCard post={post} />
+                      </Reveal>
                     ))}
                   </div>
                 </section>
@@ -266,23 +314,23 @@ export function BlogListClient() {
           )}
 
           {pagination && pagination.total_pages > 1 && (
-            <nav className="mt-12 flex items-center justify-between gap-3" aria-label="Pagination">
+            <nav
+              className="mt-24 flex items-center justify-between border-t border-stone-900/10 pt-8 dark:border-white/10"
+              aria-label="Pagination"
+            >
               <button
                 type="button"
                 onClick={() => goToPage(page - 1)}
                 disabled={!pagination.has_prev}
-                className="inline-flex h-10 items-center gap-1 rounded-full border border-border bg-white px-4 text-sm font-medium transition hover:border-foreground/30 disabled:pointer-events-none disabled:opacity-40 dark:bg-card"
+                className="inline-flex items-center gap-2 text-[13px] font-medium uppercase tracking-[0.16em] text-stone-600 transition-colors hover:text-stone-900 disabled:pointer-events-none disabled:opacity-30 dark:text-stone-400 dark:hover:text-white"
               >
-                <ChevronLeft className="h-4 w-4" />
-                Previous
+                <ArrowLeft className="h-4 w-4" />
+                Newer
               </button>
-              <p className="text-sm text-muted-foreground sm:hidden">
-                Page {page} of {pagination.total_pages}
-              </p>
-              <div className="hidden items-center gap-1 sm:flex">
+              <div className="flex items-center gap-1">
                 {pageNumbers(page, pagination.total_pages).map((item, i) =>
                   item === "…" ? (
-                    <span key={`gap-${i}`} className="px-2 text-muted-foreground">
+                    <span key={`gap-${i}`} className="px-2 text-stone-400">
                       …
                     </span>
                   ) : (
@@ -292,8 +340,10 @@ export function BlogListClient() {
                       onClick={() => goToPage(item)}
                       aria-current={item === page ? "page" : undefined}
                       className={cn(
-                        "h-10 min-w-10 rounded-full px-3 text-sm font-medium transition",
-                        item === page ? "bg-foreground text-background" : "text-muted-foreground hover:bg-muted hover:text-foreground",
+                        "h-10 min-w-10 rounded-full px-3 font-semibold text-base transition",
+                        item === page
+                          ? "bg-stone-900 text-white dark:bg-white dark:text-stone-900"
+                          : "text-stone-500 hover:text-stone-900 dark:hover:text-white",
                       )}
                     >
                       {item}
@@ -305,10 +355,10 @@ export function BlogListClient() {
                 type="button"
                 onClick={() => goToPage(page + 1)}
                 disabled={!pagination.has_next}
-                className="inline-flex h-10 items-center gap-1 rounded-full border border-border bg-white px-4 text-sm font-medium transition hover:border-foreground/30 disabled:pointer-events-none disabled:opacity-40 dark:bg-card"
+                className="inline-flex items-center gap-2 text-[13px] font-medium uppercase tracking-[0.16em] text-stone-600 transition-colors hover:text-stone-900 disabled:pointer-events-none disabled:opacity-30 dark:text-stone-400 dark:hover:text-white"
               >
-                Next
-                <ChevronRight className="h-4 w-4" />
+                Older
+                <ArrowRight className="h-4 w-4" />
               </button>
             </nav>
           )}
@@ -320,63 +370,38 @@ export function BlogListClient() {
   )
 }
 
-export function SectionHeading({ title, action }: { title: string; action?: { label: string; href: string } }) {
+function SectionTitle({ title }: { title: string }) {
   return (
-    <div className="mb-5 flex items-center justify-between gap-4 sm:mb-6">
-      <h2 className="text-xl font-semibold tracking-tight sm:text-2xl">{title}</h2>
-      {action && (
-        <Link href={action.href} className="inline-flex items-center gap-1 text-sm font-medium text-muted-foreground hover:text-foreground">
-          {action.label}
-          <ArrowRight className="h-4 w-4" />
-        </Link>
-      )}
-    </div>
-  )
-}
-
-function EmptyState({
-  title,
-  body,
-  action,
-}: {
-  title: string
-  body: string
-  action?: { label: string; onClick: () => void }
-}) {
-  return (
-    <div className="rounded-2xl border border-dashed border-border bg-white px-6 py-16 text-center dark:bg-card">
-      <p className="text-lg font-semibold">{title}</p>
-      <p className="mt-1.5 text-sm text-muted-foreground">{body}</p>
-      {action && (
-        <button
-          type="button"
-          onClick={action.onClick}
-          className="mt-6 inline-flex h-10 items-center gap-2 rounded-full bg-foreground px-5 text-sm font-medium text-background transition hover:opacity-90"
-        >
-          {action.label}
-          <ArrowRight className="h-4 w-4" />
-        </button>
-      )}
+    <div className="mb-10 flex items-center gap-6">
+      <h2 className="shrink-0 font-bold text-4xl lg:text-3xl">{title}</h2>
+      <span className="h-px flex-1 bg-stone-900/10 dark:bg-white/10" />
     </div>
   )
 }
 
 export function ShopBand() {
   return (
-    <section className="mt-16 flex flex-col items-start gap-5 rounded-2xl bg-gray-950 px-6 py-8 text-white sm:flex-row sm:items-center sm:justify-between sm:px-10 sm:py-10">
-      <div>
-        <h2 className="text-xl font-semibold tracking-tight sm:text-2xl">Shop the tech we write about</h2>
-        <p className="mt-1.5 max-w-lg text-sm text-white/70">
-          Genuine products, full warranty and nationwide delivery from Computer Village, Lagos.
+    <section className="relative mt-28 overflow-hidden rounded-[28px] bg-stone-900 px-6 py-16 text-center text-white sm:rounded-[36px] sm:px-12 sm:py-24 dark:bg-stone-900">
+      <div className="pointer-events-none absolute -left-24 -top-24 h-72 w-72 rounded-full bg-[#8E1B2C]/40 blur-3xl" />
+      <div className="pointer-events-none absolute -bottom-32 -right-16 h-80 w-80 rounded-full bg-amber-500/20 blur-3xl" />
+      <div className="relative">
+        <p className="text-[11px] font-medium uppercase tracking-[0.32em] text-white/60">From the journal to your desk</p>
+        <h2 className="mx-auto mt-5 max-w-3xl font-bold text-5xl leading-[1.05] lg:text-[2.75rem]">
+          Discover the tech <em className="not-italic text-rose-200">we write about.</em>
+        </h2>
+        <p className="mx-auto mt-6 max-w-lg text-white/65">
+          Genuine products, full warranty and delivery across Nigeria from our Computer Village store.
         </p>
+        <Link
+          href="/categories"
+          className="group mt-10 inline-flex h-14 items-center gap-3 rounded-full bg-white pl-7 pr-2 text-sm font-medium text-stone-900 transition hover:bg-stone-100"
+        >
+          Shop the collection
+          <span className="flex h-10 w-10 items-center justify-center rounded-full bg-stone-900 text-white transition-transform duration-500 group-hover:rotate-45">
+            <ArrowUpRight className="h-4 w-4" />
+          </span>
+        </Link>
       </div>
-      <Link
-        href="/categories"
-        className="inline-flex h-11 shrink-0 items-center gap-2 rounded-full bg-white px-6 text-sm font-medium text-gray-950 transition hover:bg-gray-100"
-      >
-        Shop now
-        <ArrowRight className="h-4 w-4" />
-      </Link>
     </section>
   )
 }
