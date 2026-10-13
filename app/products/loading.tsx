@@ -1,4 +1,5 @@
+import { BrandLoader } from "@/components/brand-loader"
+
 export default function Loading() {
-    return null
-  }
-  
+  return <BrandLoader label="Loading product" />
+}
