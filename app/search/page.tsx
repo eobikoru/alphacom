@@ -7,6 +7,7 @@ import { AppLayout } from "@/components/app-layout"
 import { getCategoriesWithProducts, type CategoryWithProducts } from "@/lib/api/categories"
 import { getProductsWithCategories, type Product } from "@/lib/api/products"
 import { getCanonicalSearchQuery, SEO_BRANDS } from "@/lib/site"
+import { productHref } from "@/lib/product-url"
 import { FolderTree, Layers, ShoppingBag, Search } from "lucide-react"
 
 export default function SearchPage() {
@@ -140,7 +141,7 @@ export default function SearchPage() {
                   {products.map((p) => (
                     <li key={p.id}>
                       <Link
-                        href={`/products/id/${p.id}`}
+                        href={productHref(p)}
                         className="block rounded-lg border border-border bg-card overflow-hidden hover:shadow-md transition-shadow"
                       >
                         <div className="aspect-square bg-muted relative">

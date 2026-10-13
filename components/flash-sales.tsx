@@ -5,6 +5,7 @@ import Link from "next/link"
 import { Zap } from "lucide-react"
 import { getCategoriesWithProducts, type CategoryWithProducts, type CategoryProduct } from "@/lib/api/categories"
 import { SaleProductCard } from "@/components/sale-product-card"
+import { productHref } from "@/lib/product-url"
 
 const TWENTY_FOUR_HR_MS = 24 * 60 * 60 * 1000
 
@@ -124,7 +125,7 @@ export function FlashSales() {
             <SaleProductCard
               key={`${category.id}-${product.id}`}
               product={product}
-              href={`/products/${product.id}`}
+              href={productHref(product)}
               itemsLeft={null}
             />
           ))}

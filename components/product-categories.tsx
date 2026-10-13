@@ -4,6 +4,7 @@ import Link from "next/link"
 import { useEffect, useState } from "react"
 import { getCategoriesWithProducts, type CategoryWithProducts, type CategoryProduct } from "@/lib/api/categories"
 import { SaleProductCard } from "@/components/sale-product-card"
+import { productHref } from "@/lib/product-url"
 
 const ITEMS_PER_CATEGORY = 12
 
@@ -98,7 +99,7 @@ export function ProductCategories() {
                       <SaleProductCard
                         key={product.id}
                         product={product}
-                        href={`/products/${product.id}`}
+                        href={productHref(product)}
                         itemsLeft={null}
                       />
                     ))}

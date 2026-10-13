@@ -14,6 +14,7 @@ import { useQuery } from "@tanstack/react-query"
 import { getProductsWithCategories } from "@/lib/api/products"
 import { getCategoriesWithProducts, getBrandsFromCategories } from "@/lib/api/categories"
 import { useCart } from "@/hooks/use-cart"
+import { productHref } from "@/lib/product-url"
 import { toast } from "sonner"
 import { FEATURED_BRANDS } from "@/components/shop-by-brands"
 
@@ -132,7 +133,7 @@ export default function BrandPage() {
               {data?.data.map((product) => (
                 <Card key={product.id} className="group hover:shadow-lg transition-shadow">
                   <CardContent className="p-4">
-                    <Link href={`/products/id/${product.id}`}>
+                    <Link href={productHref(product)}>
                       <div className="relative aspect-square mb-4 overflow-hidden rounded-lg bg-muted">
                         <img
                           src={product.main_image || "/placeholder.svg"}
@@ -151,7 +152,7 @@ export default function BrandPage() {
                     </Link>
 
                     <div className="space-y-2">
-                      <Link href={`/products/id/${product.id}`}>
+                      <Link href={productHref(product)}>
                         <h3 className="font-semibold line-clamp-2 hover:text-primary transition-colors">
                           {product.name}
                         </h3>

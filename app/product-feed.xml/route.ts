@@ -1,5 +1,6 @@
 import { getProductsWithCategories, type Product } from "@/lib/api/products"
 import { SITE_URL } from "@/lib/site"
+import { productHref } from "@/lib/product-url"
 
 const MAX_PRODUCTS = 5000
 const PAGE_SIZE = 100
@@ -37,7 +38,7 @@ async function getAllProducts(): Promise<Product[]> {
 
 function productToItemXml(product: Product): string {
   const description = stripHtml(product.short_description || product.description || product.name)
-  const productLink = `${SITE_URL}/products/id/${encodeURIComponent(product.id)}`
+  const productLink = `${SITE_URL}${productHref(product)}`
   const imageLink = toAbsoluteImage(product.main_image)
   const availability = product.in_stock ? "in stock" : "out of stock"
   const price = `${product.price.toFixed(2)} ${product.currency}`

@@ -20,7 +20,7 @@ type FieldErrors = Partial<Record<"author_name" | "author_email" | "content", st
 
 const inputClass =
   "w-full rounded-xl border bg-white px-4 text-sm text-gray-950 outline-none transition placeholder:text-gray-400 focus:ring-4 dark:bg-gray-950 dark:text-white"
-const okBorder = "border-stone-200 bg-[#FCFBF9] focus:border-stone-400 focus:ring-stone-900/5 dark:border-stone-800 dark:bg-stone-950"
+const okBorder = "border-border bg-background focus:border-foreground/40 focus:ring-foreground/5"
 const errorBorder = "border-red-500 focus:ring-red-500/10"
 
 function formatCommentDate(value: string | null) {
@@ -134,12 +134,10 @@ export function BlogComments({ slug }: { slug: string }) {
   }
 
   return (
-    <section id="comments" className="mt-20 scroll-mt-28">
+    <section id="comments" className="mt-12 scroll-mt-28">
       <div className="flex items-baseline justify-between gap-4">
-        <h2 className="font-display text-4xl text-stone-900 sm:text-5xl dark:text-white">
-          Conversation
-        </h2>
-        <span className="text-[11px] font-medium uppercase tracking-[0.22em] text-stone-500">
+        <h2 className="text-xl font-semibold tracking-tight sm:text-2xl">Comments</h2>
+        <span className="text-sm text-muted-foreground">
           {total} {total === 1 ? "comment" : "comments"}
         </span>
       </div>
@@ -147,7 +145,7 @@ export function BlogComments({ slug }: { slug: string }) {
       <form
         onSubmit={handleSubmit}
         noValidate
-        className="mt-8 rounded-[24px] bg-white p-5 ring-1 ring-stone-900/5 sm:p-7 dark:bg-stone-900 dark:ring-white/10"
+        className="mt-5 rounded-2xl border border-border bg-white p-4 sm:p-6 dark:bg-card"
       >
         {isAuthenticated ? (
           <div className="mb-4 flex items-center gap-3">
@@ -227,7 +225,7 @@ export function BlogComments({ slug }: { slug: string }) {
           </p>
         </div>
 
-        <div className="mt-4 flex flex-col-reverse items-start justify-between gap-3 sm:flex-row sm:items-center">
+        <div className="mt-4 flex flex-col-reverse items-stretch justify-between gap-3 sm:flex-row sm:items-center">
           {!isAuthenticated ? (
             <p className="text-xs text-gray-500 dark:text-gray-400">
               Have an account?{" "}
@@ -242,7 +240,7 @@ export function BlogComments({ slug }: { slug: string }) {
           <button
             type="submit"
             disabled={createComment.isPending}
-            className="inline-flex h-12 items-center gap-2 rounded-full bg-stone-900 px-7 text-sm font-medium text-white transition hover:bg-stone-700 disabled:opacity-60 dark:bg-white dark:text-stone-900 dark:hover:bg-stone-200"
+            className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-full bg-foreground px-6 text-sm font-medium text-background transition hover:opacity-90 disabled:opacity-60 sm:w-auto"
           >
             {createComment.isPending && <Loader2 className="h-4 w-4 animate-spin" />}
             {createComment.isPending ? "Posting…" : "Post comment"}
@@ -273,8 +271,8 @@ export function BlogComments({ slug }: { slug: string }) {
         <p className="mt-8 text-sm text-gray-500">Comments couldn't be loaded right now.</p>
       ) : comments.length === 0 ? (
         <div className="mt-8 flex flex-col items-center py-6 text-center">
-          <MessageCircle className="h-7 w-7 text-stone-300 dark:text-stone-600" strokeWidth={1.25} />
-          <p className="mt-4 font-display text-2xl text-stone-900 dark:text-white">Start the conversation</p>
+          <MessageCircle className="h-7 w-7 text-muted-foreground/50" strokeWidth={1.5} />
+          <p className="mt-3 text-base font-semibold">No comments yet</p>
           <p className="mt-1 text-sm text-gray-500">Be the first to share your thoughts.</p>
         </div>
       ) : (

@@ -12,6 +12,7 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { Search, ShoppingCart } from "lucide-react"
 import Link from "next/link"
 import { useCart } from "@/hooks/use-cart"
+import { productHref } from "@/lib/product-url"
 import { toast } from "sonner"
 
 export default function ProductsPage() {
@@ -88,7 +89,7 @@ export default function ProductsPage() {
               {data?.data.map((product) => (
                 <Card key={product.id} className="group hover:shadow-lg transition-shadow">
                   <CardContent className="p-4">
-                    <Link href={`/products/id/${product.id}`}>
+                    <Link href={productHref(product)}>
                       <div className="relative aspect-square mb-4 overflow-hidden rounded-lg bg-muted">
                         <img
                           src={product.main_image || "/placeholder.svg"}
@@ -107,7 +108,7 @@ export default function ProductsPage() {
                     </Link>
 
                     <div className="space-y-2">
-                      <Link href={`/products/id/${product.id}`}>
+                      <Link href={productHref(product)}>
                         <h3 className="font-semibold line-clamp-2 hover:text-primary transition-colors">
                           {product.name}
                         </h3>

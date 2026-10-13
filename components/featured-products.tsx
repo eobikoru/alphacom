@@ -5,6 +5,7 @@ import { Star } from "lucide-react"
 import { useState, useEffect } from "react"
 import { getFeaturedProducts, type FeaturedProduct } from "@/lib/api/products"
 import { SaleProductCard } from "@/components/sale-product-card"
+import { productHref } from "@/lib/product-url"
 
 export function FeaturedProducts() {
   const [products, setProducts] = useState<FeaturedProduct[]>([])
@@ -72,7 +73,7 @@ export function FeaturedProducts() {
               <SaleProductCard
                 key={product.id}
                 product={product}
-                href={`/products/${product.id}`}
+                href={productHref(product)}
                 itemsLeft={null}
               />
             ))}

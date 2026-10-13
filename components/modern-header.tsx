@@ -15,6 +15,7 @@ import { useState, useRef, useEffect, useMemo } from "react"
 import { useAuth } from "@/hooks/use-auth"
 import { getCategoriesWithProducts, type CategoryWithProducts } from "@/lib/api/categories"
 import { getProductsWithCategories, type Product } from "@/lib/api/products"
+import { productHref } from "@/lib/product-url"
 import { useAppSelector } from "@/store/hooks"
 interface ModernHeaderProps {
   blackNavbar?: boolean
@@ -302,13 +303,13 @@ export function ModernHeader({ blackNavbar }: ModernHeaderProps) {
                         searchProducts.map((p) => (
                           <Link
                             key={p.id}
-                            href={`/products/id/${p.id}`}
+                            href={productHref(p)}
                             onClick={(e) => {
                               e.preventDefault()
                               setIsSearchOpen(false)
                               setSearchQuery("")
                               handleNavClick()
-                              router.push(`/products/id/${p.id}`)
+                              router.push(productHref(p))
                             }}
                             className="flex items-center gap-3 px-3 py-2 text-sm rounded-md hover:bg-accent"
                           >
@@ -346,7 +347,7 @@ export function ModernHeader({ blackNavbar }: ModernHeaderProps) {
 
           {/* Actions */}
           <div className="flex items-center gap-4">
-            {/* <Link
+            <Link
               href="/blog"
               onClick={handleNavClick}
               className={`relative flex items-center gap-1.5 text-sm font-medium transition-colors hover:text-foreground ${
@@ -360,7 +361,7 @@ export function ModernHeader({ blackNavbar }: ModernHeaderProps) {
                   New
                 </span>
               )}
-            </Link> */}
+            </Link>
             <ThemeToggle />
 
             <CartDrawer ref={cartDrawerRef} />
@@ -521,8 +522,8 @@ export function ModernHeader({ blackNavbar }: ModernHeaderProps) {
                         searchProducts.slice(0, 5).map((p) => (
                           <Link
                             key={p.id}
-                            href={`/products/id/${p.id}`}
-                            onClick={(e) => { e.preventDefault(); setIsSearchOpen(false); setSearchQuery(""); handleNavClick(); router.push(`/products/id/${p.id}`); }}
+                            href={productHref(p)}
+                            onClick={(e) => { e.preventDefault(); setIsSearchOpen(false); setSearchQuery(""); handleNavClick(); router.push(productHref(p)); }}
                             className="flex items-center gap-3 px-3 py-2 text-sm rounded-md hover:bg-accent"
                           >
                             {p.main_image && <img src={p.main_image} alt="" className="h-10 w-10 rounded object-cover shrink-0" />}
@@ -604,7 +605,7 @@ export function ModernHeader({ blackNavbar }: ModernHeaderProps) {
                           <div className="px-3 py-2 text-sm text-muted-foreground">Searching...</div>
                         ) : (
                           searchProducts.slice(0, 5).map((p) => (
-                            <Link key={p.id} href={`/products/${p.id}`} onClick={() => { setIsSearchOpen(false); setSearchQuery(""); setIsMobileMenuOpen(false); }} className="flex items-center gap-3 px-3 py-2 text-sm rounded-md hover:bg-accent">
+                            <Link key={p.id} href={productHref(p)} onClick={() => { setIsSearchOpen(false); setSearchQuery(""); setIsMobileMenuOpen(false); }} className="flex items-center gap-3 px-3 py-2 text-sm rounded-md hover:bg-accent">
                               {p.main_image && <img src={p.main_image} alt="" className="h-10 w-10 rounded object-cover shrink-0" />}
                               <span className="truncate">{p.name}</span>
                             </Link>

@@ -8,6 +8,7 @@ import { SaleProductCard } from "@/components/sale-product-card"
 import { AppLayout } from "@/components/app-layout"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Button } from "@/components/ui/button"
+import { productHref } from "@/lib/product-url"
 
 const MAX_PRODUCTS = 20
 
@@ -80,7 +81,7 @@ export default function TopSalesPage() {
                 <SaleProductCard
                   key={product.id}
                   product={product}
-                  href={`/products/${product.id}`}
+                  href={productHref(product)}
                   itemsLeft={null}
                 />
               ))}

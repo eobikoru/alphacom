@@ -5,6 +5,7 @@ import Link from "next/link"
 import { TrendingUp } from "lucide-react"
 import { getCategoriesWithProducts, type CategoryWithProducts, type CategoryProduct } from "@/lib/api/categories"
 import { SaleProductCard } from "@/components/sale-product-card"
+import { productHref } from "@/lib/product-url"
 
 const TOP_SALES_LIMIT = 12
 
@@ -94,7 +95,7 @@ export function TopSales() {
               <SaleProductCard
                 key={product.id}
                 product={product}
-                href={`/products/${product.id}`}
+                href={productHref(product)}
                 itemsLeft={null}
               />
             ))}

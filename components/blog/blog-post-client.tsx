@@ -2,12 +2,14 @@
 
 import { useEffect, useState } from "react"
 import Link from "next/link"
-import { ArrowLeft, Check, Facebook, Link2, MessageCircle } from "lucide-react"
+import { ArrowLeft, Check, ChevronRight, Facebook, Link2, MessageCircle } from "lucide-react"
 import { useBlogPost } from "@/hooks/use-blog"
 import { taxonomyName, taxonomySlug, type BlogPost } from "@/lib/api/blog"
 import { AuthorAvatar, BlogCard, BlogCover, BlogMeta } from "@/components/blog/blog-card"
 import { BlogComments } from "@/components/blog/blog-comments"
-import { ShopBand } from "@/components/blog/blog-list-client"
+import { BlogSocialCard } from "@/components/blog/blog-social"
+import { XIcon } from "@/lib/social-links"
+import { SectionHeading, ShopBand } from "@/components/blog/blog-list-client"
 
 function ReadingProgress() {
   const [progress, setProgress] = useState(0)
@@ -33,18 +35,10 @@ function ReadingProgress() {
   return (
     <div className="pointer-events-none fixed inset-x-0 top-0 z-[60] h-[3px]" aria-hidden>
       <div
-        className="h-full origin-left bg-gradient-to-r from-[#8E1B2C] to-[#C2410C] transition-transform duration-150 ease-out"
+        className="h-full origin-left bg-foreground transition-transform duration-150 ease-out"
         style={{ transform: `scaleX(${progress})` }}
       />
     </div>
-  )
-}
-
-function XIcon({ className }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 24 24" fill="currentColor" className={className} aria-hidden>
-      <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231 5.45-6.231Zm-1.161 17.52h1.833L7.084 4.126H5.117l11.966 15.644Z" />
-    </svg>
   )
 }
 
@@ -69,10 +63,11 @@ function ShareBar({ post }: { post: BlogPost }) {
   const text = encodeURIComponent(post.title)
   const encodedUrl = encodeURIComponent(url)
   const buttonClass =
-    "flex h-10 w-10 items-center justify-center rounded-full border border-stone-900/10 text-stone-600 transition hover:border-stone-900 hover:bg-stone-900 hover:text-white dark:border-white/15 dark:text-stone-300 dark:hover:border-white dark:hover:bg-white dark:hover:text-stone-900"
+    "flex h-9 w-9 items-center justify-center rounded-full border border-border bg-white text-foreground/70 transition hover:border-foreground hover:bg-foreground hover:text-background dark:bg-card"
 
   return (
     <div className="flex items-center gap-2">
+      <span className="mr-1 text-xs font-medium text-muted-foreground">Share</span>
       <a
         href={`https://wa.me/?text=${text}%20${encodedUrl}`}
         target="_blank"
@@ -113,15 +108,16 @@ export function BlogPostClient({ slug }: { slug: string }) {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-[#FAF8F5] dark:bg-stone-950">
-        <div className="container mx-auto px-4 pt-16 sm:pt-24">
-          <div className="mx-auto flex max-w-3xl flex-col items-center">
-            <div className="mb-8 h-3 w-28 animate-pulse rounded bg-stone-300 dark:bg-stone-800" />
-            <div className="mb-4 h-14 w-full animate-pulse rounded-lg bg-stone-300 dark:bg-stone-800" />
-            <div className="mb-10 h-14 w-2/3 animate-pulse rounded-lg bg-stone-300 dark:bg-stone-800" />
-            <div className="h-10 w-56 animate-pulse rounded-full bg-stone-200 dark:bg-stone-900" />
+      <div className="min-h-screen bg-background">
+        <div className="container mx-auto px-4 pt-8 sm:pt-12">
+          <div className="mx-auto max-w-3xl space-y-4">
+            <div className="h-4 w-32 animate-pulse rounded bg-muted" />
+            <div className="h-6 w-24 animate-pulse rounded-full bg-muted" />
+            <div className="h-10 w-full animate-pulse rounded bg-muted" />
+            <div className="h-10 w-2/3 animate-pulse rounded bg-muted" />
+            <div className="h-5 w-56 animate-pulse rounded bg-muted" />
           </div>
-          <div className="mx-auto mt-14 aspect-[16/9] max-w-6xl animate-pulse rounded-[36px] bg-stone-300 dark:bg-stone-800" />
+          <div className="mx-auto mt-8 aspect-[16/9] max-w-5xl animate-pulse rounded-2xl bg-muted" />
         </div>
       </div>
     )
@@ -129,17 +125,17 @@ export function BlogPostClient({ slug }: { slug: string }) {
 
   if (isError || !post) {
     return (
-      <div className="flex min-h-[70vh] items-center justify-center bg-[#FAF8F5] px-4 dark:bg-stone-950">
+      <div className="flex min-h-[60vh] items-center justify-center bg-background px-4">
         <div className="text-center">
-          <p className="text-[11px] font-medium uppercase tracking-[0.32em] text-[#8E1B2C] dark:text-rose-300">404</p>
-          <h1 className="mt-4 font-display text-5xl sm:text-6xl">This story has moved on.</h1>
-          <p className="mt-4 text-stone-500">It may have been renamed or removed from the journal.</p>
+          <p className="text-sm font-semibold text-muted-foreground">404</p>
+          <h1 className="mt-2 text-2xl font-bold tracking-tight sm:text-3xl">Article not found</h1>
+          <p className="mt-2 text-sm text-muted-foreground">It may have been renamed or removed.</p>
           <Link
             href="/blog"
-            className="mt-10 inline-flex h-12 items-center gap-2 rounded-full bg-stone-900 px-7 text-sm font-medium text-white transition hover:bg-stone-700 dark:bg-white dark:text-stone-900"
+            className="mt-6 inline-flex h-10 items-center gap-2 rounded-full bg-foreground px-5 text-sm font-medium text-background transition hover:opacity-90"
           >
             <ArrowLeft className="h-4 w-4" />
-            Back to the journal
+            Back to blog
           </Link>
         </div>
       </div>
@@ -150,118 +146,107 @@ export function BlogPostClient({ slug }: { slug: string }) {
   const categorySlug = taxonomySlug(post.category)
 
   return (
-    <div className="min-h-screen bg-[#FAF8F5] text-stone-900 dark:bg-stone-950 dark:text-stone-100">
+    <div className="min-h-screen bg-background text-foreground">
       <ReadingProgress />
 
-      <article className="container mx-auto px-4 pt-10 sm:pt-16">
-        <header className="mx-auto max-w-4xl animate-fade-in-up text-center" style={{ animationDuration: "900ms" }}>
-          <nav
-            className="mb-10 flex items-center justify-center gap-3 text-[11px] font-medium uppercase tracking-[0.22em] text-stone-500"
-            aria-label="Breadcrumb"
-          >
-            <Link href="/blog" className="transition-colors hover:text-stone-900 dark:hover:text-white">
-              The Journal
+      <article className="container mx-auto px-4 pt-6 sm:pt-10">
+        <header className="mx-auto max-w-3xl">
+          <nav aria-label="Breadcrumb" className="flex flex-wrap items-center gap-1.5 text-xs text-muted-foreground">
+            <Link href="/" className="hover:text-foreground">
+              Home
+            </Link>
+            <ChevronRight className="h-3.5 w-3.5" />
+            <Link href="/blog" className="hover:text-foreground">
+              Blog
             </Link>
             {category && (
               <>
-                <span className="h-px w-6 bg-stone-300 dark:bg-stone-700" />
-                <Link
-                  href={`/blog?category=${categorySlug}`}
-                  className="text-[#8E1B2C] transition-opacity hover:opacity-70 dark:text-rose-300"
-                >
+                <ChevronRight className="h-3.5 w-3.5" />
+                <Link href={`/blog?category=${categorySlug}`} className="hover:text-foreground">
                   {category}
                 </Link>
               </>
             )}
           </nav>
 
-          <h1 className="font-display text-[2.75rem] leading-[1.02] tracking-[-0.015em] sm:text-7xl lg:text-[5.5rem]">
+          <h1 className="mt-5 text-3xl font-bold leading-tight tracking-tight sm:text-4xl lg:text-[2.75rem] lg:leading-[1.15]">
             {post.title}
           </h1>
           {post.excerpt && (
-            <p className="mx-auto mt-7 max-w-2xl font-display text-xl italic leading-snug text-stone-600 sm:text-2xl dark:text-stone-400">
-              {post.excerpt}
-            </p>
+            <p className="mt-4 text-base leading-relaxed text-muted-foreground sm:text-lg">{post.excerpt}</p>
           )}
 
-          <div className="mt-10 flex flex-col items-center gap-6 sm:flex-row sm:justify-center sm:gap-10">
-            <div className="flex items-center gap-3 text-left">
-              {post.author_name && <AuthorAvatar name={post.author_name} size="lg" />}
+          <div className="mt-6 flex flex-col gap-4 border-y border-border py-4 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex items-center gap-3">
+              {post.author_name && <AuthorAvatar name={post.author_name} size="md" />}
               <div>
-                {post.author_name && <p className="text-sm font-medium">By {post.author_name}</p>}
+                {post.author_name && <p className="text-sm font-medium">{post.author_name}</p>}
                 <BlogMeta post={post} />
               </div>
             </div>
-            <span className="hidden h-10 w-px bg-stone-900/10 sm:block dark:bg-white/10" />
             <ShareBar post={post} />
           </div>
         </header>
 
         {post.cover_image_url && (
-          <figure
-            className="mx-auto mt-14 max-w-6xl animate-fade-in-up sm:mt-20"
-            style={{ animationDelay: "150ms", animationDuration: "1000ms" }}
-          >
-            <div className="overflow-hidden rounded-[24px] sm:rounded-[36px]">
-              <BlogCover src={post.cover_image_url} alt={post.title} className="aspect-[16/9] w-full" />
-            </div>
+          <figure className="mx-auto mt-8 max-w-5xl overflow-hidden rounded-2xl border border-border">
+            <BlogCover src={post.cover_image_url} alt={post.title} className="aspect-[16/9] w-full" />
           </figure>
         )}
 
-        <div id="article-body" className="mx-auto mt-14 max-w-[680px] sm:mt-20">
+        <div id="article-body" className="mx-auto mt-8 max-w-3xl sm:mt-10">
           <div className="blog-content" dangerouslySetInnerHTML={{ __html: post.content }} />
 
-          <div className="mt-16 flex flex-col gap-6 border-y border-stone-900/10 py-8 sm:flex-row sm:items-center sm:justify-between dark:border-white/10">
+          <div className="mt-12 flex flex-col gap-4 border-t border-border pt-6 sm:flex-row sm:items-center sm:justify-between">
             {post.tags.length > 0 ? (
               <div className="flex flex-wrap gap-2">
                 {post.tags.map((item) => (
                   <Link
                     key={taxonomySlug(item)}
                     href={`/blog?tag=${taxonomySlug(item)}`}
-                    className="rounded-full border border-stone-900/10 px-3.5 py-1.5 text-[13px] text-stone-600 transition hover:border-stone-900 hover:text-stone-900 dark:border-white/15 dark:text-stone-300 dark:hover:border-white dark:hover:text-white"
+                    className="rounded-md bg-muted px-2.5 py-1 text-xs font-medium text-foreground/80 transition hover:bg-foreground hover:text-background"
                   >
                     #{taxonomyName(item)}
                   </Link>
                 ))}
               </div>
             ) : (
-              <p className="font-display text-2xl italic text-stone-500">Enjoyed this story?</p>
+              <span />
             )}
             <ShareBar post={post} />
           </div>
 
           {post.author_name && (
-            <div className="mt-10 flex items-center gap-5 rounded-[24px] bg-white p-6 ring-1 ring-stone-900/5 dark:bg-stone-900 dark:ring-white/10">
+            <div className="mt-8 flex items-center gap-4 rounded-2xl border border-border bg-white p-5 dark:bg-card">
               <AuthorAvatar name={post.author_name} size="lg" />
               <div>
-                <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-stone-500">Written by</p>
-                <p className="mt-1 font-display text-2xl">{post.author_name}</p>
-                <p className="mt-1 text-sm text-stone-500">For the Alphacom Journal</p>
+                <p className="text-xs text-muted-foreground">Written by</p>
+                <p className="text-base font-semibold">{post.author_name}</p>
+                <p className="text-sm text-muted-foreground">Alphacom Online</p>
               </div>
             </div>
           )}
 
+          <BlogSocialCard className="mt-6" />
+
           <BlogComments slug={post.slug} />
+
+          <Link
+            href="/blog"
+            className="mt-10 inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground hover:text-foreground"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Back to all articles
+          </Link>
         </div>
       </article>
 
-      <div className="container mx-auto px-4 pb-24">
+      <div className="container mx-auto px-4 pb-20">
         <div className="mx-auto max-w-7xl">
           {post.related?.length > 0 && (
-            <section className="mt-28">
-              <div className="mb-10 flex items-center gap-6">
-                <h2 className="shrink-0 font-display text-4xl sm:text-5xl">
-                  Keep <em className="italic text-[#8E1B2C] dark:text-rose-300">reading</em>
-                </h2>
-                <span className="h-px flex-1 bg-stone-900/10 dark:bg-white/10" />
-                <Link
-                  href="/blog"
-                  className="hidden shrink-0 text-[13px] font-medium uppercase tracking-[0.16em] text-stone-500 transition-colors hover:text-stone-900 sm:inline dark:hover:text-white"
-                >
-                  All stories
-                </Link>
-              </div>
-              <div className="grid gap-x-10 gap-y-16 sm:grid-cols-2 lg:grid-cols-3">
+            <section className="mt-14 border-t border-border pt-10">
+              <SectionHeading title="Related articles" action={{ label: "View all", href: "/blog" }} />
+              <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                 {post.related.map((item) => (
                   <BlogCard key={item.id} post={item} />
                 ))}

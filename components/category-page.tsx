@@ -15,6 +15,7 @@ import { toast } from "sonner"
 import Link from "next/link"
 import { getCategoriesWithProducts, getSubcategoriesByCategory } from "@/lib/api/categories"
 import { ProductCardSkeleton } from "@/components/skeletons/product-card-skeleton"
+import { productHref } from "@/lib/product-url"
 
 interface Product {
   id: string
@@ -518,7 +519,7 @@ export function CategoryPage({ categorySlug, selectedSubcategory }: CategoryPage
             >
               <div className="relative">
                 <div className="w-full aspect-[4/3] overflow-hidden bg-muted">
-                  <Link href={`/products/id/${product.id}`} className="block w-full h-full">
+                  <Link href={productHref(product)} className="block w-full h-full">
                     <img
                       src={product.main_image || "/placeholder.svg"}
                       alt={product.name}
@@ -546,7 +547,7 @@ export function CategoryPage({ categorySlug, selectedSubcategory }: CategoryPage
                 </Button>
               </div>
               <CardContent className="p-2">
-                <Link href={`/products/id/${product.id}`}>
+                <Link href={productHref(product)}>
                   <p className="text-xs font-medium text-foreground line-clamp-2 leading-tight hover:text-primary">
                     {product.name}
                   </p>
