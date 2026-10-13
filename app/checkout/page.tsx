@@ -1,5 +1,6 @@
 "use client"
 
+import { cdnImage } from "@/lib/image-url"
 import type React from "react"
 
 import { useEffect, useState } from "react"
@@ -446,7 +447,7 @@ export default function CheckoutPage() {
                     <li key={item.id} className="flex items-center gap-3">
                       <div className="relative h-16 w-16 shrink-0 rounded-xl border border-gray-100 bg-white dark:border-gray-800">
                         <img
-                          src={item.image || "/placeholder.svg"}
+                          src={cdnImage(item.image, 200) || "/placeholder.svg"}
                           alt={item.name}
                           className="h-full w-full rounded-xl object-contain p-1.5"
                         />

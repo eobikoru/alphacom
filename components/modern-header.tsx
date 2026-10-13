@@ -1,5 +1,6 @@
 "use client"
 
+import { cdnImage } from "@/lib/image-url"
 import type React from "react"
 import { Search, User, Menu, MapPin, LogOut, Mail, Shield, ChevronDown, Package, FolderTree, Layers, ShoppingBag, BookOpen } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -314,7 +315,7 @@ export function ModernHeader({ blackNavbar }: ModernHeaderProps) {
                             className="flex items-center gap-3 px-3 py-2 text-sm rounded-md hover:bg-accent"
                           >
                             {p.main_image && (
-                              <img src={p.main_image} alt="" className="h-10 w-10 rounded object-cover shrink-0" />
+                              <img src={cdnImage(p.main_image, 96)} alt="" className="h-10 w-10 rounded object-cover shrink-0" />
                             )}
                             <span className="truncate">{p.name}</span>
                           </Link>
@@ -526,7 +527,7 @@ export function ModernHeader({ blackNavbar }: ModernHeaderProps) {
                             onClick={(e) => { e.preventDefault(); setIsSearchOpen(false); setSearchQuery(""); handleNavClick(); router.push(productHref(p)); }}
                             className="flex items-center gap-3 px-3 py-2 text-sm rounded-md hover:bg-accent"
                           >
-                            {p.main_image && <img src={p.main_image} alt="" className="h-10 w-10 rounded object-cover shrink-0" />}
+                            {p.main_image && <img src={cdnImage(p.main_image, 96)} alt="" className="h-10 w-10 rounded object-cover shrink-0" />}
                             <span className="truncate">{p.name}</span>
                           </Link>
                         ))
@@ -606,7 +607,7 @@ export function ModernHeader({ blackNavbar }: ModernHeaderProps) {
                         ) : (
                           searchProducts.slice(0, 5).map((p) => (
                             <Link key={p.id} href={productHref(p)} onClick={() => { setIsSearchOpen(false); setSearchQuery(""); setIsMobileMenuOpen(false); }} className="flex items-center gap-3 px-3 py-2 text-sm rounded-md hover:bg-accent">
-                              {p.main_image && <img src={p.main_image} alt="" className="h-10 w-10 rounded object-cover shrink-0" />}
+                              {p.main_image && <img src={cdnImage(p.main_image, 96)} alt="" className="h-10 w-10 rounded object-cover shrink-0" />}
                               <span className="truncate">{p.name}</span>
                             </Link>
                           ))

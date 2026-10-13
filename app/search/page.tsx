@@ -1,5 +1,6 @@
 "use client"
 
+import { cdnImage } from "@/lib/image-url"
 import { useSearchParams } from "next/navigation"
 import { useEffect, useMemo, useState } from "react"
 import Link from "next/link"
@@ -146,7 +147,7 @@ export default function SearchPage() {
                       >
                         <div className="aspect-square bg-muted relative">
                           {p.main_image && (
-                            <img src={p.main_image} alt={p.name} className="w-full h-full object-cover" />
+                            <img src={cdnImage(p.main_image, 600)} alt={p.name} loading="lazy" decoding="async" className="w-full h-full object-cover" />
                           )}
                         </div>
                         <div className="p-3">

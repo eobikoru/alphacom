@@ -1,5 +1,6 @@
 "use client"
 
+import { cdnImage } from "@/lib/image-url"
 import { useState, useEffect } from "react"
 import { useSearchParams } from "next/navigation"
 import { useQuery } from "@tanstack/react-query"
@@ -92,8 +93,10 @@ export default function ProductsPage() {
                     <Link href={productHref(product)}>
                       <div className="relative aspect-square mb-4 overflow-hidden rounded-lg bg-muted">
                         <img
-                          src={product.main_image || "/placeholder.svg"}
+                          src={cdnImage(product.main_image, 600) || "/placeholder.svg"}
                           alt={product.name}
+                          loading="lazy"
+                          decoding="async"
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform"
                         />
                         {product.discount_percentage > 0 && (

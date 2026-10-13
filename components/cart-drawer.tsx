@@ -1,5 +1,6 @@
 "use client"
 
+import { cdnImage } from "@/lib/image-url"
 import { useState, useEffect, forwardRef, useImperativeHandle } from "react"
 import { ShoppingCart, Plus, Minus, X, Trash2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -97,7 +98,7 @@ export const CartDrawer = forwardRef<CartDrawerRef, CartDrawerProps>(({ hideTrig
                   <div key={item.id} className="flex gap-4 p-4 border border-border rounded-lg bg-card">
                     <div className="w-20 h-20 bg-muted rounded-md overflow-hidden flex-shrink-0">
                       <img
-                        src={item.image || "/placeholder.svg"}
+                        src={cdnImage(item.image, 200) || "/placeholder.svg"}
                         alt={item.name}
                         className="w-full h-full object-cover"
                       />

@@ -1,5 +1,6 @@
 "use client"
 
+import { cdnImage } from "@/lib/image-url"
 import { useEffect, useState } from "react"
 import { useAppSelector } from "@/store/hooks"
 import { useCart } from "@/hooks/use-cart"
@@ -228,7 +229,7 @@ export function ProductDetailClient({ slug, productId }: ProductDetailClientProp
             <div className={`overflow-hidden rounded-2xl ${surface}`}>
               <div className="flex aspect-square items-center justify-center p-6 sm:p-10">
                 <Image
-                  src={activeImage || "/placeholder.svg"}
+                  src={cdnImage(activeImage, 1200) || "/placeholder.svg"}
                   alt={product.name}
                   width={800}
                   height={800}
@@ -254,8 +255,10 @@ export function ProductDetailClient({ slug, productId }: ProductDetailClientProp
                     }`}
                   >
                     <img
-                      src={image || "/placeholder.svg"}
+                      src={cdnImage(image, 240) || "/placeholder.svg"}
                       alt=""
+                      loading="lazy"
+                      decoding="async"
                       className="aspect-square w-full object-contain p-1.5"
                     />
                   </button>

@@ -8,6 +8,7 @@ import gsap from "gsap"
 import { useQuery } from "@tanstack/react-query"
 import apiClient from "@/lib/api-client"
 import { Skeleton } from "@/components/ui/skeleton"
+import { cdnImage } from "@/lib/image-url"
 
 const fallbackSlides = [
   {
@@ -73,7 +74,7 @@ export function HeroSection() {
           id: index + 1,
           title: banner.title || "Featured Products",
           subtitle: banner.subtitle || "Shop premium tech products with warranty.",
-          image: banner.image_url || "/placeholder.svg",
+          image: cdnImage(banner.image_url, 1600) || "/placeholder.svg",
         }))
       : fallbackSlides
 

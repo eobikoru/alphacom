@@ -1,6 +1,7 @@
 "use client"
 
 import Link from "next/link"
+import { cdnImage } from "@/lib/image-url"
 
 export interface SaleProductCardItem {
   id: string
@@ -33,7 +34,7 @@ export function SaleProductCard({
     >
       <div className="relative h-24 w-full bg-muted overflow-hidden">
         <img
-          src={product.main_image || "/placeholder.svg?height=96&width=144"}
+          src={cdnImage(product.main_image, 320) || "/placeholder.svg?height=96&width=144"}
           alt={product.name}
           loading="lazy"
           decoding="async"

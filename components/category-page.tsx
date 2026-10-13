@@ -1,5 +1,6 @@
 "use client"
 
+import { cdnImage } from "@/lib/image-url"
 import { useState, useMemo, useEffect } from "react"
 import { Search, Filter, Grid3X3, List, ChevronDown, Heart, ShoppingCart } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -521,8 +522,10 @@ export function CategoryPage({ categorySlug, selectedSubcategory }: CategoryPage
                 <div className="w-full aspect-[4/3] overflow-hidden bg-muted">
                   <Link href={productHref(product)} className="block w-full h-full">
                     <img
-                      src={product.main_image || "/placeholder.svg"}
+                      src={cdnImage(product.main_image, 600) || "/placeholder.svg"}
                       alt={product.name}
+                      loading="lazy"
+                      decoding="async"
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                     />
                   </Link>

@@ -1,5 +1,6 @@
 "use client"
 
+import { cdnImage } from "@/lib/image-url"
 import Image from "next/image"
 import Link from "next/link"
 import * as Dialog from "@radix-ui/react-dialog"
@@ -60,7 +61,7 @@ export function AddedToCartModal({
           <div className="mt-4 grid grid-cols-[4.5rem_minmax(0,1fr)_auto] items-start gap-x-3 gap-y-3 text-sm text-gray-900 sm:grid-cols-[5rem_minmax(0,1fr)_auto] sm:gap-x-4">
             <div className="row-span-3 flex h-[4.5rem] w-[4.5rem] items-center justify-center sm:h-20 sm:w-20">
               <Image
-                src={productImage || "/placeholder.svg"}
+                src={cdnImage(productImage, 240) || "/placeholder.svg"}
                 alt={productName}
                 width={80}
                 height={80}

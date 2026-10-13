@@ -1,5 +1,6 @@
 "use client"
 
+import { cdnImage } from "@/lib/image-url"
 import { useState } from "react"
 import * as Dialog from "@radix-ui/react-dialog"
 import { Building2, Check, Copy, MessageCircle, X } from "lucide-react"
@@ -125,7 +126,7 @@ export function BankTransferModal({ open, onOpenChange, items, total, formatPric
               {items.map((item) => (
                 <li key={item.id} className="flex items-center gap-3">
                   <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-xl border border-gray-100 bg-white dark:border-gray-800">
-                    <img src={item.image || "/placeholder.svg"} alt={item.name} className="h-full w-full object-contain p-1" />
+                    <img src={cdnImage(item.image, 200) || "/placeholder.svg"} alt={item.name} className="h-full w-full object-contain p-1" />
                   </div>
                   <div className="min-w-0 flex-1">
                     <p className="truncate text-sm font-medium text-gray-950 dark:text-white">{item.name}</p>

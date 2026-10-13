@@ -47,7 +47,7 @@ const team = [
   {
     name: "Anthony",
     role: "Chief Technology Consultant",
-    image: "/davi.png",
+    image: "/davi.jpg",
     description: "Anthony is a seasoned Information and Communication Technology Consultant with over 18years experience. ",
   },
   {
