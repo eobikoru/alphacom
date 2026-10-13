@@ -76,7 +76,7 @@ export function BlogHeroCard({ post }: { post: BlogPostCard }) {
       href={`/blog/${post.slug}`}
       className="group relative block overflow-hidden rounded-[28px] bg-stone-900 sm:rounded-[36px]"
     >
-      <div className="relative aspect-[4/5] sm:aspect-[16/10] lg:aspect-[21/10]">
+      <div className="relative flex min-h-[22rem] flex-col justify-between gap-8 p-6 sm:min-h-[26rem] sm:p-10 lg:min-h-[28rem] lg:p-14">
         <BlogCover
           src={post.cover_image_url}
           alt={post.title}
@@ -86,14 +86,14 @@ export function BlogHeroCard({ post }: { post: BlogPostCard }) {
         <div className="absolute inset-0 bg-gradient-to-r from-black/40 to-transparent" />
         <div className="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-black/50 to-transparent" />
 
-        <div className="absolute inset-x-0 top-0 flex flex-wrap items-center gap-3 p-6 sm:p-10 lg:p-14">
+        <div className="relative flex flex-wrap items-center gap-3">
           <span className="rounded-full border border-white/25 bg-white/10 px-3 py-1 text-[11px] font-medium uppercase tracking-[0.22em] text-white backdrop-blur-md">
             The latest
           </span>
           <CategoryEyebrow post={post} light />
         </div>
 
-        <div className="absolute inset-x-0 bottom-0 p-6 sm:p-10 lg:p-14">
+        <div className="relative">
           <div className="max-w-3xl">
             <h2 className="font-bold text-[2.5rem] leading-[1.05] text-white sm:text-5xl lg:text-[3.25rem]">
               {post.title}
