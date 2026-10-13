@@ -74,26 +74,25 @@ export function BlogHeroCard({ post }: { post: BlogPostCard }) {
   return (
     <Link
       href={`/blog/${post.slug}`}
-      className="group relative block overflow-hidden rounded-[28px] bg-stone-900 sm:rounded-[36px]"
+      className="group relative block overflow-hidden rounded-[28px] bg-stone-900 sm:rounded-[36px] lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)]"
     >
-      <div className="relative flex min-h-[22rem] flex-col justify-between gap-8 p-6 sm:min-h-[26rem] sm:p-10 lg:min-h-[28rem] lg:p-14">
+      <div className="relative aspect-[16/10] overflow-hidden lg:order-2 lg:aspect-auto lg:min-h-[28rem]">
         <BlogCover
           src={post.cover_image_url}
           alt={post.title}
           className="absolute inset-0 h-full w-full transition-transform duration-[1600ms] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.04]"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/35 to-black/0" />
-        <div className="absolute inset-0 bg-gradient-to-r from-black/40 to-transparent" />
-        <div className="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-black/50 to-transparent" />
+      </div>
 
-        <div className="relative flex flex-wrap items-center gap-3">
+      <div className="flex flex-col justify-center p-6 sm:p-10 lg:p-12">
+        <div className="mb-5 flex flex-wrap items-center gap-3">
           <span className="rounded-full border border-white/25 bg-white/10 px-3 py-1 text-[11px] font-medium uppercase tracking-[0.22em] text-white backdrop-blur-md">
             The latest
           </span>
           <CategoryEyebrow post={post} light />
         </div>
 
-        <div className="relative">
+        <div>
           <div className="max-w-3xl">
             <h2 className="font-bold text-[2.5rem] leading-[1.05] text-white sm:text-5xl lg:text-[3.25rem]">
               {post.title}
