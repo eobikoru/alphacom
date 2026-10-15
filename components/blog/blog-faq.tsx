@@ -3,20 +3,19 @@
 import { useId, useState } from "react"
 import { Plus } from "lucide-react"
 import { cn } from "@/lib/utils"
-import { useBlogFaqs } from "@/hooks/use-blog"
+import type { BlogFaq as BlogFaqItem } from "@/lib/api/blog"
 
-export function BlogFaq() {
-  const { data, isLoading } = useBlogFaqs()
-  const faqs = [...(data?.data ?? [])].sort((a, b) => a.sort_order - b.sort_order)
+export function BlogFaq({ faqs }: { faqs: BlogFaqItem[] }) {
+  const items = [...faqs].sort((a, b) => a.sort_order - b.sort_order)
   const [openId, setOpenId] = useState<string | null>(null)
   const baseId = useId()
 
-  if (isLoading || faqs.length === 0) return null
+  if (items.length === 0) return null
 
   const structuredData = {
     "@context": "https://schema.org",
     "@type": "FAQPage",
-    mainEntity: faqs.map((faq) => ({
+    mainEntity: items.map((faq) => ({
       "@type": "Question",
       name: faq.question,
       acceptedAnswer: { "@type": "Answer", text: faq.answer },
@@ -41,7 +40,7 @@ export function BlogFaq() {
       </div>
 
       <ul className="border-t border-stone-900/10 dark:border-white/10">
-        {faqs.map((faq, index) => {
+        {items.map((faq, index) => {
           const isOpen = openId === faq.id
           const panelId = `${baseId}-panel-${faq.id}`
           const buttonId = `${baseId}-button-${faq.id}`

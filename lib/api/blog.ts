@@ -22,11 +22,19 @@ export interface BlogPostCard {
   comment_count: number
 }
 
+export interface BlogFaq {
+  id: string
+  question: string
+  answer: string
+  sort_order: number
+}
+
 export interface BlogPost extends BlogPostCard {
   content: string
   meta_title: string | null
   meta_description: string | null
   related: BlogPostCard[]
+  faqs: BlogFaq[]
 }
 
 export interface BlogPagination {
@@ -92,18 +100,6 @@ export const getBlogCategories = async (): Promise<{ success: boolean; data: Blo
 
 export const getBlogTags = async (): Promise<{ success: boolean; data: BlogTag[] }> => {
   const response = await apiClient.get("/api/v1/blog/tags")
-  return response.data
-}
-
-export interface BlogFaq {
-  id: string
-  question: string
-  answer: string
-  sort_order: number
-}
-
-export const getBlogFaqs = async (): Promise<{ success: boolean; data: BlogFaq[] }> => {
-  const response = await apiClient.get("/api/v1/blog/faqs")
   return response.data
 }
 

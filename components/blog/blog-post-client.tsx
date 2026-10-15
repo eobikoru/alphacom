@@ -7,6 +7,7 @@ import { useBlogPost } from "@/hooks/use-blog"
 import { taxonomyName, taxonomySlug, type BlogPost } from "@/lib/api/blog"
 import { AuthorAvatar, BlogCard, BlogCover, BlogMeta } from "@/components/blog/blog-card"
 import { BlogComments } from "@/components/blog/blog-comments"
+import { BlogFaq } from "@/components/blog/blog-faq"
 import { ShopBand } from "@/components/blog/blog-list-client"
 
 function ReadingProgress() {
@@ -247,6 +248,8 @@ export function BlogPostClient({ slug }: { slug: string }) {
 
       <div className="container mx-auto px-4 pb-24">
         <div className="mx-auto max-w-7xl">
+          <BlogFaq faqs={post.faqs ?? []} />
+
           {post.related?.length > 0 && (
             <section className="mt-28">
               <div className="mb-10 flex items-center gap-6">

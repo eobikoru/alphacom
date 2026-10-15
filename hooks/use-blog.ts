@@ -6,7 +6,6 @@ import {
   getBlogComments,
   type CreateBlogCommentRequest,
   getBlogCategories,
-  getBlogFaqs,
   getBlogPost,
   getBlogPosts,
   getBlogTags,
@@ -56,14 +55,6 @@ export function useBlogCategories() {
   return useQuery({
     queryKey: ["blog-categories"],
     queryFn: getBlogCategories,
-    staleTime: 5 * 60 * 1000,
-  })
-}
-
-export function useBlogFaqs() {
-  return useQuery({
-    queryKey: ["blog-faqs"],
-    queryFn: getBlogFaqs,
     staleTime: 5 * 60 * 1000,
   })
 }

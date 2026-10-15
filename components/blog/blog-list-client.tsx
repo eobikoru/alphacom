@@ -14,7 +14,6 @@ import {
   BlogHeroSkeleton,
   EditorPickCard,
 } from "@/components/blog/blog-card"
-import { BlogFaq } from "@/components/blog/blog-faq"
 
 const PER_PAGE = 12
 
@@ -363,8 +362,6 @@ export function BlogListClient() {
               </button>
             </nav>
           )}
-
-          <BlogFaq />
 
           <ShopBand />
         </div>
