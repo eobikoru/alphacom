@@ -95,6 +95,18 @@ export const getBlogTags = async (): Promise<{ success: boolean; data: BlogTag[]
   return response.data
 }
 
+export interface BlogFaq {
+  id: string
+  question: string
+  answer: string
+  sort_order: number
+}
+
+export const getBlogFaqs = async (): Promise<{ success: boolean; data: BlogFaq[] }> => {
+  const response = await apiClient.get("/api/v1/blog/faqs")
+  return response.data
+}
+
 export interface BlogComment {
   id: string
   author_name: string | null
