@@ -20,11 +20,14 @@ export interface ShippingAddress {
   phone: string
 }
 
+export type CheckoutMode = "transfer" | "paystack"
+
 export interface GuestCheckoutRequest {
   callback_url: string
   email: string
   name: string
   phone: string
+  mode: CheckoutMode
   items: CheckoutItem[]
   shipping_address: ShippingAddress
   notes?: string

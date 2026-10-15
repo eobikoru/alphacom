@@ -16,7 +16,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
 import { ShoppingCart, ArrowLeft, Landmark, Lock, CreditCard } from "lucide-react"
 import { useGuestCheckout, useAuthenticatedCheckout, useOrderBreakdown } from "@/hooks/use-orders"
-import type { CheckoutItem, CheckoutResponse, ShippingAddress } from "@/lib/api/orders"
+import type { CheckoutItem, CheckoutMode, CheckoutResponse, ShippingAddress } from "@/lib/api/orders"
 import Link from "next/link"
 import { toast } from "sonner"
 import { BankTransferModal } from "@/components/bank-transfer-modal"
@@ -198,7 +198,7 @@ export default function CheckoutPage() {
     )
   }
 
-  const placeOrder = async (): Promise<CheckoutResponse | undefined> => {
+  const placeOrder = async (mode: CheckoutMode): Promise<CheckoutResponse | undefined> => {
     const checkoutItems: CheckoutItem[] = items.map((item) => ({
       product_id: item.id,
       quantity: item.quantity,
@@ -226,6 +226,7 @@ export default function CheckoutPage() {
         email: formData.email,
         name: formData.name,
         phone: formData.phone,
+        mode,
         items: checkoutItems,
         shipping_address: shippingAddress,
         notes: formData.notes,
@@ -242,7 +243,7 @@ export default function CheckoutPage() {
     if (!validateForm()) return
 
     setPendingAction("payment")
-    const response = await placeOrder()
+    const response = await placeOrder("paystack")
     setPendingAction(null)
 
     // Redirect to Paystack payment page
@@ -258,7 +259,7 @@ export default function CheckoutPage() {
 
     if (!transferOrder) {
       setPendingAction("transfer")
-      const response = await placeOrder()
+      const response = await placeOrder("transfer")
       setPendingAction(null)
       if (!response) return
       setTransferOrder(response)
