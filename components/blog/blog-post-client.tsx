@@ -230,7 +230,13 @@ export function BlogPostClient({ slug }: { slug: string }) {
             )}
             <ShareBar post={post} />
           </div>
+        </div>
 
+        <div className="mx-auto max-w-7xl">
+          <BlogFaq faqs={post.faqs ?? []} />
+        </div>
+
+        <div className="mx-auto max-w-[680px]">
           {post.author_name && (
             <div className="mt-10 flex items-center gap-5 rounded-[24px] bg-white p-6 ring-1 ring-stone-900/5 dark:bg-stone-900 dark:ring-white/10">
               <AuthorAvatar name={post.author_name} size="lg" />
@@ -248,8 +254,6 @@ export function BlogPostClient({ slug }: { slug: string }) {
 
       <div className="container mx-auto px-4 pb-24">
         <div className="mx-auto max-w-7xl">
-          <BlogFaq faqs={post.faqs ?? []} />
-
           {post.related?.length > 0 && (
             <section className="mt-28">
               <div className="mb-10 flex items-center gap-6">
