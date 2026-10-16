@@ -7,6 +7,7 @@ import { SpeedInsights } from "@vercel/speed-insights/next"
 import "./globals.css"
 import { ReduxProvider } from "@/components/redux-provider"
 import { ThemeWrapper } from "@/components/theme-wrapper"
+import { AuthModalProvider } from "@/components/auth-modal"
 import { Suspense } from "react"
 import NextTopLoader from "nextjs-toploader"
 import { WhatsAppWidget } from "@/components/whatsapp-widget"
@@ -255,7 +256,9 @@ export default function RootLayout({
         <QueryProvider>
           <ReduxProvider>
             <Suspense fallback={null}>
-              <ThemeWrapper>{children}</ThemeWrapper>
+              <ThemeWrapper>
+                <AuthModalProvider>{children}</AuthModalProvider>
+              </ThemeWrapper>
             </Suspense>
           </ReduxProvider>
         </QueryProvider>

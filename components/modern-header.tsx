@@ -14,6 +14,7 @@ import { ThemeToggle } from "@/components/theme-toggle"
 import { CartDrawer, type CartDrawerRef } from "@/components/cart-drawer"
 import { useState, useRef, useEffect, useMemo } from "react"
 import { useAuth } from "@/hooks/use-auth"
+import { useAuthModal } from "@/components/auth-modal"
 import { getCategoriesWithProducts, type CategoryWithProducts } from "@/lib/api/categories"
 import { getProductsWithCategories, type Product } from "@/lib/api/products"
 import { productHref } from "@/lib/product-url"
@@ -35,6 +36,7 @@ export function ModernHeader({ blackNavbar }: ModernHeaderProps) {
   const [isCategoriesLoading, setIsCategoriesLoading] = useState(true)
   const [searchProducts, setSearchProducts] = useState<Product[]>([])
   const [productsSearchLoading, setProductsSearchLoading] = useState(false)
+  const { openAuth } = useAuthModal()
   const cartDrawerRef = useRef<CartDrawerRef>(null)
   const dropdownRef = useRef<HTMLDivElement>(null)
   const searchRef = useRef<HTMLDivElement>(null)
@@ -439,12 +441,18 @@ export function ModernHeader({ blackNavbar }: ModernHeaderProps) {
                 )}
               </div>
             ) : (
-              <Link href="/auth/signin" onClick={handleNavClick}>
-                <Button variant="ghost" size="sm" className="flex items-center gap-2">
-                  <User className="h-4 w-4" />
-                  <span className="hidden md:inline">Sign In</span>
-                </Button>
-              </Link>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="flex items-center gap-2"
+                onClick={() => {
+                  handleNavClick()
+                  openAuth("signin")
+                }}
+              >
+                <User className="h-4 w-4" />
+                <span className="hidden md:inline">Sign In</span>
+              </Button>
             )}
 
             <Button

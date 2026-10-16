@@ -1,11 +1,11 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import Link from "next/link"
 import { CheckCircle2, Loader2, MessageCircle } from "lucide-react"
 import { toast } from "sonner"
 import { cn } from "@/lib/utils"
 import { useAuth } from "@/hooks/use-auth"
+import { useAuthModal } from "@/components/auth-modal"
 import { useBlogComments, useCreateBlogComment } from "@/hooks/use-blog"
 import { getApiErrorMessage, type BlogComment, type CreateBlogCommentResponse } from "@/lib/api/blog"
 import { AuthorAvatar } from "@/components/blog/blog-card"
@@ -67,6 +67,7 @@ function CommentItem({ comment }: { comment: BlogComment }) {
 
 export function BlogComments({ slug }: { slug: string }) {
   const { isAuthenticated, user } = useAuth()
+  const { openAuth } = useAuthModal()
   const { data, isLoading, isError, fetchNextPage, hasNextPage, isFetchingNextPage } = useBlogComments(slug)
   const createComment = useCreateBlogComment(slug)
 
@@ -231,9 +232,13 @@ export function BlogComments({ slug }: { slug: string }) {
           {!isAuthenticated ? (
             <p className="text-xs text-gray-500 dark:text-gray-400">
               Have an account?{" "}
-              <Link href="/auth/signin" className="font-medium text-gray-950 underline underline-offset-4 dark:text-white">
+              <button
+                type="button"
+                onClick={() => openAuth("signin")}
+                className="font-medium text-gray-950 underline underline-offset-4 dark:text-white"
+              >
                 Sign in
-              </Link>{" "}
+              </button>{" "}
               to comment faster.
             </p>
           ) : (

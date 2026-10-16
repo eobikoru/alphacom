@@ -7,8 +7,10 @@ import { Input } from "@/components/ui/input"
 import Link from "next/link"
 import { SimpleThemeToggle } from "@/components/simple-theme-toggle"
 import { useState } from "react"
+import { useAuthModal } from "@/components/auth-modal"
 
 export function SimpleHeader() {
+  const { openAuth } = useAuthModal()
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState("")
 
@@ -95,12 +97,18 @@ export function SimpleHeader() {
           <div className="flex items-center gap-4">
             <SimpleThemeToggle />
 
-            <Link href="/auth/signin" onClick={handleNavClick}>
-              <Button variant="ghost" size="sm" className="flex items-center gap-2">
-                <User className="h-4 w-4" />
-                <span className="hidden md:inline">Sign In</span>
-              </Button>
-            </Link>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="flex items-center gap-2"
+              onClick={() => {
+                handleNavClick()
+                openAuth("signin")
+              }}
+            >
+              <User className="h-4 w-4" />
+              <span className="hidden md:inline">Sign In</span>
+            </Button>
 
             <Button
               variant="ghost"
