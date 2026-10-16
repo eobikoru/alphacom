@@ -31,6 +31,22 @@ function categoryHref(category: Product["category"] | string | null | undefined)
   return `/categories/${category.slug}`
 }
 
+function descriptionHtml(value: string) {
+  const trimmed = value.trim()
+  if (/<\/?[a-z][\s\S]*>/i.test(trimmed)) return trimmed
+
+  const escaped = trimmed
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+
+  return escaped
+    .split(/\r?\n\r?\n/)
+    .map((paragraph) => `<p>${paragraph.replace(/\r?\n/g, "<br />")}</p>`)
+    .join("")
+}
+
 export function ProductDetailClient({ slug, productId }: ProductDetailClientProps) {
   const [product, setProduct] = useState<Product | null>(null)
   const [loading, setLoading] = useState(true)
@@ -389,9 +405,10 @@ export function ProductDetailClient({ slug, productId }: ProductDetailClientProp
             {product.description && (
               <section className={`mt-6 rounded-2xl p-6 ${surface}`}>
                 <h2 className={`text-lg font-semibold tracking-tight ${strongText}`}>Description</h2>
-                <p className={`mt-4 text-[15px] leading-7 ${isDark ? "text-gray-300" : "text-gray-600"}`}>
-                  {product.description}
-                </p>
+                <div
+                  className="product-description mt-4"
+                  dangerouslySetInnerHTML={{ __html: descriptionHtml(product.description) }}
+                />
               </section>
             )}
           </div>

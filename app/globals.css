@@ -490,4 +490,50 @@
   .blog-content p:empty {
     @apply hidden;
   }
+
+  .product-description {
+    @apply text-[15px] leading-7 text-gray-600 dark:text-gray-300;
+    overflow-wrap: anywhere;
+  }
+  .product-description > * + * {
+    @apply mt-4;
+  }
+  .product-description h1,
+  .product-description h2,
+  .product-description h3,
+  .product-description h4 {
+    @apply font-semibold leading-snug text-gray-950 dark:text-white;
+  }
+  .product-description h1,
+  .product-description h2 {
+    @apply text-lg;
+  }
+  .product-description h3,
+  .product-description h4 {
+    @apply text-base;
+  }
+  .product-description a {
+    @apply text-cyan-700 underline underline-offset-2 dark:text-cyan-400;
+  }
+  .product-description strong,
+  .product-description b {
+    @apply font-semibold text-gray-900 dark:text-white;
+  }
+  .product-description ul {
+    @apply list-disc space-y-1.5 pl-5;
+  }
+  .product-description ol {
+    @apply list-decimal space-y-1.5 pl-5;
+  }
+  .product-description img,
+  .product-description video,
+  .product-description iframe {
+    @apply my-4 h-auto max-w-full rounded-xl;
+  }
+  .product-description iframe {
+    @apply aspect-video w-full;
+  }
+  .product-description p:empty {
+    @apply hidden;
+  }
 }
