@@ -8,6 +8,8 @@ import "./globals.css"
 import { ReduxProvider } from "@/components/redux-provider"
 import { ThemeWrapper } from "@/components/theme-wrapper"
 import { AuthModalProvider } from "@/components/auth-modal"
+import { NewsletterWelcome } from "@/components/newsletter-welcome"
+import { LiveProductNote } from "@/components/live-product-note"
 import { Suspense } from "react"
 import NextTopLoader from "nextjs-toploader"
 import { WhatsAppWidget } from "@/components/whatsapp-widget"
@@ -272,6 +274,8 @@ export default function RootLayout({
             <Suspense fallback={null}>
               <ThemeWrapper>
                 <AuthModalProvider>{children}</AuthModalProvider>
+                <NewsletterWelcome />
+                <LiveProductNote />
               </ThemeWrapper>
             </Suspense>
           </ReduxProvider>

@@ -8,6 +8,7 @@ import { useAppSelector } from "@/store/hooks"
 import Link from "next/link"
 import { useEffect, useState, type FormEvent } from "react"
 import { toast } from "sonner"
+import { rememberNewsletterPrompt } from "@/components/newsletter-welcome"
 import { getCategoriesWithProducts, type CategoryWithProducts } from "@/lib/api/categories"
 import { Skeleton } from "@/components/ui/skeleton"
 
@@ -65,6 +66,7 @@ export function ModernFooter() {
       if (response.ok && data?.success) {
         toast.success(data.message ?? "You're subscribed.")
         setNewsletterEmail("")
+        rememberNewsletterPrompt("subscribed")
       } else {
         toast.error(data?.message ?? "We couldn't subscribe you right now. Please try again.")
       }
