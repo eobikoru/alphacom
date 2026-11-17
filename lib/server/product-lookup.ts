@@ -1,4 +1,6 @@
 import "server-only"
+import { cache } from "react"
+import type { Product } from "@/lib/api/products"
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "https://api.alphacomonline.com"
 const PAGE_SIZE = 100
@@ -99,6 +101,47 @@ export async function findProductBySlug(slug: string): Promise<ProductSummary | 
   const refreshed = await getIndex(true)
   return refreshed.bySlug.get(slug) ?? null
 }
+
+function asProduct(raw: Record<string, unknown>): Product {
+  const category = raw.category
+  const categoryObject =
+    category && typeof category === "object"
+      ? (category as Product["category"])
+      : { id: "", name: typeof category === "string" ? category : "", slug: "" }
+
+  return {
+    id: String(raw.id ?? ""),
+    name: String(raw.name ?? ""),
+    slug: String(raw.slug ?? ""),
+    sku: String(raw.sku ?? ""),
+    brand: typeof raw.brand === "string" ? raw.brand : null,
+    price: Number(raw.price ?? 0),
+    original_price: Number(raw.original_price ?? raw.price ?? 0),
+    discount_percentage: Number(raw.discount_percentage ?? 0),
+    currency: typeof raw.currency === "string" ? raw.currency : "NGN",
+    main_image: typeof raw.main_image === "string" ? raw.main_image : null,
+    images: Array.isArray(raw.images) ? raw.images.filter((image): image is string => typeof image === "string") : [],
+    category: categoryObject,
+    subcategory_id: typeof raw.subcategory_id === "string" ? raw.subcategory_id : null,
+    in_stock: Boolean(raw.in_stock),
+    stock_quantity: Number(raw.stock_quantity ?? 0),
+    stock_status: typeof raw.stock_status === "string" ? raw.stock_status : raw.in_stock ? "In Stock" : "Out of Stock",
+    description: typeof raw.description === "string" ? raw.description : "",
+    short_description: typeof raw.short_description === "string" ? raw.short_description : null,
+  }
+}
+
+/** Full product for the public page. Deduped for metadata and the page render. */
+export const fetchProductDetail = cache(async (id: string): Promise<Product | null> => {
+  try {
+    const json = await fetchJson(`/api/v1/products/${encodeURIComponent(id)}`)
+    const raw = json?.data
+    if (!raw?.id || !raw?.name) return null
+    return asProduct(raw as Record<string, unknown>)
+  } catch {
+    return null
+  }
+})
 
 export async function findProductById(id: string): Promise<ProductSummary | null> {
   try {

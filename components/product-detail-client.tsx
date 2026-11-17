@@ -18,6 +18,7 @@ import { AddedToCartModal } from "@/components/added-to-cart-modal"
 interface ProductDetailClientProps {
   slug?: string
   productId?: string
+  initialProduct?: Product | null
 }
 
 function categoryLabel(category: Product["category"] | string | null | undefined) {
@@ -47,9 +48,9 @@ function descriptionHtml(value: string) {
     .join("")
 }
 
-export function ProductDetailClient({ slug, productId }: ProductDetailClientProps) {
-  const [product, setProduct] = useState<Product | null>(null)
-  const [loading, setLoading] = useState(true)
+export function ProductDetailClient({ slug, productId, initialProduct = null }: ProductDetailClientProps) {
+  const [product, setProduct] = useState<Product | null>(initialProduct)
+  const [loading, setLoading] = useState(!initialProduct)
   const [selectedImage, setSelectedImage] = useState(0)
   const [quantity, setQuantity] = useState(1)
   const [cartModalOpen, setCartModalOpen] = useState(false)
@@ -60,6 +61,7 @@ export function ProductDetailClient({ slug, productId }: ProductDetailClientProp
   const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist()
 
   useEffect(() => {
+    if (initialProduct) return
     const fetchProduct = async () => {
       try {
         setLoading(true)
@@ -289,6 +291,9 @@ export function ProductDetailClient({ slug, productId }: ProductDetailClientProp
             )}
             <h1 className={`mt-2 text-3xl font-semibold tracking-tight md:text-4xl ${strongText}`}>{product.name}</h1>
             <p className={`mt-2 text-sm ${mutedText}`}>SKU {product.sku}</p>
+            <p className={`mt-2 max-w-xl text-sm leading-6 ${mutedText}`}>
+              Buy {product.name} at Alphacom Online, Computer Village, Lagos.
+            </p>
 
             <div className="mt-6 flex flex-wrap items-center gap-3">
               <span className={`text-4xl font-semibold tracking-tight ${strongText}`}>{formatPrice(product.price)}</span>

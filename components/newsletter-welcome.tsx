@@ -12,7 +12,13 @@ const HIDDEN_PREFIXES = ["/checkout", "/payment", "/auth"]
 
 export function rememberNewsletterPrompt(value: "subscribed" | "dismissed") {
   try {
-    localStorage.setItem(NEWSLETTER_PROMPT_KEY, value)
+    if (value === "subscribed") {
+      localStorage.setItem(NEWSLETTER_PROMPT_KEY, value)
+      sessionStorage.removeItem(NEWSLETTER_PROMPT_KEY)
+      return
+    }
+    sessionStorage.setItem(NEWSLETTER_PROMPT_KEY, value)
+    if (localStorage.getItem(NEWSLETTER_PROMPT_KEY) === "dismissed") localStorage.removeItem(NEWSLETTER_PROMPT_KEY)
   } catch {
     // Private mode can block storage. The prompt simply returns next visit.
   }
@@ -49,9 +55,10 @@ function InboxIllustration({ className }: { className?: string }) {
 
 function hasSeenPrompt() {
   try {
-    return Boolean(localStorage.getItem(NEWSLETTER_PROMPT_KEY))
+    if (localStorage.getItem(NEWSLETTER_PROMPT_KEY) === "subscribed") return true
+    return sessionStorage.getItem(NEWSLETTER_PROMPT_KEY) === "dismissed"
   } catch {
-    return true
+    return false
   }
 }
 
@@ -115,11 +122,11 @@ export function NewsletterWelcome() {
     >
       <Dialog.Portal>
         <Dialog.Overlay className="fixed inset-0 z-[100] bg-stone-950/50 backdrop-blur-[3px] data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0" />
-        <Dialog.Content className="fixed left-1/2 top-1/2 z-[110] w-[min(100%-1.5rem,44rem)] -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-[28px] border border-stone-200/80 bg-white shadow-[0_28px_90px_-32px_rgba(28,25,23,0.55)] outline-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 dark:border-white/10 dark:bg-stone-950">
-          <div className="grid sm:grid-cols-[minmax(0,15.5rem)_minmax(0,1fr)]">
-            <aside className="relative flex items-center gap-3 bg-[#8E1B2C] px-5 py-4 text-white sm:flex-col sm:items-center sm:justify-center sm:gap-5 sm:px-7 sm:py-8">
-              <img src="/alpd.png" alt="Alphacom" className="hidden h-9 w-auto sm:block" />
-              <InboxIllustration className="h-[4.5rem] w-[5.5rem] shrink-0 sm:h-52 sm:w-full" />
+        <Dialog.Content className="fixed left-1/2 top-1/2 z-[110] max-h-[min(100%-2rem,40rem)] w-[min(100%-1.5rem,58rem)] -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-[28px] border border-stone-200/80 bg-white shadow-[0_28px_90px_-32px_rgba(28,25,23,0.55)] outline-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 dark:border-white/10 dark:bg-stone-950">
+          <div className="grid max-h-[min(100vh-2rem,40rem)] sm:min-h-[30rem] sm:grid-cols-[minmax(0,22rem)_minmax(0,1fr)]">
+            <aside className="relative flex items-center gap-3 bg-[#8E1B2C] px-5 py-5 text-white sm:flex-col sm:items-center sm:justify-center sm:gap-5 sm:px-8 sm:py-10">
+              <img src="/alpd.png" alt="Alphacom" className="hidden h-10 w-auto sm:block" />
+              <InboxIllustration className="h-20 w-24 shrink-0 sm:h-64 sm:w-full" />
               <div className="min-w-0 sm:mt-2">
                 <img src="/alpd.png" alt="Alphacom" className="mb-1 h-7 w-auto sm:hidden" />
                 <p className="mt-1 text-sm font-medium leading-snug text-white sm:mt-3 sm:text-[1.35rem] sm:leading-tight">
@@ -128,7 +135,7 @@ export function NewsletterWelcome() {
               </div>
             </aside>
 
-            <div className="relative px-6 py-7 sm:px-8 sm:py-9">
+            <div className="relative overflow-y-auto px-6 py-8 sm:px-10 sm:py-11">
               <Dialog.Close
                 className="absolute right-4 top-4 flex h-9 w-9 items-center justify-center rounded-full border border-stone-200 text-stone-500 transition-colors hover:border-stone-300 hover:bg-stone-50 hover:text-stone-900 dark:border-white/10 dark:text-stone-400 dark:hover:bg-white/5 dark:hover:text-white"
                 aria-label="Close"

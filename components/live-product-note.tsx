@@ -13,22 +13,52 @@ const FIRST_DELAY_MS = 20000
 const EVERY_MS = 5 * 60 * 1000
 const VISIBLE_MS = 12000
 
-function playChime(context: AudioContext) {
-  const now = context.currentTime
-  ;[523.25, 659.25].forEach((frequency, index) => {
-    const osc = context.createOscillator()
-    const gain = context.createGain()
-    const start = now + index * 0.11
-    osc.type = "sine"
-    osc.frequency.value = frequency
-    gain.gain.setValueAtTime(0.0001, start)
-    gain.gain.exponentialRampToValueAtTime(0.045, start + 0.03)
-    gain.gain.exponentialRampToValueAtTime(0.0001, start + 0.38)
-    osc.connect(gain)
-    gain.connect(context.destination)
-    osc.start(start)
-    osc.stop(start + 0.4)
+function chimeUrl() {
+  const sampleRate = 22050
+  const duration = 0.62
+  const length = Math.floor(sampleRate * duration)
+  const samples = new Float32Array(length)
+  ;[
+    { frequency: 523.25, start: 0, end: 0.4 },
+    { frequency: 659.25, start: 0.11, end: 0.51 },
+  ].forEach((tone) => {
+    const start = Math.floor(tone.start * sampleRate)
+    const end = Math.min(length, Math.floor(tone.end * sampleRate))
+    for (let index = start; index < end; index++) {
+      const time = (index - start) / sampleRate
+      const envelope = Math.min(1, time / 0.09) * Math.exp(-time * 3.2)
+      samples[index] += Math.sin(2 * Math.PI * tone.frequency * time) * envelope * 0.16
+    }
   })
+
+  const bytes = new DataView(new ArrayBuffer(44 + length * 2))
+  const write = (offset: number, text: string) => {
+    for (let index = 0; index < text.length; index++) bytes.setUint8(offset + index, text.charCodeAt(index))
+  }
+  write(0, "RIFF")
+  bytes.setUint32(4, 36 + length * 2, true)
+  write(8, "WAVE")
+  write(12, "fmt ")
+  bytes.setUint32(16, 16, true)
+  bytes.setUint16(20, 1, true)
+  bytes.setUint16(22, 1, true)
+  bytes.setUint32(24, sampleRate, true)
+  bytes.setUint32(28, sampleRate * 2, true)
+  bytes.setUint16(32, 2, true)
+  bytes.setUint16(34, 16, true)
+  write(36, "data")
+  bytes.setUint32(40, length * 2, true)
+  for (let index = 0; index < length; index++) {
+    const sample = Math.max(-1, Math.min(1, samples[index]))
+    bytes.setInt16(44 + index * 2, sample < 0 ? sample * 0x8000 : sample * 0x7fff, true)
+  }
+  return URL.createObjectURL(new Blob([bytes.buffer], { type: "audio/wav" }))
+}
+
+let chimeSrc: string | null = null
+function getChimeUrl() {
+  if (!chimeSrc) chimeSrc = chimeUrl()
+  return chimeSrc
 }
 
 function timeAgoLabel() {
@@ -50,13 +80,33 @@ export function LiveProductNote() {
   const [open, setOpen] = useState(false)
   const productsRef = useRef<Product[]>([])
   const lastIdRef = useRef<string | null>(null)
-  const audioRef = useRef<AudioContext | null>(null)
+  const audioRef = useRef<HTMLAudioElement | null>(null)
   const canPlayRef = useRef(false)
   const hiddenRoute = HIDDEN_PREFIXES.some((prefix) => pathname?.startsWith(prefix))
+
+  const chime = () => {
+    if (!audioRef.current) {
+      const audio = new Audio(getChimeUrl())
+      audio.preload = "auto"
+      audioRef.current = audio
+    }
+    const audio = audioRef.current
+    audio.volume = 0.4
+    audio.currentTime = 0
+    return audio.play()
+  }
 
   useEffect(() => {
     const arm = () => {
       canPlayRef.current = true
+      const audio = audioRef.current ?? new Audio(getChimeUrl())
+      audioRef.current = audio
+      audio.volume = 0
+      audio.play().then(() => {
+        audio.pause()
+        audio.currentTime = 0
+        audio.volume = 0.4
+      }).catch(() => {})
     }
     window.addEventListener("pointerdown", arm, { once: true })
     window.addEventListener("keydown", arm, { once: true })
@@ -70,8 +120,19 @@ export function LiveProductNote() {
     let cancelled = false
     let hideTimer = 0
     let showTimer = 0
+    let cardOpen = false
     const schedule = (delay: number) => {
+      window.clearTimeout(showTimer)
       showTimer = window.setTimeout(reveal, delay)
+    }
+    const scheduleDismiss = () => {
+      window.clearTimeout(hideTimer)
+      if (!cardOpen || document.hidden) return
+      hideTimer = window.setTimeout(() => {
+        if (cancelled) return
+        cardOpen = false
+        setOpen(false)
+      }, VISIBLE_MS)
     }
 
     const pick = () => {
@@ -84,7 +145,7 @@ export function LiveProductNote() {
     const reveal = () => {
       if (cancelled) return
       const onQuietPage = HIDDEN_PREFIXES.some((prefix) => pathnameRef.current?.startsWith(prefix))
-      if (document.hidden || onQuietPage) {
+      if (onQuietPage) {
         schedule(EVERY_MS)
         return
       }
@@ -93,23 +154,25 @@ export function LiveProductNote() {
       lastIdRef.current = next.id
       setProduct(next)
       setTimeAgo(timeAgoLabel())
+      cardOpen = true
       setOpen(true)
 
       if (canPlayRef.current && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-        const Context = window.AudioContext || (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext
-        if (Context) {
-          if (!audioRef.current) audioRef.current = new Context()
-          const context = audioRef.current
-          context.resume().then(() => playChime(context)).catch(() => {})
-        }
+        chime().catch(() => {})
       }
 
-      hideTimer = window.setTimeout(() => {
-        if (cancelled) return
-        setOpen(false)
-        schedule(EVERY_MS)
-      }, VISIBLE_MS)
+      schedule(EVERY_MS)
+      scheduleDismiss()
     }
+
+    const onVisibility = () => {
+      if (document.hidden) {
+        window.clearTimeout(hideTimer)
+        return
+      }
+      scheduleDismiss()
+    }
+    document.addEventListener("visibilitychange", onVisibility)
 
     getProductsWithCategories({ per_page: 24 })
       .then((response) => {
@@ -122,6 +185,7 @@ export function LiveProductNote() {
 
     return () => {
       cancelled = true
+      document.removeEventListener("visibilitychange", onVisibility)
       window.clearTimeout(hideTimer)
       window.clearTimeout(showTimer)
     }
