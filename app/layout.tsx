@@ -26,7 +26,7 @@ const TIKTOK_PIXEL_ID = "DBB0S8JC77UF47DK0AT0"
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "AlphaCom Online | Premium Technology Store - Computer Village Lagos",
+    default: "AlphaCom Online | Premium Technology Store",
     template: "%s | AlphaCom Online",
   },
   description:
@@ -62,7 +62,7 @@ export const metadata: Metadata = {
     locale: "en_US",
     url: SITE_URL,
     siteName: "AlphaCom Online",
-    title: "AlphaCom Online | Premium Technology Store - Logitech, Anker, SanDisk Partner Lagos",
+    title: "AlphaCom Online | Premium Technology Store",
     description:
       "Premium technology store in Computer Village, Lagos. Shop Logitech, Anker, SanDisk, Micropack. Expert support, 100% warranty & fast delivery across Nigeria.",
     images: [
@@ -76,7 +76,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "AlphaCom Online | Premium Technology Store Lagos",
+    title: "AlphaCom Online | Premium Technology Store",
     description: "Premium technology store in Computer Village, Lagos. Logitech, Anker, SanDisk & more. Expert support & competitive prices.",
     images: [`${SITE_URL}/twitter-image.jpg`],
     creator: "@alphacomonline",

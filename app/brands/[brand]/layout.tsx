@@ -27,11 +27,11 @@ type Props = { params: { brand: string }; children: React.ReactNode }
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { brand } = params
   const { name, description } = getBrandMeta(brand)
-  const title = `Buy ${name} Products | AlphaCom Online – Lagos`
+  const title = `Buy ${name} Products | AlphaCom Online`
   const url = `${SITE_URL}/brands/${encodeURIComponent(name)}`
 
   return {
-    title,
+    title: { absolute: title },
     description,
     keywords: [
       `${name} Nigeria`,
