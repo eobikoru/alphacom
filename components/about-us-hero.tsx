@@ -1,54 +1,33 @@
-"use client"
-
 import Image from "next/image"
-import { useAppSelector } from "@/store/hooks"
 
 export function AboutUsHero() {
-  const theme = useAppSelector((state) => state.theme.mode)
-
   return (
-    <section className="relative min-h-[60vh] flex items-center justify-center overflow-hidden">
-      {/* Background image with overlay */}
-      <div className="absolute inset-0">
-        <Image
-          src="/aboutpic.jpg"
-          alt="Modern computer store interior"
-          fill
-          className="object-cover"
-          priority
-        />
-        {/* Dark overlay */}
-        <div className="absolute inset-0 bg-black bg-opacity-50"></div>
-      </div>
-
-      {/* Animated background elements */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-cyan-400/20 to-blue-500/20 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-br from-purple-400/20 to-pink-500/20 rounded-full blur-3xl animate-pulse delay-1000" />
-      </div>
-
-      <div className="relative z-10 container mx-auto px-4 text-center">
-        {/* Company Logo/Storefront Section */}
-        <div className="mb-8">
-          <div className="relative w-full max-w-4xl mx-auto">
-            <div className="text-white">
-              <h1 className="text-2xl md:text-[4rem] font-normal mb-4  text-balance">
-                About{" "}
-                <span className="bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent">
-                  Alphacom
-                </span>
-              </h1>
-              <p className="text-[0.9rem] md:text-[1rem] text-gray-200 mb-6">Your Trusted Technology Partner Since 2000</p>
-            </div>
-          </div>
+    <section className="bg-[#f6f3f0] text-stone-950 dark:bg-stone-950 dark:text-white">
+      <div className="mx-auto grid max-w-6xl items-center gap-8 px-5 py-10 sm:px-8 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:gap-14 lg:py-12">
+        <div>
+          <p className="text-[11px] font-medium uppercase tracking-[0.32em] text-[#8E1B2C] dark:text-rose-300">
+            Computer Village, Lagos
+          </p>
+          <h1 className="mt-4 text-4xl font-light tracking-tight sm:text-5xl">
+            About
+            <span className="mt-1 block font-medium">Alphacom</span>
+          </h1>
+          <div className="mt-6 h-px w-12 bg-[#8E1B2C] dark:bg-rose-300" />
+          <p className="mt-6 max-w-md text-sm leading-7 text-stone-600 sm:text-base dark:text-stone-300">
+            Your trusted technology partner since 2000. From the heart of Ikeja, we have spent over two decades
+            supplying quality ICT products across Nigeria.
+          </p>
         </div>
 
-        {/* Subtitle */}
-        <div className="max-w-3xl mx-auto">
-          <p className="text-[0.9rem] md:text-[0.9rem] text-gray-200 leading-relaxed">
-            Located in the heart of Computer Village, Ikeja Lagos, we've been Nigeria's premier destination for quality
-            ICT products and services for over two decades.
-          </p>
+        <div className="relative h-52 overflow-hidden sm:h-64 lg:h-72">
+          <Image
+            src="/aboutpic.jpg"
+            alt="Alphacom"
+            fill
+            priority
+            className="object-cover object-[center_40%]"
+            sizes="(min-width: 1024px) 50vw, 100vw"
+          />
         </div>
       </div>
     </section>

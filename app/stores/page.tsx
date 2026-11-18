@@ -1,206 +1,130 @@
-"use client"
-
-import type React from "react"
-
 import { AppLayout } from "@/components/app-layout"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { MapPin, Phone, Clock, Navigation } from "lucide-react"
-import { useState } from "react"
+import { Clock, Mail, MapPin, Navigation, Phone } from "lucide-react"
 
-interface Store {
-  id: string
-  name: string
-  address: string
-  city: string
-  state: string
-  zip: string
-  phone: string
-  hours: {
-    weekdays: string
-    saturday: string
-    sunday: string
-  }
-  services: string[]
-  distance?: number
+const store = {
+  name: "Alphacom Online Store",
+  address: "No 3 Adepele street, off Medical road",
+  city: "Computer Village, Ikeja",
+  state: "Lagos",
+  phones: ["+234 702 638 4967", "+234 813 733 1005"],
+  email: "alphacomonline@gmail.com",
+  hours: [
+    { label: "Monday – Friday", value: "9:00 AM – 6:00 PM" },
+    { label: "Saturday", value: "10:00 AM – 4:00 PM" },
+    { label: "Sunday", value: "Closed" },
+  ],
+  services: ["In-store pickup", "Tech support", "Product consultation", "Warranty service", "Returns and exchange"],
 }
 
-const stores: Store[] = [
-  {
-    id: "1",
-    name: "Alphacom Online Store",
-    address: "No 3 Adepele street, off Medical road",
-    city: "Computer village Ikeja",
-    state: "Lagos",
-    zip: "",
-    phone: "+2347026384967",
-    hours: {
-      weekdays: "9:00 AM - 6:00 PM",
-      saturday: "10:00 AM - 4:00 PM",
-      sunday: "Closed",
-    },
-    services: ["In-Store Pickup", "Tech Support", "Product Consultation", "Warranty Service", "Returns & Exchange"],
-  },
-]
+const mapQuery = encodeURIComponent(`${store.address}, ${store.city}, ${store.state}`)
+const directionsUrl = `https://maps.google.com/maps?q=${mapQuery}`
+const mapEmbedUrl = `https://maps.google.com/maps?q=${mapQuery}&z=16&output=embed`
 
 export default function StoreLocatorPage() {
-  const [searchQuery, setSearchQuery] = useState("")
-  const [filteredStores, setFilteredStores] = useState(stores)
-
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!searchQuery.trim()) {
-      setFilteredStores(stores)
-      return
-    }
-
-    const filtered = stores.filter(
-      (store) =>
-        store.city.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        store.state.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        store.zip.includes(searchQuery) ||
-        store.address.toLowerCase().includes(searchQuery.toLowerCase()),
-    )
-    setFilteredStores(filtered)
-  }
-
-  const getDirections = (store: Store) => {
-    const address = `${store.address}, ${store.city}, ${store.state} ${store.zip}`
-    const encodedAddress = encodeURIComponent(address)
-    window.open(`https://maps.google.com/maps?q=${encodedAddress}`, "_blank")
-  }
-
   return (
     <AppLayout>
-      <div className="min-h-screen bg-background">
-        <div className="relative bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 py-20 overflow-hidden">
-          <div className="absolute inset-0">
-            <img
-              src="/aboutpic.jpg"
-              alt="AlphaCom Online Store Interior - Computer Village Lagos"
-              className="w-full h-full object-cover opacity-30"
-            />
-            <div className="absolute inset-0 bg-gradient-to-r from-slate-900/80 to-slate-800/80" />
-          </div>
+      <div className="bg-[#f6f3f0] text-stone-950 dark:bg-stone-950 dark:text-white">
+        <section className="mx-auto max-w-6xl px-5 py-10 sm:px-8 lg:py-12">
+          <p className="text-[11px] font-medium uppercase tracking-[0.32em] text-[#8E1B2C] dark:text-rose-300">
+            Computer Village, Lagos
+          </p>
+          <h1 className="mt-4 text-4xl font-light tracking-tight sm:text-5xl">Visit the store</h1>
+          <div className="mt-6 h-px w-12 bg-[#8E1B2C] dark:bg-rose-300" />
+          <p className="mt-6 max-w-xl text-sm leading-7 text-stone-600 sm:text-base dark:text-stone-300">
+            See the products in person at No 3 Adepele Street, off Medical Road, in the heart of Computer Village.
+          </p>
+        </section>
 
-          <div className="relative z-10 container mx-auto px-4 text-center">
-            <h1 className="text-2xl md:text-4xl font-normal text-white mb-6" itemProp="name">
-              Visit Our Store in Computer Village
-            </h1>
-            <p className="text-[1rem] text-gray-300 max-w-2xl mx-auto mb-8" itemProp="description">
-              Located in the heart of Computer Village, Lagos. Experience our premium technology products and expert
-              service in person.
-            </p>
-          </div>
-        </div>
+        <section className="border-t border-stone-200/80 bg-white dark:border-white/10 dark:bg-stone-900">
+          <div className="mx-auto grid max-w-6xl items-start gap-12 px-5 py-14 sm:px-8 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:py-16">
+            <div itemScope itemType="https://schema.org/Store">
+              <p className="text-[11px] font-medium uppercase tracking-[0.28em] text-[#8E1B2C] dark:text-rose-300">
+                Our location
+              </p>
+              <h2 className="mt-4 text-3xl font-light tracking-tight" itemProp="name">
+                {store.name}
+              </h2>
 
-        <div className="container mx-auto px-4 py-16">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {/* Store List */}
-            <div className="space-y-6">
-              <h2 className="text-2xl font-normal text-foreground">Our Store Location</h2>
-
-              {filteredStores.map((store) => (
-                <Card key={store.id} className="bg-card border-border" itemScope itemType="https://schema.org/Store">
-                  <CardHeader>
-                    <CardTitle className="text-xl text-card-foreground" itemProp="name">
-                      {store.name}
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div
-                      className="flex items-start space-x-3"
-                      itemProp="address"
-                      itemScope
-                      itemType="https://schema.org/PostalAddress"
-                    >
-                      <MapPin className="h-5 w-5 text-primary mt-1" />
-                      <div>
-                        <p className="text-card-foreground" itemProp="streetAddress">
-                          {store.address}
-                        </p>
-                        <p className="text-muted-foreground">
-                          <span itemProp="addressLocality">{store.city}</span>,{" "}
-                          <span itemProp="addressRegion">{store.state}</span>
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="flex items-start space-x-3">
-                      <Phone className="h-5 w-5 text-primary mt-1" />
-                      <div>
-                        <p className="text-card-foreground" itemProp="telephone">
-                          {store.phone}
-                        </p>
-                        <p className="text-card-foreground" itemProp="telephone">
-                          +2348137331005
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="flex items-start space-x-3" itemProp="openingHours">
-                      <Clock className="h-5 w-5 text-primary mt-1" />
-                      <div className="text-sm">
-                        <p className="text-card-foreground">Mon-Fri: {store.hours.weekdays}</p>
-                        <p className="text-card-foreground">Sat: {store.hours.saturday}</p>
-                        <p className="text-card-foreground">Sun: {store.hours.sunday}</p>
-                      </div>
-                    </div>
-
-                    <div className="flex items-start space-x-3">
-                      <Phone className="h-5 w-5 text-primary mt-1" />
-                      <div>
-                        <p className="text-card-foreground" itemProp="email">
-                          alphacomonline@gmail.com
-                        </p>
-                      </div>
-                    </div>
-
-                    <div>
-                      <p className="text-sm font-medium text-card-foreground mb-2">Services:</p>
-                      <div className="flex flex-wrap gap-2">
-                        {store.services.map((service) => (
-                          <Badge key={service} variant="outline">
-                            {service}
-                          </Badge>
-                        ))}
-                      </div>
-                    </div>
-
-                    <div className="flex gap-2 pt-2">
-                      <Button variant="outline" className="flex-1 bg-transparent" onClick={() => getDirections(store)}>
-                        <Navigation className="h-4 w-4 mr-2" />
-                        Get Directions
-                      </Button>
-                      {/* <Button variant="outline" onClick={() => window.open(`tel:${store.phone}`, "_self")}>
-                        <Phone className="h-4 w-4 mr-2" />
-                        Call Store
-                      </Button> */}
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-
-            {/* Map Placeholder */}
-            <div className="lg:sticky lg:top-4">
-              <Card className="bg-card border-border h-96 lg:h-[600px]">
-                <CardContent className="p-0 h-full">
-                  <div className="h-full bg-muted rounded-lg flex items-center justify-center relative overflow-hidden">
-                    <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/10 to-purple-500/10" />
-                    <div className="text-center z-10">
-                      <MapPin className="h-16 w-16 text-primary mx-auto mb-4" />
-                      <h3 className="text-lg font-semibold text-muted-foreground mb-2">Computer Village, Ikeja</h3>
-                      <p className="text-muted-foreground">No 3 Adepele street, off Medical road</p>
-                      {/* <p className="text-muted-foreground text-sm mt-2">Interactive Map Coming Soon</p> */}
-                    </div>
+              <div className="mt-10 space-y-8">
+                <div
+                  className="flex gap-4"
+                  itemProp="address"
+                  itemScope
+                  itemType="https://schema.org/PostalAddress"
+                >
+                  <MapPin className="mt-0.5 h-5 w-5 shrink-0 text-[#8E1B2C] dark:text-rose-300" strokeWidth={1.5} />
+                  <div>
+                    <p className="text-sm leading-6" itemProp="streetAddress">
+                      {store.address}
+                    </p>
+                    <p className="text-sm leading-6 text-stone-600 dark:text-stone-300">
+                      <span itemProp="addressLocality">{store.city}</span>, <span itemProp="addressRegion">{store.state}</span>
+                    </p>
                   </div>
-                </CardContent>
-              </Card>
+                </div>
+
+                <div className="flex gap-4">
+                  <Phone className="mt-0.5 h-5 w-5 shrink-0 text-[#8E1B2C] dark:text-rose-300" strokeWidth={1.5} />
+                  <div>
+                    {store.phones.map((phone) => (
+                      <a key={phone} href={`tel:${phone.replace(/\s/g, "")}`} className="block text-sm leading-6" itemProp="telephone">
+                        {phone}
+                      </a>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="flex gap-4" itemProp="openingHours">
+                  <Clock className="mt-0.5 h-5 w-5 shrink-0 text-[#8E1B2C] dark:text-rose-300" strokeWidth={1.5} />
+                  <div className="space-y-1">
+                    {store.hours.map((row) => (
+                      <p key={row.label} className="flex gap-6 text-sm leading-6">
+                        <span className="w-36 text-stone-500 dark:text-stone-400">{row.label}</span>
+                        <span>{row.value}</span>
+                      </p>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="flex gap-4">
+                  <Mail className="mt-0.5 h-5 w-5 shrink-0 text-[#8E1B2C] dark:text-rose-300" strokeWidth={1.5} />
+                  <a href={`mailto:${store.email}`} className="text-sm leading-6" itemProp="email">
+                    {store.email}
+                  </a>
+                </div>
+              </div>
+
+              <div className="mt-10">
+                <p className="text-[11px] font-medium uppercase tracking-[0.18em] text-stone-500 dark:text-stone-400">
+                  In store
+                </p>
+                <p className="mt-3 max-w-md text-sm leading-7 text-stone-600 dark:text-stone-300">
+                  {store.services.join(" · ")}
+                </p>
+              </div>
+
+              <a
+                href={directionsUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-10 inline-flex items-center gap-2 rounded-full bg-[#8E1B2C] px-5 py-2.5 text-sm text-white transition-colors hover:bg-[#741625] dark:bg-rose-300 dark:text-stone-950 dark:hover:bg-rose-200"
+              >
+                <Navigation className="h-4 w-4" />
+                Get directions
+              </a>
+            </div>
+
+            <div className="overflow-hidden bg-stone-100 lg:sticky lg:top-28 dark:bg-stone-800">
+              <iframe
+                title="Alphacom store on Google Maps"
+                src={mapEmbedUrl}
+                className="h-80 w-full border-0 lg:h-[32rem]"
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+              />
             </div>
           </div>
-        </div>
+        </section>
       </div>
     </AppLayout>
   )

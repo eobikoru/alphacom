@@ -1,7 +1,6 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
 import { Separator } from "@/components/ui/separator"
 import { Instagram, Youtube, Linkedin, MapPin, Phone, Mail } from "lucide-react"
 import { useAppSelector } from "@/store/hooks"
@@ -96,30 +95,41 @@ export function ModernFooter() {
 
   return (
     <footer className={`border-t transition-colors duration-300 ${isDark ? "bg-card" : "bg-white"}`}>
-      {/* Newsletter - blends with footer */}
-      <div className="border-t border-border bg-muted/40 dark:bg-muted/20 transition-colors duration-300">
-        <div className="container mx-auto px-4 py-12">
-          <div className="max-w-2xl mx-auto text-center">
-            <h3 className="text-2xl font-bold text-foreground mb-4">Stay Updated with Latest Tech</h3>
-            <p className="text-muted-foreground mb-6">
-              Get exclusive deals, new product launches, and tech insights delivered to your inbox
+      <div className="border-t border-stone-200/80 bg-[#f6f3f0] dark:border-white/10 dark:bg-stone-950">
+        <div className="mx-auto grid max-w-6xl items-end gap-8 px-5 py-14 sm:px-8 lg:grid-cols-[minmax(0,1fr)_minmax(18rem,24rem)] lg:gap-16">
+          <div>
+            <p className="text-[11px] font-medium uppercase tracking-[0.32em] text-[#8E1B2C] dark:text-rose-300">
+              Newsletter
             </p>
-            <form onSubmit={handleSubscribe} noValidate className="flex gap-4 max-w-md mx-auto">
-              <Input
-                type="email"
-                value={newsletterEmail}
-                onChange={(e) => setNewsletterEmail(e.target.value)}
-                placeholder="Enter your email address"
-                aria-label="Email address"
-                autoComplete="email"
-                disabled={isSubscribing}
-                className="bg-background border-border"
-              />
-              <Button type="submit" className="px-8" disabled={isSubscribing}>
-                {isSubscribing ? "Subscribing..." : "Subscribe"}
-              </Button>
-            </form>
+            <h3 className="mt-4 text-3xl font-light tracking-tight text-stone-950 dark:text-white">
+              Stay updated with the latest tech
+            </h3>
+            <p className="mt-4 max-w-md text-sm leading-7 text-stone-600 dark:text-stone-300">
+              Get exclusive deals, new product launches, and tech insights delivered to your inbox.
+            </p>
           </div>
+          <form onSubmit={handleSubscribe} noValidate className="flex flex-col gap-3 sm:flex-row sm:items-center">
+            <label htmlFor="footer-newsletter-email" className="sr-only">
+              Email address
+            </label>
+            <input
+              id="footer-newsletter-email"
+              type="email"
+              value={newsletterEmail}
+              onChange={(e) => setNewsletterEmail(e.target.value)}
+              placeholder="Enter your email address"
+              autoComplete="email"
+              disabled={isSubscribing}
+              className="h-11 w-full border border-stone-200 bg-white px-3 text-sm text-stone-950 outline-none transition-colors placeholder:text-stone-400 focus:border-[#8E1B2C] disabled:opacity-60 dark:border-white/10 dark:bg-stone-950 dark:text-white dark:focus:border-rose-300"
+            />
+            <button
+              type="submit"
+              disabled={isSubscribing}
+              className="inline-flex h-11 shrink-0 items-center justify-center rounded-full bg-[#8E1B2C] px-5 text-sm text-white transition-colors hover:bg-[#741625] disabled:opacity-60 dark:bg-rose-300 dark:text-stone-950 dark:hover:bg-rose-200"
+            >
+              {isSubscribing ? "Subscribing…" : "Subscribe"}
+            </button>
+          </form>
         </div>
       </div>
 

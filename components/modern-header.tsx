@@ -592,34 +592,44 @@ export function ModernHeader({ blackNavbar }: ModernHeaderProps) {
 
       </div>
 
-      {/* Navigation */}
-      <div className="border-t bg-card/50 border-border">
+      <div className="border-t border-border bg-background">
         <div className="container mx-auto px-4">
-          <nav className="no-scrollbar flex items-center gap-6 overflow-x-auto py-3">
+          <nav className="no-scrollbar flex items-center gap-7 overflow-x-auto">
             <Link
               href="/categories"
               onClick={handleNavClick}
-              className="whitespace-nowrap text-sm font-medium hover:text-primary transition-colors px-3 py-2 rounded-md hover:bg-muted/50"
+              className={`whitespace-nowrap border-b-2 py-3 text-[13px] transition-colors ${
+                pathname === "/categories"
+                  ? "border-[#8E1B2C] text-[#8E1B2C] dark:border-rose-300 dark:text-rose-300"
+                  : "border-transparent text-stone-500 hover:text-[#8E1B2C] dark:text-stone-400 dark:hover:text-rose-300"
+              }`}
             >
               All Categories
             </Link>
             {isCategoriesLoading ? (
               <>
                 {[1, 2, 3, 4, 5].map((i) => (
-                  <Skeleton key={i} className="h-8 w-24 rounded-md" />
+                  <Skeleton key={i} className="h-4 w-20" />
                 ))}
               </>
             ) : (
-              categories.map((category) => (
-                <div key={category.id} className="relative">
+              categories.map((category) => {
+                const href = `/categories/${category.slug}`
+                const active = pathname === href || pathname?.startsWith(`${href}/`)
+                return (
                   <Link
-                    href={`/categories/${category.slug}`}
-                    className="whitespace-nowrap text-sm font-medium hover:text-primary transition-colors px-3 py-2 rounded-md hover:bg-muted/50"
+                    key={category.id}
+                    href={href}
+                    className={`whitespace-nowrap border-b-2 py-3 text-[13px] transition-colors ${
+                      active
+                        ? "border-[#8E1B2C] text-[#8E1B2C] dark:border-rose-300 dark:text-rose-300"
+                        : "border-transparent text-stone-600 hover:text-[#8E1B2C] dark:text-stone-300 dark:hover:text-rose-300"
+                    }`}
                   >
                     {category.name}
                   </Link>
-                </div>
-              ))
+                )
+              })
             )}
           </nav>
         </div>
