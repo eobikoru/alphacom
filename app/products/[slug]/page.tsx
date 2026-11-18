@@ -51,6 +51,32 @@ function productJsonLd(product: Product, url: string) {
       availability: product.in_stock ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
       itemCondition: "https://schema.org/NewCondition",
       seller: { "@type": "Organization", name: "Alphacom Online" },
+      shippingDetails: {
+        "@type": "OfferShippingDetails",
+        shippingRate: {
+          "@type": "MonetaryAmount",
+          value: "0",
+          currency: product.currency || "NGN",
+        },
+        shippingDestination: {
+          "@type": "DefinedRegion",
+          addressCountry: "NG",
+        },
+        deliveryTime: {
+          "@type": "ShippingDeliveryTime",
+          handlingTime: { "@type": "QuantitativeValue", minValue: 0, maxValue: 1, unitCode: "DAY" },
+          transitTime: { "@type": "QuantitativeValue", minValue: 1, maxValue: 5, unitCode: "DAY" },
+        },
+      },
+      hasMerchantReturnPolicy: {
+        "@type": "MerchantReturnPolicy",
+        applicableCountry: "NG",
+        returnPolicyCategory: "https://schema.org/MerchantReturnFiniteReturnWindow",
+        merchantReturnDays: 1,
+        returnMethod: ["https://schema.org/ReturnInStore", "https://schema.org/ReturnByMail"],
+        returnFees: "https://schema.org/ReturnFeesCustomerResponsibility",
+        merchantReturnLink: `${SITE_URL}/return-policy`,
+      },
     },
   }
 }
