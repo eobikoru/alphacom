@@ -4,7 +4,7 @@ import { cdnImage } from "@/lib/image-url"
 import { useState, useEffect } from "react"
 import { useSearchParams } from "next/navigation"
 import { useQuery } from "@tanstack/react-query"
-import { getProductsWithCategories } from "@/lib/api/products"
+import { getProductsWithCategories, searchProducts, type Product, type ProductSearchHit } from "@/lib/api/products"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
@@ -15,6 +15,29 @@ import Link from "next/link"
 import { useCart } from "@/hooks/use-cart"
 import { productHref } from "@/lib/product-url"
 import { toast } from "sonner"
+
+function toCatalogueProduct(hit: ProductSearchHit): Product {
+  return {
+    id: hit.id,
+    name: hit.name,
+    slug: hit.slug,
+    sku: "",
+    brand: hit.brand,
+    price: hit.price,
+    original_price: hit.original_price ?? hit.price,
+    discount_percentage: hit.discount_percentage ?? 0,
+    currency: hit.currency || "NGN",
+    main_image: hit.main_image,
+    images: hit.images ?? [],
+    category: { id: "", name: "", slug: "" },
+    subcategory_id: null,
+    in_stock: hit.in_stock,
+    stock_quantity: 0,
+    stock_status: hit.stock_status,
+    description: "",
+    short_description: null,
+  }
+}
 
 export default function ProductsPage() {
   const searchParams = useSearchParams()
@@ -27,9 +50,20 @@ export default function ProductsPage() {
     if (q != null) setSearch(q)
   }, [searchParams])
 
+  useEffect(() => {
+    setPage(1)
+  }, [search])
+
   const { data, isLoading, error } = useQuery({
     queryKey: ["products", page, search],
-    queryFn: () => getProductsWithCategories({ page, per_page: 12, search: search || undefined }),
+    queryFn: () => {
+      const q = search.trim()
+      if (!q) return getProductsWithCategories({ page, per_page: 12 })
+      return searchProducts({ q, page, per_page: 20 }).then((response) => ({
+        ...response,
+        data: response.data.map(toCatalogueProduct),
+      }))
+    },
   })
 
   const handleAddToCart = (product: any) => {
@@ -117,9 +151,11 @@ export default function ProductsPage() {
                         </h3>
                       </Link>
                       <p className="text-sm text-muted-foreground">{product.brand || "Unknown Brand"}</p>
-                      <Badge variant="outline" className="text-xs">
-                        {product.category.name}
-                      </Badge>
+                      {product.category?.name ? (
+                        <Badge variant="outline" className="text-xs">
+                          {product.category.name}
+                        </Badge>
+                      ) : null}
 
                       <div className="flex items-center gap-2">
                         <span className="text-lg font-bold">

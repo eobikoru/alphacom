@@ -6,7 +6,7 @@ import { useEffect, useMemo, useState } from "react"
 import Link from "next/link"
 import { AppLayout } from "@/components/app-layout"
 import { getCategoriesWithProducts, type CategoryWithProducts } from "@/lib/api/categories"
-import { getProductsWithCategories, type Product } from "@/lib/api/products"
+import { searchProducts, type ProductSearchHit } from "@/lib/api/products"
 import { getCanonicalSearchQuery, SEO_BRANDS } from "@/lib/site"
 import { productHref } from "@/lib/product-url"
 import { FolderTree, Layers, ShoppingBag, Search } from "lucide-react"
@@ -17,7 +17,7 @@ export default function SearchPage() {
   const q = rawQ.toLowerCase()
   const canonicalQuery = getCanonicalSearchQuery(rawQ)
   const [categories, setCategories] = useState<CategoryWithProducts[]>([])
-  const [products, setProducts] = useState<Product[]>([])
+  const [products, setProducts] = useState<ProductSearchHit[]>([])
   const [productsLoading, setProductsLoading] = useState(false)
 
   const matchedCategories = useMemo(() => {
@@ -52,18 +52,18 @@ export default function SearchPage() {
     setProductsLoading(true)
     const isBrandSearch = SEO_BRANDS.some((b) => b.slug.toLowerCase() === q)
     const fetchAll = async () => {
-      const first = await getProductsWithCategories({ search: canonicalQuery, page: 1, per_page: 100 })
+      const first = await searchProducts({ q: canonicalQuery, page: 1, per_page: 20 })
       if (!first.success || !first.data) return []
       const totalPages = first.pagination.total_pages
       if (totalPages <= 1) return first.data
       const rest = await Promise.all(
         Array.from({ length: totalPages - 1 }, (_, i) =>
-          getProductsWithCategories({ search: canonicalQuery, page: i + 2, per_page: 100 })
+          searchProducts({ q: canonicalQuery, page: i + 2, per_page: 20 })
         )
       )
       return [...first.data, ...rest.flatMap((r) => r.data)]
     }
-    const fetchPage = () => getProductsWithCategories({ search: canonicalQuery, per_page: 24 }).then((r) => (r.success && r.data ? r.data : []))
+    const fetchPage = () => searchProducts({ q: canonicalQuery, page: 1, per_page: 20 }).then((r) => (r.success && r.data ? r.data : []))
 
     ;(isBrandSearch ? fetchAll() : fetchPage())
       .then(setProducts)

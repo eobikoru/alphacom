@@ -75,11 +75,51 @@ export interface GetProductsParams {
   search?: string
 }
 
+export interface ProductSearchHit {
+  id: string
+  name: string
+  slug: string
+  brand: string | null
+  price: number
+  original_price: number | null
+  discount_percentage: number | null
+  currency: string
+  main_image: string | null
+  images: string[]
+  in_stock: boolean
+  stock_status: string
+  rating: number | null
+  review_count: number | null
+}
+
+export interface ProductSearchResponse {
+  success: boolean
+  message: string
+  data: ProductSearchHit[]
+  pagination: ProductsResponse["pagination"]
+  applied_filters?: { q?: string }
+}
+
 // Get products with categories (search normalized so e.g. "logitech" → "Logitech" for known brands)
 export const getProductsWithCategories = async (params?: GetProductsParams): Promise<ProductsResponse> => {
   const search = params?.search ? getCanonicalSearchQuery(params.search) : undefined
   const response = await apiClient.get("/api/v1/products/with-categories", {
     params: { ...params, search },
+  })
+  return response.data
+}
+
+export const searchProducts = async (params: {
+  q: string
+  page?: number
+  per_page?: number
+}): Promise<ProductSearchResponse> => {
+  const response = await apiClient.get("/api/v1/products/search", {
+    params: {
+      q: getCanonicalSearchQuery(params.q),
+      page: params.page ?? 1,
+      per_page: params.per_page ?? 20,
+    },
   })
   return response.data
 }

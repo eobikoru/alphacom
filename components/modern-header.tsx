@@ -17,7 +17,7 @@ import { useState, useRef, useEffect, useMemo } from "react"
 import { useAuth } from "@/hooks/use-auth"
 import { useAuthModal } from "@/components/auth-modal"
 import { getCategoriesWithProducts, type CategoryWithProducts } from "@/lib/api/categories"
-import { getProductsWithCategories, type Product } from "@/lib/api/products"
+import { searchProducts as searchProductsApi, type ProductSearchHit } from "@/lib/api/products"
 import { productHref } from "@/lib/product-url"
 import { useAppSelector } from "@/store/hooks"
 interface ModernHeaderProps {
@@ -38,7 +38,7 @@ export function ModernHeader({ blackNavbar }: ModernHeaderProps) {
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false)
   const [categories, setCategories] = useState<CategoryWithProducts[]>([])
   const [isCategoriesLoading, setIsCategoriesLoading] = useState(true)
-  const [searchProducts, setSearchProducts] = useState<Product[]>([])
+  const [searchProducts, setSearchProducts] = useState<ProductSearchHit[]>([])
   const [productsSearchLoading, setProductsSearchLoading] = useState(false)
   const { openAuth } = useAuthModal()
   const cartDrawerRef = useRef<CartDrawerRef>(null)
@@ -126,7 +126,7 @@ export function ModernHeader({ blackNavbar }: ModernHeaderProps) {
     if (searchDebounceRef.current) clearTimeout(searchDebounceRef.current)
     searchDebounceRef.current = setTimeout(() => {
       setProductsSearchLoading(true)
-      getProductsWithCategories({ search: searchQuery.trim(), per_page: MAX_PRODUCTS_IN_DROPDOWN })
+      searchProductsApi({ q: searchQuery.trim(), page: 1, per_page: MAX_PRODUCTS_IN_DROPDOWN })
         .then((res) => {
           if (res.success && res.data) setSearchProducts(res.data)
           else setSearchProducts([])

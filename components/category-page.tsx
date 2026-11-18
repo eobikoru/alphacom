@@ -15,6 +15,7 @@ import { useCart } from "@/hooks/use-cart"
 import { toast } from "sonner"
 import Link from "next/link"
 import { getCategoriesWithProducts, getSubcategoriesByCategory } from "@/lib/api/categories"
+import { searchProducts, type ProductSearchHit } from "@/lib/api/products"
 import { ProductCardSkeleton } from "@/components/skeletons/product-card-skeleton"
 import { productHref } from "@/lib/product-url"
 
@@ -50,6 +51,7 @@ export function CategoryPage({ categorySlug, selectedSubcategory }: CategoryPage
   const [loading, setLoading] = useState(true)
   const [currentCategory, setCurrentCategory] = useState<any>(null)
   const [allProducts, setAllProducts] = useState<any[]>([])
+  const [searchHits, setSearchHits] = useState<ProductSearchHit[] | null>(null)
 
   const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist()
   const { addItem, isInCart, getItemQuantity } = useCart()
@@ -106,6 +108,20 @@ export function CategoryPage({ categorySlug, selectedSubcategory }: CategoryPage
     fetchData()
   }, [categorySlug])
 
+  useEffect(() => {
+    const q = searchQuery.trim()
+    if (q.length < 2) {
+      setSearchHits(null)
+      return
+    }
+    const timer = setTimeout(() => {
+      searchProducts({ q, page: 1, per_page: 20 })
+        .then((response) => setSearchHits(response.success && response.data ? response.data : []))
+        .catch(() => setSearchHits([]))
+    }, 300)
+    return () => clearTimeout(timer)
+  }, [searchQuery])
+
   const categoryName = currentCategory?.name || "Products"
   const subcategories = currentCategory?.subcategories || []
 
@@ -115,10 +131,10 @@ export function CategoryPage({ categorySlug, selectedSubcategory }: CategoryPage
   }, [allProducts])
 
   const filteredProducts = useMemo(() => {
-    let products = allProducts
+    let products = searchHits ?? allProducts
 
     // Filter by selected subcategory
-    if (selectedSubcategory) {
+    if (!searchHits && selectedSubcategory) {
       const subcategory = subcategories.find((sub: any) => sub.slug === selectedSubcategory)
       if (subcategory) {
         products = subcategory.products || []
@@ -126,13 +142,13 @@ export function CategoryPage({ categorySlug, selectedSubcategory }: CategoryPage
     }
 
     return products.filter((product) => {
-      const matchesSearch = product.name.toLowerCase().includes(searchQuery.toLowerCase())
+      const matchesSearch = searchHits ? true : product.name.toLowerCase().includes(searchQuery.toLowerCase())
       const matchesPrice = product.price >= priceRange[0] && product.price <= priceRange[1]
       const matchesBrand = selectedBrands.length === 0 || selectedBrands.includes(product.brand)
 
       return matchesSearch && matchesPrice && matchesBrand
     })
-  }, [allProducts, selectedSubcategory, subcategories, searchQuery, priceRange, selectedBrands])
+  }, [allProducts, searchHits, selectedSubcategory, subcategories, searchQuery, priceRange, selectedBrands])
 
   const sortedProducts = useMemo(() => {
     const sorted = [...filteredProducts]
