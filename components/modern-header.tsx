@@ -50,7 +50,6 @@ export function ModernHeader({ blackNavbar }: ModernHeaderProps) {
   const isLandingPage = pathname === "/"
   const { isAuthenticated, user, logout } = useAuth()
   const isDark = useAppSelector((state) => state.theme.isDark)
-  const [scrolled, setScrolled] = useState(false)
 
   useEffect(() => {
     if (isMobileMenuOpen) {
@@ -73,23 +72,6 @@ export function ModernHeader({ blackNavbar }: ModernHeaderProps) {
     const timer = window.setTimeout(() => setMenuPresent(false), 320)
     return () => window.clearTimeout(timer)
   }, [isMobileMenuOpen])
-
-  useEffect(() => {
-    let frame = 0
-    const onScroll = () => {
-      cancelAnimationFrame(frame)
-      frame = requestAnimationFrame(() => {
-        const next = window.scrollY > 12
-        setScrolled((current) => (current === next ? current : next))
-      })
-    }
-    onScroll()
-    window.addEventListener("scroll", onScroll, { passive: true })
-    return () => {
-      cancelAnimationFrame(frame)
-      window.removeEventListener("scroll", onScroll)
-    }
-  }, [])
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -233,20 +215,9 @@ export function ModernHeader({ blackNavbar }: ModernHeaderProps) {
   }
 
   return (
-    <header
-      className={`sticky top-0 z-50 w-full border-b backdrop-blur-xl transition-[background-color,box-shadow,border-color] duration-300 ease-out ${
-        scrolled
-          ? "border-border/80 bg-background/85 shadow-[0_12px_32px_-20px_rgba(28,25,23,0.55)]"
-          : "border-border/60 bg-background/70 shadow-none"
-      }`}
-    >
+    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-border">
       {/* Top bar */}
-      <div
-        className={`grid transition-[grid-template-rows,opacity] duration-300 ease-out ${
-          scrolled ? "grid-rows-[0fr] opacity-0" : "grid-rows-[1fr] opacity-100"
-        }`}
-      >
-        <div className="overflow-hidden border-b border-border bg-muted/30">
+      <div className="border-b bg-muted/30 border-border">
         <div className="container mx-auto px-4 py-2">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-0 text-sm text-muted-foreground">
             <div className="flex items-center gap-4">
@@ -272,18 +243,17 @@ export function ModernHeader({ blackNavbar }: ModernHeaderProps) {
             </div>
           </div>
         </div>
-        </div>
       </div>
 
       {/* Main header */}
-      <div className={`container mx-auto px-4 transition-[padding] duration-300 ease-out ${scrolled ? "py-2" : "py-4"}`}>
+      <div className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
           {/* Logo */}
           <Link href="/" onClick={handleNavClick} className="flex items-center gap-2">
             {isDark ? (
-             <img src="/alpd.png" alt="Alphacom" className={`w-auto transition-all duration-300 ease-out ${scrolled ? "h-9" : "h-12"}`} />
+             <img src="/alpd.png" alt="Alphacom" className="h-12 w-auto" />
             ) : (
-              <img src="/alpw1.png" alt="Alphacom" className={`w-auto transition-all duration-300 ease-out ${scrolled ? "h-9" : "h-12"}`} />
+              <img src="/alpw1.png" alt="Alphacom" className="h-12 w-auto" />
               
             )}
           </Link>
@@ -528,7 +498,7 @@ export function ModernHeader({ blackNavbar }: ModernHeaderProps) {
 
         {/* Landing page only: show search input for all devices */}
         {isLandingPage && (
-          <div ref={searchRef} className={`relative max-w-full transition-[margin] duration-300 ease-out md:max-w-md lg:max-w-sm ${scrolled ? "mt-1.5" : "mt-3"}`}>
+          <div ref={searchRef} className="relative mt-3 max-w-full md:max-w-md lg:max-w-sm">
             <form onSubmit={handleSearch} className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
               <Input
@@ -625,7 +595,7 @@ export function ModernHeader({ blackNavbar }: ModernHeaderProps) {
       {/* Navigation */}
       <div className="border-t bg-card/50 border-border">
         <div className="container mx-auto px-4">
-          <nav className={`no-scrollbar flex items-center gap-6 overflow-x-auto transition-[padding] duration-300 ease-out ${scrolled ? "py-1" : "py-3"}`}>
+          <nav className="no-scrollbar flex items-center gap-6 overflow-x-auto py-3">
             <Link
               href="/categories"
               onClick={handleNavClick}

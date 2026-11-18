@@ -10,24 +10,27 @@ import { productHref } from "@/lib/product-url"
 
 const HIDDEN_PREFIXES = ["/checkout", "/payment", "/auth"]
 const FIRST_DELAY_MS = 20000
-const EVERY_MS = 5 * 60 * 1000
+const EVERY_MS = 6 * 60 * 1000
 const VISIBLE_MS = 12000
 
 function chimeUrl() {
   const sampleRate = 22050
-  const duration = 0.62
+  const duration = 1.45
   const length = Math.floor(sampleRate * duration)
   const samples = new Float32Array(length)
   ;[
-    { frequency: 523.25, start: 0, end: 0.4 },
-    { frequency: 659.25, start: 0.11, end: 0.51 },
+    { frequency: 440, start: 0 },
+    { frequency: 554.37, start: 0.16 },
+    { frequency: 659.25, start: 0.32 },
   ].forEach((tone) => {
     const start = Math.floor(tone.start * sampleRate)
-    const end = Math.min(length, Math.floor(tone.end * sampleRate))
+    const end = Math.min(length, start + Math.floor(1.05 * sampleRate))
     for (let index = start; index < end; index++) {
       const time = (index - start) / sampleRate
-      const envelope = Math.min(1, time / 0.09) * Math.exp(-time * 3.2)
-      samples[index] += Math.sin(2 * Math.PI * tone.frequency * time) * envelope * 0.16
+      const envelope = Math.min(1, time / 0.035) * Math.exp(-time * 2.5)
+      const fundamental = Math.sin(2 * Math.PI * tone.frequency * time)
+      const overtone = Math.sin(2 * Math.PI * tone.frequency * 2 * time) * 0.18
+      samples[index] += (fundamental + overtone) * envelope * 0.11
     }
   })
 
@@ -91,7 +94,7 @@ export function LiveProductNote() {
       audioRef.current = audio
     }
     const audio = audioRef.current
-    audio.volume = 0.4
+    audio.volume = 0.32
     audio.currentTime = 0
     return audio.play()
   }
@@ -105,7 +108,7 @@ export function LiveProductNote() {
       audio.play().then(() => {
         audio.pause()
         audio.currentTime = 0
-        audio.volume = 0.4
+        audio.volume = 0.32
       }).catch(() => {})
     }
     window.addEventListener("pointerdown", arm, { once: true })
