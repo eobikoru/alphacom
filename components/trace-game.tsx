@@ -37,20 +37,27 @@ export function TraceGame() {
   const [path, setPath] = useState<number[]>(() => [startCell(puzzle)])
   const [hinted, setHinted] = useState(false)
   const [streak, setStreak] = useState(0)
+  const [cleared, setCleared] = useState(false)
   const boardRef = useRef<HTMLDivElement>(null)
   const drawing = useRef(false)
   const solved = isSolved(path, puzzle)
 
   useEffect(() => {
     const progress = readTraceProgress()
-    if (progress.solved.includes(puzzle.id)) setPath(puzzle.solution)
     setStreak(traceStreak(progress.solved, puzzle.id))
+    setCleared(progress.solved.includes(puzzle.id))
   }, [puzzle])
 
   useEffect(() => {
     if (!solved) return
     const progress = rememberTraceSolve(puzzle.id)
     setStreak(traceStreak(progress.solved, puzzle.id))
+    setCleared(true)
+    const timer = window.setTimeout(() => {
+      setPath([startCell(puzzle)])
+      setHinted(false)
+    }, 700)
+    return () => window.clearTimeout(timer)
   }, [solved, puzzle])
 
   useEffect(() => {
@@ -143,7 +150,7 @@ export function TraceGame() {
               <p className="text-[11px] font-medium uppercase tracking-[0.28em] text-[#8E1B2C] dark:text-rose-300">Trace</p>
               <h1 className="mt-1 text-lg font-medium tracking-tight text-stone-950 dark:text-white">{formatDay(puzzle.id)}</h1>
             </div>
-            <p className="text-sm text-stone-500 dark:text-stone-400">{solved ? `Streak ${streak}` : "One path. Every cell."}</p>
+            <p className="text-sm text-stone-500 dark:text-stone-400">{cleared && streak > 0 ? `Streak ${streak}` : "One path. Every cell."}</p>
           </div>
 
           <div
@@ -218,10 +225,12 @@ export function TraceGame() {
 
           <p className="mt-4 rounded-2xl border border-stone-200 px-4 py-3 text-sm leading-relaxed text-stone-600 dark:border-white/10 dark:text-stone-300">
             {solved
-              ? "Clear. Every cell is on the path, and the numbers landed in order."
-              : hinted
-                ? "Feeling stuck? Tap Hint again for the next step in the right direction."
-                : "Start at 1. Connect the numbers in order, and cover every cell exactly once."}
+              ? "Clear. The board is resetting so you can trace it again."
+              : cleared
+                ? "You already cleared today's circuit. The board is ready for another run."
+                : hinted
+                  ? "Feeling stuck? Tap Hint again for the next step in the right direction."
+                  : "Start at 1. Connect the numbers in order, and cover every cell exactly once."}
           </p>
         </section>
 
