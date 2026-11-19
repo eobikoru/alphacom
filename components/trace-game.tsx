@@ -4,10 +4,12 @@ import { useEffect, useMemo, useRef, useState, type ReactNode } from "react"
 import {
   canEnter,
   isSolved,
+  freshTracePuzzle,
   puzzleForDate,
   readTraceProgress,
   rememberTraceSolve,
   startCell,
+  traceDateId,
   traceStreak,
   type TracePuzzle,
 } from "@/lib/trace-puzzle"
@@ -33,32 +35,36 @@ function direction(from: number, to: number, cols: number) {
 }
 
 export function TraceGame() {
-  const [puzzle] = useState<TracePuzzle>(() => puzzleForDate(new Date()))
+  const today = traceDateId()
+  const [puzzle, setPuzzle] = useState<TracePuzzle>(() => puzzleForDate(new Date()))
   const [path, setPath] = useState<number[]>(() => [startCell(puzzle)])
   const [hinted, setHinted] = useState(false)
   const [streak, setStreak] = useState(0)
-  const [cleared, setCleared] = useState(false)
   const boardRef = useRef<HTMLDivElement>(null)
   const drawing = useRef(false)
+  const opened = useRef(false)
   const solved = isSolved(path, puzzle)
+
+  const dealNext = (next: TracePuzzle) => {
+    setPuzzle(next)
+    setPath([startCell(next)])
+    setHinted(false)
+  }
 
   useEffect(() => {
     const progress = readTraceProgress()
-    setStreak(traceStreak(progress.solved, puzzle.id))
-    setCleared(progress.solved.includes(puzzle.id))
-  }, [puzzle])
+    setStreak(traceStreak(progress.solved, today))
+    if (!opened.current && progress.solved.includes(today)) dealNext(freshTracePuzzle())
+    opened.current = true
+  }, [today])
 
   useEffect(() => {
     if (!solved) return
-    const progress = rememberTraceSolve(puzzle.id)
-    setStreak(traceStreak(progress.solved, puzzle.id))
-    setCleared(true)
-    const timer = window.setTimeout(() => {
-      setPath([startCell(puzzle)])
-      setHinted(false)
-    }, 700)
+    const progress = rememberTraceSolve(today)
+    setStreak(traceStreak(progress.solved, today))
+    const timer = window.setTimeout(() => dealNext(freshTracePuzzle()), 700)
     return () => window.clearTimeout(timer)
-  }, [solved, puzzle])
+  }, [solved, today])
 
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
@@ -148,9 +154,9 @@ export function TraceGame() {
           <div className="mb-4 flex items-end justify-between gap-3 px-1">
             <div>
               <p className="text-[11px] font-medium uppercase tracking-[0.28em] text-[#8E1B2C] dark:text-rose-300">Trace</p>
-              <h1 className="mt-1 text-lg font-medium tracking-tight text-stone-950 dark:text-white">{formatDay(puzzle.id)}</h1>
+              <h1 className="mt-1 text-lg font-medium tracking-tight text-stone-950 dark:text-white">{formatDay(today)}</h1>
             </div>
-            <p className="text-sm text-stone-500 dark:text-stone-400">{cleared && streak > 0 ? `Streak ${streak}` : "One path. Every cell."}</p>
+            <p className="text-sm text-stone-500 dark:text-stone-400">{streak > 0 ? `Streak ${streak}` : "One path. Every cell."}</p>
           </div>
 
           <div
@@ -225,12 +231,10 @@ export function TraceGame() {
 
           <p className="mt-4 rounded-2xl border border-stone-200 px-4 py-3 text-sm leading-relaxed text-stone-600 dark:border-white/10 dark:text-stone-300">
             {solved
-              ? "Clear. The board is resetting so you can trace it again."
-              : cleared
-                ? "You already cleared today's circuit. The board is ready for another run."
-                : hinted
-                  ? "Feeling stuck? Tap Hint again for the next step in the right direction."
-                  : "Start at 1. Connect the numbers in order, and cover every cell exactly once."}
+              ? "Clear. A new number pattern is on the way."
+              : hinted
+                ? "Feeling stuck? Tap Hint again for the next step in the right direction."
+                : "Start at 1. Connect the numbers in order, and cover every cell exactly once."}
           </p>
         </section>
 

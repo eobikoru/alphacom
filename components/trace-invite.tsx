@@ -22,7 +22,7 @@ export function TraceInvite() {
               {solved ? "Today's circuit is clear." : "You've earned it."}
             </p>
             <p className="text-sm text-stone-500 dark:text-stone-400">
-              {solved ? "A new Trace arrives at midnight." : "Trace is Alphacom's daily path puzzle."}
+              {solved ? "A new number pattern is ready whenever you are." : "Trace is Alphacom's daily path puzzle."}
             </p>
           </div>
         </div>

@@ -96,8 +96,8 @@ function placeCheckpoints(path: number[], count: number) {
   return unique
 }
 
-export function puzzleForDate(date = new Date()): TracePuzzle {
-  const id = traceDateId(date)
+export function puzzleFromSeed(seed: string): TracePuzzle {
+  const id = seed
   const rand = mulberry32(hashDate(id))
   const rows = 6
   const cols = 6
@@ -121,6 +121,15 @@ export function puzzleForDate(date = new Date()): TracePuzzle {
   })
 
   return { id, rows, cols, numbers, solution, checkpoints: stops.length }
+}
+
+export function puzzleForDate(date = new Date()): TracePuzzle {
+  return puzzleFromSeed(traceDateId(date))
+}
+
+export function freshTracePuzzle() {
+  const seed = `${traceDateId()}:${Date.now().toString(36)}:${Math.floor(Math.random() * 1e9).toString(36)}`
+  return puzzleFromSeed(seed)
 }
 
 export function startCell(puzzle: TracePuzzle) {
