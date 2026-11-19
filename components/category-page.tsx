@@ -583,10 +583,10 @@ export function CategoryPage({ categorySlug, selectedSubcategory }: CategoryPage
                   onClick={() => handleAddToCart(product)}
                   disabled={!inStock}
                   size="sm"
-                  className="mt-2 h-7 w-full text-xs"
+                  className="mt-2 h-12 w-full px-1 text-sm sm:h-8 sm:text-xs"
                   variant={productInCart ? "secondary" : "default"}
                 >
-                  <ShoppingCart className="h-3 w-3 mr-1" />
+                  <ShoppingCart className="h-4 w-4 sm:h-3.5 sm:w-3.5" />
                   {!inStock ? "Out" : productInCart ? cartQuantity : "Cart"}
                 </Button>
               </CardContent>

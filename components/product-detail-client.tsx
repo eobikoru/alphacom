@@ -360,10 +360,10 @@ export function ProductDetailClient({ slug, productId, initialProduct = null }: 
               <Button
                 onClick={handleAddToCart}
                 disabled={!product.in_stock}
-                className="h-12 flex-1 rounded-full bg-gradient-to-r from-cyan-600 to-purple-600 text-base hover:from-cyan-700 hover:to-purple-700"
+                className="h-16 w-full flex-none rounded-full bg-gradient-to-r from-cyan-600 to-purple-600 text-lg hover:from-cyan-700 hover:to-purple-700 sm:h-12 sm:w-auto sm:flex-1 sm:text-base"
                 size="lg"
               >
-                <ShoppingCart className="h-5 w-5" />
+                <ShoppingCart className="h-6 w-6 sm:h-5 sm:w-5" />
                 {!product.in_stock ? "Out of Stock" : productInCart ? `In Cart (${cartQuantity})` : "Add to Cart"}
               </Button>
 

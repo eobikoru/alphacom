@@ -181,7 +181,7 @@ export default function BrandPage() {
                   </CardContent>
 
                   <CardFooter className="p-4 pt-0">
-                    <Button className="w-full" onClick={() => handleAddToCart(product)} disabled={!product.in_stock}>
+                    <Button className="h-14 w-full text-base sm:h-10 sm:text-sm" onClick={() => handleAddToCart(product)} disabled={!product.in_stock}>
                       <ShoppingCart className="h-4 w-4 mr-2" />
                       {product.in_stock ? "Add to Cart" : "Out of Stock"}
                     </Button>
