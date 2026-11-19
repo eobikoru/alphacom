@@ -1,5 +1,6 @@
 import { AppLayout } from "@/components/app-layout"
 import { HeroSection } from "@/components/hero-section"
+import { TraceInvite } from "@/components/trace-invite"
 import { ProductCategories } from "@/components/product-categories"
 import { ShopByBrands } from "@/components/shop-by-brands"
 import { FlashSales } from "@/components/flash-sales"
@@ -12,6 +13,7 @@ export default function HomePage() {
     <AppLayout>
       <LandingScrollAnimations>
         <HeroSection />
+        <TraceInvite />
         <FlashSales />
         <TopSales />
         <ShopByBrands />
