@@ -9,6 +9,7 @@ import { ReduxProvider } from "@/components/redux-provider"
 import { ThemeWrapper } from "@/components/theme-wrapper"
 import { AuthModalProvider } from "@/components/auth-modal"
 import { NewsletterWelcome } from "@/components/newsletter-welcome"
+import { BlackFridayModal } from "@/components/black-friday-modal"
 import { LiveProductNote } from "@/components/live-product-note"
 import { Suspense } from "react"
 import NextTopLoader from "nextjs-toploader"
@@ -275,6 +276,7 @@ export default function RootLayout({
               <ThemeWrapper>
                 <AuthModalProvider>{children}</AuthModalProvider>
                 <NewsletterWelcome />
+                <BlackFridayModal />
                 <LiveProductNote />
               </ThemeWrapper>
             </Suspense>

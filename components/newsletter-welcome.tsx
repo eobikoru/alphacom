@@ -4,8 +4,14 @@ import { useEffect, useState, type FormEvent } from "react"
 import { usePathname } from "next/navigation"
 import * as Dialog from "@radix-ui/react-dialog"
 import { X } from "lucide-react"
+import { useAuth } from "@/hooks/use-auth"
 
 export const NEWSLETTER_PROMPT_KEY = "alphacom-newsletter-prompt"
+export const NEWSLETTER_SETTLED_EVENT = "alphacom-newsletter-settled"
+
+function settleNewsletterPrompt() {
+  window.dispatchEvent(new Event(NEWSLETTER_SETTLED_EVENT))
+}
 
 const SHOW_DELAY_MS = 1600
 const HIDDEN_PREFIXES = ["/checkout", "/payment", "/auth"]
@@ -62,8 +68,23 @@ function hasSeenPrompt() {
   }
 }
 
+async function isMailerLiteSubscriber(email: string) {
+  try {
+    const response = await fetch("/api/newsletter/status", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email }),
+    })
+    const data = await response.json().catch(() => null)
+    return Boolean(data?.subscribed)
+  } catch {
+    return false
+  }
+}
+
 export function NewsletterWelcome() {
   const pathname = usePathname()
+  const { user, loading } = useAuth()
   const [open, setOpen] = useState(false)
   const [email, setEmail] = useState("")
   const [error, setError] = useState("")
@@ -72,15 +93,33 @@ export function NewsletterWelcome() {
 
   useEffect(() => {
     if (HIDDEN_PREFIXES.some((prefix) => pathname?.startsWith(prefix))) return
-    if (hasSeenPrompt()) return
+    if (hasSeenPrompt()) {
+      settleNewsletterPrompt()
+      return
+    }
+    if (loading) return
 
-    const timer = window.setTimeout(() => setOpen(true), SHOW_DELAY_MS)
-    return () => window.clearTimeout(timer)
-  }, [pathname])
+    let cancelled = false
+    const timer = window.setTimeout(async () => {
+      const accountEmail = user?.email?.trim()
+      if (accountEmail && (await isMailerLiteSubscriber(accountEmail))) {
+        rememberNewsletterPrompt("subscribed")
+        if (!cancelled) settleNewsletterPrompt()
+        return
+      }
+      if (!cancelled) setOpen(true)
+    }, SHOW_DELAY_MS)
+
+    return () => {
+      cancelled = true
+      window.clearTimeout(timer)
+    }
+  }, [pathname, loading, user?.email])
 
   const close = (reason: "subscribed" | "dismissed") => {
     rememberNewsletterPrompt(reason)
     setOpen(false)
+    settleNewsletterPrompt()
   }
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
