@@ -539,10 +539,20 @@
   .product-promotion a.btn {
     @apply mt-4 inline-flex h-11 items-center justify-center rounded-full bg-[#8E1B2C] px-5 text-sm font-medium text-white no-underline hover:bg-[#741625] dark:bg-rose-300 dark:text-stone-950 dark:hover:bg-rose-200;
   }
+  .product-promotion .promotion-video:empty {
+    display: none;
+  }
+  .product-promotion .promotion-video[data-video-type="instagram"] iframe,
+  .product-description.product-promotion iframe[src*="instagram.com"] {
+    aspect-ratio: auto;
+    height: 640px;
+    width: min(100%, 400px);
+    max-width: 100%;
+  }
   .product-promotion .promotion-video {
     @apply mt-4;
   }
   .product-promotion .promotion-video iframe {
-    @apply my-0 aspect-video w-full;
+    @apply my-0;
   }
 }

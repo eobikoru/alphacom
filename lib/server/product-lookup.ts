@@ -137,11 +137,17 @@ function asPromotion(value: unknown): Product["promotion"] {
   const raw = value as Record<string, unknown>
   const title = typeof raw.title === "string" ? raw.title : ""
   const html = typeof raw.html === "string" ? raw.html : ""
-  if (!title && !html) return null
+  const videoEmbedUrl = typeof raw.video_embed_url === "string" ? raw.video_embed_url : ""
+  const videoUrl = typeof raw.video_url === "string" ? raw.video_url : ""
+  const videoType = typeof raw.video_type === "string" ? raw.video_type : ""
+  if (!title && !html && !videoEmbedUrl) return null
   return {
     id: String(raw.id ?? ""),
     title,
     html,
+    video_url: videoUrl || null,
+    video_embed_url: videoEmbedUrl || null,
+    video_type: videoType || null,
   }
 }
 

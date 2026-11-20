@@ -11,6 +11,9 @@ export interface ProductPromotion {
   id: string
   title: string
   html: string
+  video_url?: string | null
+  video_embed_url?: string | null
+  video_type?: string | null
 }
 
 export interface Product {

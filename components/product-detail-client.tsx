@@ -32,6 +32,18 @@ function categoryHref(category: Product["category"] | string | null | undefined)
   return `/categories/${category.slug}`
 }
 
+function escapeAttr(value: string) {
+  return value.replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;")
+}
+
+function promotionHtml(promotion: NonNullable<Product["promotion"]>) {
+  const html = promotion.html || ""
+  const embed = promotion.video_embed_url || ""
+  if (!embed || html.includes(embed)) return html
+  const type = escapeAttr(promotion.video_type || "video")
+  return `${html}<div class="promotion-video" data-video-type="${type}"><iframe src="${escapeAttr(embed)}" title="${escapeAttr(promotion.title || "Promotion video")}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen loading="lazy"></iframe></div>`
+}
+
 function descriptionHtml(value: string) {
   const trimmed = value.trim()
   if (/<\/?[a-z][\s\S]*>/i.test(trimmed)) return trimmed
@@ -406,32 +418,32 @@ export function ProductDetailClient({ slug, productId, initialProduct = null }: 
                 </div>
               </div>
             </div>
-
-            {product.promotion && (product.promotion.title || product.promotion.html) && (
-              <section className={`mt-6 rounded-2xl p-6 ${surface}`}>
-                {product.promotion.title ? (
-                  <h2 className={`text-lg font-semibold tracking-tight ${strongText}`}>{product.promotion.title}</h2>
-                ) : null}
-                {product.promotion.html ? (
-                  <div
-                    className={`product-description product-promotion${product.promotion.title ? " mt-4" : ""}`}
-                    dangerouslySetInnerHTML={{ __html: product.promotion.html }}
-                  />
-                ) : null}
-              </section>
-            )}
-
-            {product.description && (
-              <section className={`mt-6 rounded-2xl p-6 ${surface}`}>
-                <h2 className={`text-lg font-semibold tracking-tight ${strongText}`}>Description</h2>
-                <div
-                  className="product-description mt-4"
-                  dangerouslySetInnerHTML={{ __html: descriptionHtml(product.description) }}
-                />
-              </section>
-            )}
           </div>
         </div>
+
+        {product.promotion && (product.promotion.title || product.promotion.html || product.promotion.video_embed_url) && (
+          <section className={`mt-10 rounded-2xl p-6 ${surface}`}>
+            {product.promotion.title ? (
+              <h2 className={`text-lg font-semibold tracking-tight ${strongText}`}>{product.promotion.title}</h2>
+            ) : null}
+            {promotionHtml(product.promotion) ? (
+              <div
+                className={`product-description product-promotion${product.promotion.title ? " mt-4" : ""}`}
+                dangerouslySetInnerHTML={{ __html: promotionHtml(product.promotion) }}
+              />
+            ) : null}
+          </section>
+        )}
+
+        {product.description && (
+          <section className={`mt-6 rounded-2xl p-6 ${surface}`}>
+            <h2 className={`text-lg font-semibold tracking-tight ${strongText}`}>Description</h2>
+            <div
+              className="product-description mt-4"
+              dangerouslySetInnerHTML={{ __html: descriptionHtml(product.description) }}
+            />
+          </section>
+        )}
       </div>
     </div>
   )
