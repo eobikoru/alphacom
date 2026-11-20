@@ -421,8 +421,18 @@ export function ProductDetailClient({ slug, productId, initialProduct = null }: 
           </div>
         </div>
 
-        {product.promotion && (product.promotion.title || product.promotion.html || product.promotion.video_embed_url) && (
+        {product.description && (
           <section className={`mt-10 rounded-2xl p-6 ${surface}`}>
+            <h2 className={`text-lg font-semibold tracking-tight ${strongText}`}>Description</h2>
+            <div
+              className="product-description mt-4"
+              dangerouslySetInnerHTML={{ __html: descriptionHtml(product.description) }}
+            />
+          </section>
+        )}
+
+        {product.promotion && (product.promotion.title || product.promotion.html || product.promotion.video_embed_url) && (
+          <section className={`mt-6 rounded-2xl p-6 ${surface}`}>
             {product.promotion.title ? (
               <h2 className={`text-lg font-semibold tracking-tight ${strongText}`}>{product.promotion.title}</h2>
             ) : null}
@@ -432,16 +442,6 @@ export function ProductDetailClient({ slug, productId, initialProduct = null }: 
                 dangerouslySetInnerHTML={{ __html: promotionHtml(product.promotion) }}
               />
             ) : null}
-          </section>
-        )}
-
-        {product.description && (
-          <section className={`mt-6 rounded-2xl p-6 ${surface}`}>
-            <h2 className={`text-lg font-semibold tracking-tight ${strongText}`}>Description</h2>
-            <div
-              className="product-description mt-4"
-              dangerouslySetInnerHTML={{ __html: descriptionHtml(product.description) }}
-            />
           </section>
         )}
       </div>
