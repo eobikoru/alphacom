@@ -7,6 +7,12 @@ export interface ProductCategory {
   slug: string
 }
 
+export interface ProductPromotion {
+  id: string
+  title: string
+  html: string
+}
+
 export interface Product {
   id: string
   name: string
@@ -26,6 +32,7 @@ export interface Product {
   stock_status: string
   description: string
   short_description: string | null
+  promotion?: ProductPromotion | null
 }
 
 export interface FeaturedProduct {

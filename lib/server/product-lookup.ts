@@ -128,6 +128,20 @@ function asProduct(raw: Record<string, unknown>): Product {
     stock_status: typeof raw.stock_status === "string" ? raw.stock_status : raw.in_stock ? "In Stock" : "Out of Stock",
     description: typeof raw.description === "string" ? raw.description : "",
     short_description: typeof raw.short_description === "string" ? raw.short_description : null,
+    promotion: asPromotion(raw.promotion),
+  }
+}
+
+function asPromotion(value: unknown): Product["promotion"] {
+  if (!value || typeof value !== "object") return null
+  const raw = value as Record<string, unknown>
+  const title = typeof raw.title === "string" ? raw.title : ""
+  const html = typeof raw.html === "string" ? raw.html : ""
+  if (!title && !html) return null
+  return {
+    id: String(raw.id ?? ""),
+    title,
+    html,
   }
 }
 
