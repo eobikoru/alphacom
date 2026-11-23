@@ -183,30 +183,14 @@ export function PromotionLanding() {
             Take a closer look at the power bank before you order. What you see is what you get from Alphacom.
           </p>
         </div>
-        <div className="mt-10 grid gap-4 sm:grid-cols-3">
-          {photos.map((photo, index) => (
-            <button key={photo.src} type="button" onClick={() => setActivePhoto(index)} className="overflow-hidden rounded-[1.5rem] bg-white text-left shadow-sm focus:outline-none">
-              <Image src={photo.src} alt={photo.alt} width={768} height={1024} className="aspect-[4/5] w-full object-cover" />
-              <span className="block px-4 py-3 text-sm font-medium">{photo.caption}</span>
-            </button>
-          ))}
-        </div>
-        <div className="mt-14 grid items-center gap-10 lg:grid-cols-[0.9fr_1.1fr]">
-          <div>
-            <h3 className="text-2xl font-medium">Watch the product.</h3>
-            <p className="mt-3 text-sm leading-7 text-stone-600">
-              A closer look at the power bank and the hand fan in this bundle, before you order.
-            </p>
-          </div>
-          <div className="mx-auto aspect-[9/16] w-full max-w-[320px] overflow-hidden rounded-[1.5rem] bg-stone-950 shadow-[0_20px_50px_rgba(28,25,22,0.12)]">
-            <iframe
-              src="https://www.youtube.com/embed/pwpYvxl4EqI"
-              title="Alphacom bundle product video"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-              allowFullScreen
-              className="h-full w-full"
-            />
-          </div>
+        <div className="mx-auto mt-10 aspect-[9/16] w-full max-w-[320px] overflow-hidden rounded-[1.5rem] bg-stone-950 shadow-[0_20px_50px_rgba(28,25,22,0.12)]">
+          <iframe
+            src="https://www.youtube.com/embed/pwpYvxl4EqI"
+            title="Alphacom bundle product video"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            allowFullScreen
+            className="h-full w-full"
+          />
         </div>
       </section>
 
