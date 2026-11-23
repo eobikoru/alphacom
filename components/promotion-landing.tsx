@@ -12,44 +12,40 @@ const photos = [
   {
     src: "/promotion/power-bank.jpg",
     alt: "20,000mAh power bank with a digital battery display",
-    caption: "The power bank",
+    caption: "20,000mAh power bank",
   },
   {
     src: "/promotion/hand-fan.jpg",
     alt: "Orange portable electric hand fan on its stand",
-    caption: "The hand fan, included",
+    caption: "Free electric hand fan",
   },
   {
     src: "/promotion/bundle.jpg",
     alt: "The power bank and orange electric hand fan together",
-    caption: "Both, together",
+    caption: "The bundle",
   },
 ] as const
 
 const faqs = [
   {
     q: "How much is the bundle?",
-    a: "The 20,000mAh power bank and free electric hand fan are available together for ₦27,000.",
+    a: "The 20,000mAh power bank and FREE electric hand fan are available together for ₦27,000.",
   },
   {
-    q: "Is the electric hand fan really free?",
-    a: "Yes. The electric hand fan is included with this bundle. You pay ₦27,000 for both.",
+    q: "Is the electric fan really free?",
+    a: "Yes. The electric hand fan is included as a free bonus with this bundle.",
   },
   {
-    q: "Can the power bank charge my phone?",
-    a: "Yes. It is designed to provide backup charging for compatible devices when you are away from a power source.",
+    q: "Can I see the products before ordering?",
+    a: "Yes. You can view the product pictures and the product video on this page.",
   },
   {
-    q: "Is delivery free?",
-    a: "Yes. This offer includes free delivery, subject to the advertised delivery locations and terms. Share your location and our team will confirm the arrangement before your order is finalized.",
+    q: "Do you offer free delivery?",
+    a: "Free delivery applies to the locations covered by this offer. Contact our team to confirm delivery availability for your area.",
   },
   {
-    q: "Do you deliver outside Lagos?",
-    a: "Send your location with the order. Our team will confirm whether this free-delivery offer covers your area.",
-  },
-  {
-    q: "How do I order?",
-    a: "Fill in the form on this page and send it on WhatsApp. Our team will contact you to confirm your details and delivery.",
+    q: "How do I place an order?",
+    a: "Click any order button on this page and submit your details through WhatsApp. Our team will assist you.",
   },
 ]
 
@@ -105,169 +101,106 @@ export function PromotionLanding() {
   }
 
   return (
-    <div className="min-h-screen bg-[#f4efe8] text-[#1c1916]">
-      <header className="sticky top-0 z-40 border-b border-[#e4dbd1] bg-[#f4efe8]/90 backdrop-blur-md">
+    <div className="min-h-screen bg-[#F0F4F8] text-stone-950">
+      <header className="sticky top-0 z-40 border-b border-stone-200/80 bg-white/90 backdrop-blur-md">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-3.5 sm:px-8">
           <Link href="/" aria-label="Alphacom Online home">
             <Image src="/alpw1.png" alt="Alphacom" width={180} height={48} className="h-10 w-auto" priority />
           </Link>
-          <button
-            type="button"
-            onClick={scrollToOrder}
-            className="whitespace-nowrap text-[13px] font-medium tracking-wide text-[#1c1916] underline decoration-[#c4b6a6] underline-offset-4 transition hover:decoration-[#1c1916]"
-          >
-            Order · {PRICE}
+          <button type="button" onClick={scrollToOrder} className={buttonClass}>
+            Get this offer
           </button>
         </div>
       </header>
 
-      <section className="mx-auto grid max-w-6xl items-end gap-10 px-5 pb-16 pt-10 sm:px-8 lg:grid-cols-[1.05fr_0.95fr] lg:gap-16 lg:pt-16">
+      <section className="mx-auto grid max-w-6xl items-center gap-12 px-5 py-14 sm:px-8 lg:grid-cols-[1.05fr_0.95fr] lg:py-20">
         <div>
-          <p className="text-[12px] uppercase tracking-[0.28em] text-[#8a7564]">Alphacom Online · Ikeja</p>
-          <h1 className="mt-5 max-w-xl text-[3.1rem] font-medium leading-[0.95] tracking-[-0.03em] text-[#1c1916] sm:text-7xl">
-            Stay powered.
-            <span className="mt-1 block italic text-[#8d4a34]">Stay cool.</span>
+          <p className="text-[12px] font-medium uppercase tracking-[0.28em] text-[#8E1B2C]">Alphacom Online</p>
+          <h1 className="mt-4 text-4xl font-medium leading-[1.05] tracking-tight sm:text-5xl">
+            Get a 20,000mAh power bank + a free electric hand fan for just {PRICE}.
           </h1>
-          <p className="mt-6 max-w-md text-[15px] leading-7 text-[#5e564e]">
-            A 20,000mAh power bank, with a portable electric hand fan included. Two everyday essentials, one bundle, for {PRICE}.
+          <p className="mt-5 text-lg text-stone-700">Two useful everyday essentials. One amazing offer.</p>
+          <p className="mt-4 max-w-xl text-[15px] leading-7 text-stone-600">
+            Keep your devices powered and enjoy a little extra comfort with this special Alphacom bundle. Get a 20,000mAh power bank and receive a portable electric hand fan absolutely free.
           </p>
-          <div className="mt-8 flex flex-wrap items-end gap-6">
-            <p className="text-5xl font-medium tracking-tight">{PRICE}</p>
-            <button
-              type="button"
-              onClick={scrollToOrder}
-              className="rounded-full bg-[#1c1916] px-6 py-3 text-sm text-[#f4efe8] transition hover:bg-[#3a332c]"
-            >
-              Reserve this bundle
-            </button>
-          </div>
-          <p className="mt-5 max-w-sm text-xs leading-5 text-[#8a7d72]">
-            Free delivery on this offer, subject to the locations and terms confirmed with your order.
-          </p>
+          <p className="mt-6 text-sm text-stone-500">Bundle price</p>
+          <p className="text-4xl font-medium tracking-tight text-[#8E1B2C]">{PRICE}</p>
+          <button type="button" onClick={scrollToOrder} className={`${buttonClass} mt-6`}>
+            Get this offer now
+          </button>
         </div>
-        <button
-          type="button"
-          onClick={() => setActivePhoto(2)}
-          className="group relative block focus:outline-none"
-          aria-label="View the power bank and fan together"
-        >
+        <button type="button" onClick={() => setActivePhoto(2)} className="overflow-hidden rounded-[1.75rem] bg-white shadow-[0_24px_60px_rgba(28,25,22,0.08)] focus:outline-none" aria-label="View the power bank and fan together">
           <Image
             src="/promotion/bundle.jpg"
             alt="20,000mAh power bank beside the free orange electric hand fan"
             width={768}
             height={1024}
             priority
-            className="aspect-[4/5] w-full rounded-[2rem] object-cover object-[center_42%] shadow-[0_30px_80px_rgba(28,25,22,0.12)]"
+            className="aspect-[4/5] w-full object-cover object-[center_42%]"
           />
-          <span className="absolute bottom-4 left-4 rounded-full bg-[#f4efe8]/90 px-3 py-1.5 text-xs text-[#1c1916] backdrop-blur">
-            Power bank + hand fan
-          </span>
         </button>
       </section>
 
-      <section className="border-y border-[#e4dbd1]">
-        <div className="mx-auto grid max-w-6xl gap-8 px-5 py-10 sm:grid-cols-3 sm:px-8">
-          {[
-            ["01", "Stay powered", "Extra capacity from a 20,000mAh power bank when you are away from a socket."],
-            ["02", "Stay cool", "A portable electric hand fan comes with the order, at no extra cost."],
-            ["03", "One price", "Both pieces together for ₦27,000, with free delivery on this offer."],
-          ].map(([index, title, body]) => (
-            <div key={index}>
-              <p className="text-sm italic text-[#8d4a34]">{index}</p>
-              <h2 className="mt-2 text-lg font-medium">{title}</h2>
-              <p className="mt-2 text-sm leading-6 text-[#5e564e]">{body}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <section className="bg-[#1c1916] text-[#f4efe8]">
+      <section className="bg-white">
         <div className="mx-auto grid max-w-6xl items-center gap-12 px-5 py-16 sm:px-8 lg:grid-cols-2 lg:py-24">
-          <button
-            type="button"
-            onClick={() => setActivePhoto(0)}
-            className="overflow-hidden rounded-[1.75rem] focus:outline-none"
-            aria-label="View the power bank"
-          >
-            <Image
-              src="/promotion/power-bank.jpg"
-              alt="Black 20,000mAh power bank with a digital display reading 99 percent"
-              width={500}
-              height={500}
-              className="aspect-square w-full object-cover"
-            />
-          </button>
           <div>
-            <p className="text-[12px] uppercase tracking-[0.28em] text-[#c4a090]">The power bank</p>
-            <h2 className="mt-4 text-4xl font-medium leading-tight sm:text-5xl">
-              A quieter kind of backup power.
-            </h2>
-            <p className="mt-5 max-w-md text-[15px] leading-7 text-[#d9d0c6]">
-              Whether you are working, travelling, in a meeting, or studying, a low battery does not have to interrupt the day. This 20,000mAh power bank is the practical piece you keep in a bag.
+            <p className="text-[12px] font-medium uppercase tracking-[0.22em] text-[#8E1B2C]">01</p>
+            <h2 className="mt-3 text-3xl font-medium leading-tight sm:text-4xl">A power bank that keeps you going.</h2>
+            <h3 className="mt-4 text-lg text-stone-950">Don&apos;t let a low battery interrupt your day.</h3>
+            <p className="mt-4 text-[15px] leading-7 text-stone-600">
+              Whether you&apos;re working, travelling, attending meetings, studying or going about your daily activities, having reliable backup power makes a difference. The 20,000mAh power bank gives you extra power when you need it, helping you stay connected and keep your essential devices running.
             </p>
-            <ul className="mt-8 space-y-3 text-sm text-[#efe7de]">
+            <p className="mt-6 text-sm font-medium text-stone-950">Why you&apos;ll want one</p>
+            <ul className="mt-3 space-y-2 text-sm leading-6 text-stone-600">
               {[
-                "20,000mAh capacity",
-                "Portable charging for compatible devices",
-                "Useful for work, school, and travel",
-                "A backup when you are away from a power source",
+                "20,000mAh capacity.",
+                "Convenient portable charging.",
+                "Useful for everyday activities and travel.",
+                "A practical backup power solution when you're away from a power source.",
               ].map((item) => (
-                <li key={item} className="border-t border-white/10 pt-3">
-                  {item}
+                <li key={item} className="flex gap-3">
+                  <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[#8E1B2C]" />
+                  <span>{item}</span>
                 </li>
               ))}
             </ul>
+          </div>
+          <div className="grid gap-4">
+            <button type="button" onClick={() => setActivePhoto(0)} className="overflow-hidden rounded-[1.5rem] focus:outline-none" aria-label="View the power bank">
+              <Image src="/promotion/power-bank.jpg" alt="Black 20,000mAh power bank with a digital display" width={500} height={500} className="aspect-square w-full object-cover" />
+            </button>
+            <p className="text-sm text-stone-500">See it for yourself.</p>
           </div>
         </div>
       </section>
 
       <section className="mx-auto max-w-6xl px-5 py-16 sm:px-8 lg:py-24">
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-          <div>
-            <p className="text-[12px] uppercase tracking-[0.28em] text-[#8a7564]">What you receive</p>
-            <h2 className="mt-3 text-4xl font-medium tracking-tight sm:text-5xl">
-              The actual products.
-            </h2>
-          </div>
-          <p className="max-w-xs text-sm leading-6 text-[#5e564e]">
-            These photographs are the power bank and the hand fan in this bundle.
+        <div className="max-w-2xl">
+          <p className="text-[12px] font-medium uppercase tracking-[0.22em] text-[#8E1B2C]">02</p>
+          <h2 className="mt-3 text-3xl font-medium leading-tight sm:text-4xl">See what you&apos;re getting.</h2>
+          <h3 className="mt-4 text-lg text-stone-950">Pictures are good. Seeing the actual product is even better.</h3>
+          <p className="mt-4 text-[15px] leading-7 text-stone-600">
+            Take a closer look at the power bank before you order. What you see is what you get from Alphacom.
           </p>
         </div>
         <div className="mt-10 grid gap-4 sm:grid-cols-3">
           {photos.map((photo, index) => (
-            <button
-              key={photo.src}
-              type="button"
-              onClick={() => setActivePhoto(index)}
-              className={`group overflow-hidden text-left focus:outline-none ${index === 1 ? "sm:mt-10" : ""}`}
-            >
-              <Image
-                src={photo.src}
-                alt={photo.alt}
-                width={768}
-                height={1024}
-                className="aspect-[4/5] w-full rounded-[1.5rem] object-cover transition duration-500 group-hover:scale-[1.01]"
-              />
-              <span className="mt-3 block text-sm text-[#5e564e]">{photo.caption}</span>
+            <button key={photo.src} type="button" onClick={() => setActivePhoto(index)} className="overflow-hidden rounded-[1.5rem] bg-white text-left shadow-sm focus:outline-none">
+              <Image src={photo.src} alt={photo.alt} width={768} height={1024} className="aspect-[4/5] w-full object-cover" />
+              <span className="block px-4 py-3 text-sm font-medium">{photo.caption}</span>
             </button>
           ))}
         </div>
-      </section>
-
-      <section className="border-t border-[#e4dbd1]">
-        <div className="mx-auto grid max-w-6xl items-center gap-12 px-5 py-16 sm:px-8 lg:grid-cols-[0.8fr_1.2fr] lg:py-24">
+        <div className="mt-14 grid items-center gap-10 lg:grid-cols-[0.9fr_1.1fr]">
           <div>
-            <p className="text-[12px] uppercase tracking-[0.28em] text-[#8a7564]">A closer look</p>
-            <h2 className="mt-3 text-4xl font-medium leading-tight">
-              See it before you order.
-            </h2>
-            <p className="mt-4 text-sm leading-7 text-[#5e564e]">
-              A short look at the power bank and the hand fan that come in this Alphacom bundle.
+            <h3 className="text-2xl font-medium">Watch the product.</h3>
+            <p className="mt-3 text-sm leading-7 text-stone-600">
+              A closer look at the power bank and the hand fan in this bundle, before you order.
             </p>
           </div>
-          <div className="mx-auto aspect-[9/16] w-full max-w-[320px] overflow-hidden rounded-[1.75rem] bg-[#1c1916] shadow-[0_24px_60px_rgba(28,25,22,0.12)]">
+          <div className="mx-auto aspect-[9/16] w-full max-w-[320px] overflow-hidden rounded-[1.5rem] bg-stone-950 shadow-[0_20px_50px_rgba(28,25,22,0.12)]">
             <iframe
-              src="https://www.youtube.com/embed/4KiHspG1ROI"
+              src="https://www.youtube.com/embed/pwpYvxl4EqI"
               title="Alphacom bundle product video"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
               allowFullScreen
@@ -277,77 +210,118 @@ export function PromotionLanding() {
         </div>
       </section>
 
-      <section className="mx-auto grid max-w-6xl items-center gap-12 px-5 py-8 sm:px-8 lg:grid-cols-2 lg:py-12">
-        <button
-          type="button"
-          onClick={() => setActivePhoto(1)}
-          className="overflow-hidden rounded-[2rem] focus:outline-none"
-          aria-label="View a larger photo of the electric hand fan"
-        >
-          <Image
-            src="/promotion/hand-fan.jpg"
-            alt="Large view of the orange portable electric hand fan"
-            width={768}
-            height={1024}
-            className="aspect-[4/5] w-full object-cover object-[center_40%]"
-          />
-        </button>
-        <div>
-          <p className="text-[12px] uppercase tracking-[0.28em] text-[#8a7564]">Included with your order</p>
-          <h2 className="mt-3 text-4xl font-medium leading-tight sm:text-5xl">
-            The hand fan comes with it.
-          </h2>
-          <p className="mt-5 max-w-md text-[15px] leading-7 text-[#5e564e]">
-            Buy the power bank and the portable electric hand fan is added at no extra cost. Both are yours for {PRICE}.
+      <section className="border-y border-stone-200 bg-white">
+        <div className="mx-auto max-w-6xl px-5 py-16 sm:px-8 lg:py-24">
+          <p className="text-[12px] font-medium uppercase tracking-[0.22em] text-[#8E1B2C]">03</p>
+          <h2 className="mt-3 max-w-xl text-3xl font-medium leading-tight sm:text-4xl">Real customers. Real experiences.</h2>
+          <h3 className="mt-4 text-lg text-stone-950">Don&apos;t just take our word for it.</h3>
+          <p className="mt-4 max-w-2xl text-[15px] leading-7 text-stone-600">
+            At Alphacom, we understand that you want to feel confident before making a purchase. These are messages from people who have shopped with us.
           </p>
-          <ul className="mt-8 space-y-2 text-sm leading-6 text-[#3d3833]">
+          <div className="mt-10 grid gap-4 sm:grid-cols-3">
             {[
-              "A breeze while you commute.",
-              "Comfortable company for outdoor plans.",
-              "Light enough for work, school, or church.",
-              "Compact size, with a stand and a button on the handle.",
-            ].map((item) => (
-              <li key={item}>{item}</li>
+              ["/promotion/review-full-1.jpg", "WhatsApp review: I love this your 20000mah powerbank"],
+              ["/promotion/review-full-2.jpg", "WhatsApp review: The Powerbank is my best buy ever"],
+              ["/promotion/review-full-3.jpg", "WhatsApp review: The Powerbank was worth buying. Thank you Alphacom Online"],
+            ].map(([src, alt]) => (
+              <figure key={src} className="overflow-hidden rounded-[1.75rem] border border-stone-200 bg-white shadow-sm">
+                <Image src={src} alt={alt} width={472} height={560} className="h-auto w-full" />
+              </figure>
             ))}
-          </ul>
+          </div>
         </div>
       </section>
 
-      <section className="mx-auto max-w-6xl px-5 py-16 sm:px-8">
-        <div className="rounded-[2rem] bg-[#ebe3d8] px-6 py-10 sm:px-12 sm:py-14">
-          <div className="grid gap-10 lg:grid-cols-[1.2fr_0.8fr] lg:items-end">
-            <div>
-              <p className="text-[12px] uppercase tracking-[0.28em] text-[#8a7564]">Delivery</p>
-              <h2 className="mt-3 max-w-lg text-4xl font-medium leading-tight">
-                Delivered without an extra charge.
-              </h2>
-              <p className="mt-4 max-w-md text-sm leading-7 text-[#5e564e]">
-                Free delivery applies to the locations and terms of this offer. Tell us where you are, and the team confirms the arrangement before the order is finalized.
-              </p>
-            </div>
-            <p className="text-sm leading-7 text-[#5e564e]">
-              Alphacom Online is a technology retailer in Computer Village, Ikeja, Lagos. Genuine products, a team you can reach, and support after you order.
+      <section className="bg-[#F0F4F8]">
+        <div className="mx-auto grid max-w-6xl items-center gap-12 px-5 py-16 sm:px-8 lg:grid-cols-2 lg:py-24">
+          <button type="button" onClick={() => setActivePhoto(1)} className="overflow-hidden rounded-[1.75rem] focus:outline-none" aria-label="View the electric hand fan">
+            <Image src="/promotion/hand-fan.jpg" alt="Large view of the orange portable electric hand fan" width={768} height={1024} className="aspect-[4/5] w-full object-cover object-[center_40%]" />
+          </button>
+          <div>
+            <p className="text-[12px] font-medium uppercase tracking-[0.22em] text-[#8E1B2C]">04</p>
+            <h2 className="mt-3 text-3xl font-medium leading-tight sm:text-4xl">Your purchase comes with a free bonus.</h2>
+            <p className="mt-4 text-lg text-stone-950">Buy the 20,000mAh power bank and get a free electric hand fan.</p>
+            <p className="mt-4 text-[15px] leading-7 text-stone-600">
+              Yes, you read that correctly. We&apos;re adding an electric hand fan to your order at no extra cost.
+            </p>
+            <h3 className="mt-8 text-lg font-medium">A little extra comfort for your everyday life.</h3>
+            <ul className="mt-3 space-y-2 text-sm leading-6 text-stone-600">
+              {[
+                "Staying cool while commuting.",
+                "Keeping comfortable during outdoor activities.",
+                "Taking it along to work, school or church.",
+                "Everyday use when you're on the move.",
+                "Compact size, with a stand and a button on the handle.",
+              ].map((item) => (
+                <li key={item} className="flex gap-3">
+                  <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[#8E1B2C]" />
+                  <span>{item}</span>
+                </li>
+              ))}
+            </ul>
+            <p className="mt-6 text-[15px] text-stone-950">
+              You get both products for just <span className="font-medium text-[#8E1B2C]">{PRICE}</span>.
             </p>
           </div>
         </div>
       </section>
 
-      <section id="order" className="scroll-mt-20 bg-[#ebe4da]">
+      <section className="mx-auto max-w-3xl px-5 py-16 text-center sm:px-8 lg:py-24">
+        <p className="text-[12px] font-medium uppercase tracking-[0.22em] text-[#8E1B2C]">05</p>
+        <h2 className="mt-3 text-3xl font-medium sm:text-4xl">Enjoy free delivery.</h2>
+        <p className="mx-auto mt-4 max-w-xl text-[15px] leading-7 text-stone-600">
+          Get your bundle delivered without an additional delivery charge, subject to the advertised delivery locations and terms. No need to miss out on this special offer.
+        </p>
+        <button type="button" onClick={scrollToOrder} className={`${buttonClass} mt-8`}>
+          Get my {PRICE} bundle
+        </button>
+      </section>
+
+      <section className="border-y border-stone-200 bg-white">
+        <div className="mx-auto max-w-3xl px-5 py-16 text-center sm:px-8">
+          <p className="text-[12px] font-medium uppercase tracking-[0.22em] text-[#8E1B2C]">06</p>
+          <h2 className="mt-3 text-3xl font-medium sm:text-4xl">Why shop with Alphacom?</h2>
+          <p className="mt-4 text-[15px] leading-7 text-stone-600">
+            When you shop with Alphacom Online, you&apos;re shopping with a trusted technology retailer from the heart of Computer Village, Ikeja, Lagos. We are committed to providing genuine tech products you can count on, dependable service and customer support.
+          </p>
+          <p className="mt-5 text-sm font-medium text-[#8E1B2C]">Your satisfaction matters to us.</p>
+        </div>
+      </section>
+
+      <section className="mx-auto max-w-6xl px-5 py-16 sm:px-8 lg:py-20">
+        <p className="text-[12px] font-medium uppercase tracking-[0.22em] text-[#8E1B2C]">07</p>
+        <h2 className="mt-3 text-3xl font-medium sm:text-4xl">How to order.</h2>
+        <p className="mt-3 text-stone-600">Getting your bundle is easy.</p>
+        <ol className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {[
+            "Click the order button.",
+            "Fill in your name, phone number and delivery location.",
+            "Submit your order through WhatsApp.",
+            "Our team will contact you to confirm your order and delivery arrangements.",
+          ].map((step, index) => (
+            <li key={step} className="rounded-2xl bg-white p-5 shadow-sm">
+              <span className="text-sm font-medium text-[#8E1B2C]">{index + 1}</span>
+              <p className="mt-2 text-sm leading-6 text-stone-700">{step}</p>
+            </li>
+          ))}
+        </ol>
+      </section>
+
+      <section id="order" className="scroll-mt-20 bg-white">
         <div className="mx-auto max-w-xl px-5 py-16 sm:px-8 sm:py-20">
           <div className="text-center">
-            <p className="text-[12px] uppercase tracking-[0.28em] text-[#8a7564]">Order</p>
-            <h2 className="mt-3 text-4xl font-medium leading-tight">Tell us where to send it.</h2>
-            <p className="mx-auto mt-3 max-w-sm text-sm leading-6 text-[#5e564e]">
-              Your name, phone, and location. We confirm the bundle and delivery on WhatsApp.
+            <h2 className="text-3xl font-medium sm:text-4xl">Order your bundle now.</h2>
+            <p className="mx-auto mt-3 max-w-sm text-sm leading-6 text-stone-600">
+              Fill in your details and send them on WhatsApp. Our team will confirm your order.
             </p>
           </div>
-          <form onSubmit={submitOrder} className="mt-8 overflow-hidden rounded-[1.75rem] border border-[#d9cfc3] bg-white shadow-[0_24px_60px_rgba(28,25,22,0.1)]">
-            <div className="flex items-center justify-between gap-4 border-b border-[#efe7de] bg-[#faf7f3] px-6 py-5 sm:px-8">
+          <form onSubmit={submitOrder} className="mt-8 overflow-hidden rounded-[1.75rem] border border-stone-200 bg-white shadow-[0_24px_60px_rgba(142,27,44,0.08)]">
+            <div className="flex items-center justify-between gap-4 border-b border-stone-200 bg-[#F0F4F8] px-6 py-5 sm:px-8">
               <div>
-                <p className="text-sm font-medium text-[#1c1916]">Power bank + free hand fan</p>
-                <p className="mt-1 text-xs text-[#8a7d72]">Free delivery on this offer</p>
+                <p className="text-sm font-medium">Power bank + free hand fan</p>
+                <p className="mt-1 text-xs text-stone-500">Free delivery on this offer</p>
               </div>
-              <p className="text-2xl font-medium tracking-tight text-[#1c1916]">{PRICE}</p>
+              <p className="text-2xl font-medium tracking-tight text-[#8E1B2C]">{PRICE}</p>
             </div>
             <div className="px-6 py-7 sm:px-8">
               <div className="grid gap-4 sm:grid-cols-2">
@@ -373,11 +347,11 @@ export function PromotionLanding() {
               <Field label="Anything else, optional" htmlFor="notes">
                 <textarea id="notes" name="notes" rows={2} value={notes} onChange={(event) => setNotes(event.target.value)} placeholder="A note for the team" className={`${inputClass} resize-y`} />
               </Field>
-              {error ? <p className="mb-4 rounded-xl bg-[#f8ece6] px-4 py-3 text-sm text-[#8d4a34]">{error}</p> : null}
-              <button type="submit" className="w-full rounded-xl bg-[#128C7E] py-4 text-base font-medium text-white transition hover:bg-[#0e7468]">
-                Send order on WhatsApp
+              {error ? <p className="mb-4 rounded-xl bg-[#F8ECEE] px-4 py-3 text-sm text-[#8E1B2C]">{error}</p> : null}
+              <button type="submit" className="w-full rounded-xl bg-[#8E1B2C] py-4 text-base font-medium text-white transition hover:bg-[#741625]">
+                Order your bundle now
               </button>
-              <p className="mt-3 text-center text-xs leading-5 text-[#8a7d72]">
+              <p className="mt-3 text-center text-xs leading-5 text-stone-500">
                 This opens WhatsApp with your details. The order is confirmed when our team replies.
               </p>
               {sent ? (
@@ -390,33 +364,41 @@ export function PromotionLanding() {
         </div>
       </section>
 
-      <section className="border-t border-[#e4dbd1]">
-        <div className="mx-auto grid max-w-6xl gap-10 px-5 py-16 sm:px-8 lg:grid-cols-[0.7fr_1.3fr]">
-          <h2 className="text-4xl font-medium">Questions, briefly.</h2>
-          <div className="divide-y divide-[#e4dbd1]">
-            {faqs.map((item) => (
-              <article key={item.q} className="py-5">
-                <h3 className="font-medium">{item.q}</h3>
-                <p className="mt-2 text-sm leading-6 text-[#5e564e]">{item.a}</p>
-              </article>
-            ))}
-          </div>
+      <section className="mx-auto max-w-3xl px-5 py-16 sm:px-8">
+        <p className="text-[12px] font-medium uppercase tracking-[0.22em] text-[#8E1B2C]">08</p>
+        <h2 className="mt-3 text-3xl font-medium sm:text-4xl">Frequently asked questions.</h2>
+        <div className="mt-8 divide-y divide-stone-200">
+          {faqs.map((item) => (
+            <article key={item.q} className="py-5">
+              <h3 className="font-medium">{item.q}</h3>
+              <p className="mt-2 text-sm leading-6 text-stone-600">{item.a}</p>
+            </article>
+          ))}
         </div>
       </section>
 
-      <footer className="border-t border-[#e4dbd1] px-5 py-10 text-center sm:px-8">
-        <p className="text-2xl italic">Alphacom Online</p>
-        <p className="mt-2 text-sm text-[#8a7d72]">Computer Village, Ikeja, Lagos · Genuine tech, carefully chosen.</p>
+      <section className="bg-[#8E1B2C] px-5 py-16 text-center text-white sm:px-8">
+        <div className="mx-auto max-w-2xl">
+          <p className="text-[12px] font-medium uppercase tracking-[0.28em] text-white/70">Don&apos;t miss this special offer</p>
+          <h2 className="mt-4 text-3xl font-medium leading-tight sm:text-4xl">
+            Get your 20,000mAh power bank + free electric hand fan today.
+          </h2>
+          <p className="mt-5 text-4xl font-medium">Just {PRICE}</p>
+          <p className="mt-3 text-white/80">Two useful products. One incredible bundle.</p>
+          <button type="button" onClick={scrollToOrder} className="mt-8 rounded-full bg-white px-6 py-3 text-sm font-medium text-[#8E1B2C] transition hover:bg-stone-100">
+            Yes, I want my bundle
+          </button>
+        </div>
+      </section>
+
+      <footer className="bg-white px-5 py-10 text-center sm:px-8">
+        <p className="text-lg font-medium">Alphacom Online</p>
+        <p className="mt-2 text-sm text-stone-500">Your destination for genuine tech products you can count on.</p>
+        <p className="mt-1 text-sm text-stone-400">Computer Village, Ikeja, Lagos.</p>
       </footer>
 
       {activePhoto !== null ? (
-        <div
-          className="fixed inset-0 z-[60] flex items-center justify-center bg-[#1c1916]/80 p-4"
-          role="dialog"
-          aria-modal="true"
-          aria-label={photos[activePhoto].caption}
-          onClick={() => setActivePhoto(null)}
-        >
+        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-stone-950/80 p-4" role="dialog" aria-modal="true" aria-label={photos[activePhoto].caption} onClick={() => setActivePhoto(null)}>
           <button type="button" className="absolute right-4 top-4 rounded-full bg-white/15 p-2 text-white" aria-label="Close photo" onClick={() => setActivePhoto(null)}>
             <X className="h-5 w-5" />
           </button>
@@ -434,12 +416,14 @@ export function PromotionLanding() {
   )
 }
 
+const buttonClass = "whitespace-nowrap rounded-full bg-[#8E1B2C] px-5 py-2.5 text-sm font-medium text-white transition hover:bg-[#741625]"
+
 const inputClass =
-  "mt-1.5 w-full rounded-xl border border-[#d8cfc4] bg-[#faf7f3] px-4 py-3.5 text-base text-[#1c1916] outline-none transition placeholder:text-[#a3988c] focus:border-[#1c1916] focus:bg-white focus:ring-2 focus:ring-[#1c1916]/10"
+  "mt-1.5 w-full rounded-xl border border-stone-300 bg-[#F0F4F8] px-4 py-3.5 text-base text-stone-950 outline-none transition placeholder:text-stone-400 focus:border-[#8E1B2C] focus:bg-white focus:ring-2 focus:ring-[#8E1B2C]/15"
 
 function Field({ label, htmlFor, children }: { label: string; htmlFor: string; children: ReactNode }) {
   return (
-    <label htmlFor={htmlFor} className="mb-4 block text-sm font-medium text-[#1c1916]">
+    <label htmlFor={htmlFor} className="mb-4 block text-sm font-medium text-stone-950">
       {label}
       {children}
     </label>
