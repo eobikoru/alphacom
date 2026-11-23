@@ -8,7 +8,7 @@ import { X } from "lucide-react"
 import { NEWSLETTER_SETTLED_EVENT } from "@/components/newsletter-welcome"
 
 const PROMO_KEY = "alphacom-black-friday-promo"
-const HIDDEN_PREFIXES = ["/checkout", "/payment", "/auth"]
+const HIDDEN_PREFIXES = ["/checkout", "/payment", "/auth", "/promotion"]
 const REVEAL_DELAY_MS = 280
 
 function alreadySeen() {

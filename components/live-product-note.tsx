@@ -8,7 +8,7 @@ import { getProductsWithCategories, type Product } from "@/lib/api/products"
 import { cdnImage } from "@/lib/image-url"
 import { productHref } from "@/lib/product-url"
 
-const HIDDEN_PREFIXES = ["/checkout", "/payment", "/auth"]
+const HIDDEN_PREFIXES = ["/checkout", "/payment", "/auth", "/promotion"]
 const FIRST_DELAY_MS = 20000
 const EVERY_MS = 6 * 60 * 1000
 const VISIBLE_MS = 12000

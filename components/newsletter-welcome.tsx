@@ -14,7 +14,7 @@ function settleNewsletterPrompt() {
 }
 
 const SHOW_DELAY_MS = 1600
-const HIDDEN_PREFIXES = ["/checkout", "/payment", "/auth"]
+const HIDDEN_PREFIXES = ["/checkout", "/payment", "/auth", "/promotion"]
 
 export function rememberNewsletterPrompt(value: "subscribed" | "dismissed") {
   try {

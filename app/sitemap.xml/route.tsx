@@ -16,6 +16,7 @@ export async function GET(): Promise<Response> {
     { url: "/terms", priority: 0.3, changefreq: "yearly", lastmod: currentDate },
     { url: "/return-policy", priority: 0.4, changefreq: "monthly", lastmod: currentDate },
     { url: "/warranty", priority: 0.4, changefreq: "monthly", lastmod: currentDate },
+    { url: "/promotion", priority: 0.8, changefreq: "weekly", lastmod: currentDate },
   ]
 
   // Brand pages – so "Logitech", "Anker", etc. surface in search
