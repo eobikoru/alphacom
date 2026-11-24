@@ -203,15 +203,39 @@ export function PromotionLanding() {
             At Alphacom, we understand that you want to feel confident before making a purchase. These are messages from people who have shopped with us.
           </p>
           <div className="mt-10 grid gap-4 sm:grid-cols-3">
-            {[
-              ["/promotion/review-full-1.jpg", "WhatsApp review: I love this your 20000mah powerbank"],
-              ["/promotion/review-full-2.jpg", "WhatsApp review: The Powerbank is my best buy ever"],
-              ["/promotion/review-full-3.jpg", "WhatsApp review: The Powerbank was worth buying. Thank you Alphacom Online"],
-            ].map(([src, alt]) => (
+            {(
+              [
+                ["/promotion/review-full-1.jpg", "WhatsApp review: I love this your 20000mah powerbank", 472, 560],
+                ["/promotion/review-full-2.jpg", "WhatsApp review: The Powerbank is my best buy ever", 472, 560],
+                ["/promotion/review-full-3.jpg", "WhatsApp review: The Powerbank was worth buying. Thank you Alphacom Online", 472, 560],
+              ] as const
+            ).map(([src, alt, width, height]) => (
               <figure key={src} className="overflow-hidden rounded-[1.75rem] border border-stone-200 bg-white shadow-sm">
-                <Image src={src} alt={alt} width={472} height={560} className="h-auto w-full" />
+                <Image src={src} alt={alt} width={width} height={height} className="h-auto w-full" />
               </figure>
             ))}
+          </div>
+          <figure className="mx-auto mt-4 max-w-3xl overflow-hidden rounded-[1.75rem] border border-stone-200 bg-white shadow-sm">
+            <Image
+              src="/promotion/review-full-4.jpg"
+              alt="WhatsApp review: The Powerbank was worth my money. Thank you Alphacom Online for the gift"
+              width={1024}
+              height={449}
+              className="h-auto w-full"
+            />
+          </figure>
+          <div className="mt-14">
+            <h3 className="text-2xl font-medium">Video testimonials.</h3>
+            <p className="mt-3 max-w-2xl text-sm leading-7 text-stone-600">Hear from a customer who bought from Alphacom.</p>
+            <div className="mx-auto mt-8 aspect-[9/16] w-full max-w-[320px] overflow-hidden rounded-[1.5rem] bg-stone-950 shadow-[0_20px_50px_rgba(28,25,22,0.12)]">
+              <iframe
+                src="https://www.youtube.com/embed/dKj8IvUrJrY"
+                title="Customer video testimonial"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowFullScreen
+                className="h-full w-full"
+              />
+            </div>
           </div>
         </div>
       </section>
