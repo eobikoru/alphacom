@@ -1,10 +1,22 @@
 "use client"
 
 import Link from "next/link"
-import { ChevronRight, Package, Tag } from "lucide-react"
+import { ChevronRight } from "lucide-react"
 import { AppLayout } from "@/components/app-layout"
 import { useEffect, useMemo, useState } from "react"
 import { getCategoriesWithProducts, getBrandsFromCategories, type CategoryWithProducts } from "@/lib/api/categories"
+
+function groupBrands(brands: string[]) {
+  const groups = new Map<string, string[]>()
+  for (const brand of brands) {
+    const first = brand.trim().charAt(0).toUpperCase()
+    const letter = /[A-Z]/.test(first) ? first : "#"
+    const list = groups.get(letter) ?? []
+    list.push(brand)
+    groups.set(letter, list)
+  }
+  return Array.from(groups.entries())
+}
 
 export default function CategoriesPage() {
   const [categories, setCategories] = useState<CategoryWithProducts[]>([])
@@ -12,6 +24,7 @@ export default function CategoriesPage() {
   const [error, setError] = useState<string | null>(null)
 
   const brands = useMemo(() => getBrandsFromCategories(categories), [categories])
+  const brandGroups = useMemo(() => groupBrands(brands), [brands])
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -37,66 +50,89 @@ export default function CategoriesPage() {
   return (
     <AppLayout>
       <div className="min-h-screen bg-background">
-        <div className="container mx-auto px-4 py-8">
-          {/* Page Header */}
-          <div className="mb-6 sm:mb-10 px-1">
-            <h1 className="text-2xl sm:text-3xl font-semibold mb-1.5 sm:mb-2 text-foreground">Shop by Category</h1>
-            <p className="text-muted-foreground max-w-2xl text-xs sm:text-sm">
-              Discover our range of technology products by category
-            </p>
+        <div className="container mx-auto max-w-5xl px-4 py-10 sm:py-14">
+          <div className="mb-8 flex items-end justify-between gap-6 border-b border-border pb-5">
+            <div>
+              <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-[#8E1B2C]">Browse</p>
+              <h1 className="mt-2 text-3xl font-medium tracking-tight text-foreground sm:text-4xl">Shop by category</h1>
+              <p className="mt-2 max-w-xl text-sm leading-6 text-muted-foreground">
+                Discover our range of technology products by category.
+              </p>
+            </div>
+            {!isLoading && !error ? (
+              <p className="shrink-0 text-sm tabular-nums text-muted-foreground">{categories.length}</p>
+            ) : null}
           </div>
 
           {isLoading && (
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4">
-              {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
-                <div key={i} className="rounded-lg border border-border overflow-hidden bg-card p-3 sm:p-4">
-                  <div className="h-5 w-3/4 bg-muted rounded animate-pulse" />
+            <div className="grid md:grid-cols-2 md:gap-x-16">
+              {Array.from({ length: 8 }, (_, i) => (
+                <div key={i} className="border-b border-border py-4">
+                  <div className="h-4 w-2/5 animate-pulse rounded bg-muted" />
                 </div>
               ))}
             </div>
           )}
 
           {error && (
-            <div className="text-center py-12">
-              <p className="text-red-500">{error}</p>
+            <div className="py-12 text-center">
+              <p className="text-sm text-red-500">{error}</p>
             </div>
           )}
 
           {!isLoading && !error && (
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-4 relative z-[6]">
+            <ul className="grid md:grid-cols-2 md:gap-x-16">
               {categories.map((category) => (
-                <Link
-                  key={category.id}
-                  href={`/categories/${category.slug}`}
-                  className="group relative rounded-lg border border-border bg-card overflow-hidden hover:shadow-lg hover:border-primary/30 transition-all duration-200 flex items-center gap-2 p-3 sm:p-4"
-                  onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-                >
-                  <Package className="w-4 h-4 sm:w-5 sm:h-5 text-muted-foreground shrink-0" />
-                  <p className="text-xs sm:text-sm font-medium text-foreground line-clamp-2 leading-tight group-hover:text-primary transition-colors">
-                    {category.name}
-                  </p>
-                </Link>
+                <li key={category.id} className="border-b border-border">
+                  <Link
+                    href={`/categories/${category.slug}`}
+                    className="group flex items-baseline justify-between gap-6 py-4"
+                    onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+                  >
+                    <span className="text-[15px] font-medium text-foreground transition-colors group-hover:text-[#8E1B2C]">
+                      {category.name}
+                    </span>
+                    <span className="shrink-0 text-xs tabular-nums text-muted-foreground">
+                      {category.total_product_count} {category.total_product_count === 1 ? "product" : "products"}
+                    </span>
+                  </Link>
+                </li>
               ))}
-            </div>
+            </ul>
           )}
 
-          {/* Shop by Brands */}
           {!isLoading && !error && brands.length > 0 && (
-            <div className="mt-6 sm:mt-8">
-              <h2 className="text-lg sm:text-xl font-semibold text-foreground mb-3 sm:mb-4">Shop by Brand</h2>
-              <div className="flex flex-wrap gap-2 sm:gap-3">
-                {brands.map((brand) => (
-                  <Link
-                    key={brand}
-                    href={`/brands/${encodeURIComponent(brand)}`}
-                    className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm font-medium text-foreground hover:bg-accent hover:border-primary/30 hover:text-primary transition-colors"
-                  >
-                    <Tag className="h-3 w-3 sm:h-3.5 sm:w-3.5 text-muted-foreground shrink-0" />
-                    {brand}
-                  </Link>
+            <section className="mt-16 sm:mt-20">
+              <div className="mb-8 flex items-end justify-between gap-6 border-b border-border pb-5">
+                <div>
+                  <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-[#8E1B2C]">Browse</p>
+                  <h2 className="mt-2 text-3xl font-medium tracking-tight text-foreground sm:text-4xl">Shop by brand</h2>
+                  <p className="mt-2 max-w-xl text-sm leading-6 text-muted-foreground">
+                    Find products from the brands we stock.
+                  </p>
+                </div>
+                <p className="shrink-0 text-sm tabular-nums text-muted-foreground">{brands.length}</p>
+              </div>
+              <div className="columns-2 gap-x-10 sm:columns-3 lg:columns-4">
+                {brandGroups.map(([letter, names]) => (
+                  <div key={letter} className="mb-8 break-inside-avoid">
+                    <p className="border-b border-border pb-2 text-xs font-medium tracking-[0.2em] text-[#8E1B2C]">{letter}</p>
+                    <ul className="mt-3 space-y-2">
+                      {names.map((brand) => (
+                        <li key={brand}>
+                          <Link
+                            href={`/brands/${encodeURIComponent(brand)}`}
+                            className="text-sm text-foreground transition-colors hover:text-[#8E1B2C]"
+                          >
+                            {brand}
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
                 ))}
               </div>
-            </div>
+            </section>
           )}
 
           {/* Featured Categories Banner */}
