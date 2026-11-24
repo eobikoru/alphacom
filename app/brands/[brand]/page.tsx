@@ -96,7 +96,11 @@ export default function BrandPage() {
               Back
             </Button>
             <h1 className="text-2xl sm:text-3xl font-semibold text-foreground">Shop by Brand: {brandName}</h1>
-            <p className="text-muted-foreground mt-1">Products from {brandName}</p>
+            <p className="text-muted-foreground mt-1">
+              {brandName.toLowerCase() === "micropack"
+                ? "AlphaCom is the authorized partner and official importer of Micropack in Nigeria."
+                : `Products from ${brandName}`}
+            </p>
           </div>
 
           {isLoading ? (

@@ -9,7 +9,7 @@ const BRAND_DESCRIPTIONS: Record<string, string> = {
   SanDisk:
     "Buy SanDisk memory cards, USB drives & storage at AlphaCom Online. Authorized SanDisk partner in Computer Village Lagos. Genuine products, warranty.",
   Micropack:
-    "Shop Micropack accessories and tech at AlphaCom Online. Computer Village Lagos. Quality products with expert support and fast delivery.",
+    "Shop Micropack at AlphaCom Online, the authorized partner and official importer of Micropack in Nigeria. Computer Village, Lagos. Genuine products, warranty, and fast delivery.",
 }
 
 function getBrandMeta(brandSlug: string) {
