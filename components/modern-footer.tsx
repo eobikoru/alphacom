@@ -140,9 +140,9 @@ export function ModernFooter() {
           <div className="space-y-4">
             <div className="flex items-center gap-2">
             {isDark ? (
-             <img src="/alphacomblacklogo.png" className="h-[5rem] fit-cover" />
+             <img src="/alphacomblacklogo.png" alt="AlphaCom Online" width="160" height="80" className="h-[5rem] w-auto" />
             ) : (
-              <img src="/alphacomwhitelogo.png" className="h-[5rem] fit-cover" />
+              <img src="/alphacomwhitelogo.png" alt="AlphaCom Online" width="160" height="80" className="h-[5rem] w-auto" />
               
             )}
             </div>
@@ -263,18 +263,18 @@ export function ModernFooter() {
               <div className="flex items-start gap-3">
                 <MapPin className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
                 <div>
-                  <p className="text-muted-foreground">
-                    No 3 Adepele street, off Medical road,
+                  <address className="text-muted-foreground not-italic">
+                    No 3 Adepele Street, off Medical Road,
                     <br />
-                    Computer village Ikeja, Lagos
-                  </p>
+                    Computer Village, Ikeja, Lagos
+                  </address>
                 </div>
               </div>
               <div className="flex items-center gap-3">
                 <Phone className="h-4 w-4 text-primary flex-shrink-0" />
                 <div className="text-muted-foreground">
-                  <p>+234 702 638 4967</p>
-                  <p>+234 813 733 1005</p>
+                  <p><a href="tel:+2347026384967">+234 702 638 4967</a></p>
+                  <p><a href="tel:+2348137331005">+234 813 733 1005</a></p>
                 </div>
               </div>
               <div className="flex items-center gap-3">

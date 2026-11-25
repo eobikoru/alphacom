@@ -209,7 +209,9 @@ export function LiveProductNote() {
       <div className="flex items-center gap-4">
         <img
           src={cdnImage(product.main_image, 240) || "/placeholder.svg"}
-          alt=""
+          alt={product.name}
+          width="96"
+          height="96"
           className="h-24 w-24 shrink-0 rounded-2xl bg-stone-100 object-contain dark:bg-stone-900"
         />
         <div className="min-w-0 py-1">

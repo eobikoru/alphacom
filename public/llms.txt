@@ -1,0 +1,26 @@
+# AlphaCom Online
+
+> Technology shop at No 3 Adepele Street, off Medical Road, Computer Village, Ikeja, Lagos. Genuine electronics, warranty, and delivery across Nigeria.
+
+AlphaCom sells computer accessories in store and online, including cables, chargers, earbuds, printers, laptop bags, power banks, and brands such as Anker, Logitech, Micropack, and SanDisk.
+
+## Contact
+
+- Phone: +234 702 638 4967
+- Phone: +234 813 733 1005
+- Email: alphacomonline@gmail.com
+- Hours: Monday, Tuesday, Wednesday, and Friday 09:00–18:00. Thursday 10:00–18:00. Saturday 10:00–16:00. Sunday closed.
+
+## Pages
+
+- [Home](https://alphacomonline.com/)
+- [Categories](https://alphacomonline.com/categories)
+- [All products](https://alphacomonline.com/products)
+- [Contact](https://alphacomonline.com/contact)
+- [Store](https://alphacomonline.com/stores)
+- [Logitech](https://alphacomonline.com/brands/Logitech)
+- [Anker](https://alphacomonline.com/brands/Anker)
+- [Micropack](https://alphacomonline.com/brands/Micropack)
+- [SanDisk](https://alphacomonline.com/brands/SanDisk)
+- [Sitemap](https://alphacomonline.com/sitemap.xml)
+- [Product feed](https://alphacomonline.com/product-feed.xml)

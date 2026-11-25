@@ -252,9 +252,9 @@ export function ModernHeader({ blackNavbar }: ModernHeaderProps) {
           {/* Logo */}
           <Link href="/" onClick={handleNavClick} className="flex items-center gap-2">
             {isDark ? (
-             <img src="/alpd.png" alt="Alphacom" className="h-12 w-auto" />
+             <img src="/alpd.png" alt="Alphacom" width="120" height="48" className="h-12 w-auto" />
             ) : (
-              <img src="/alpw1.png" alt="Alphacom" className="h-12 w-auto" />
+              <img src="/alpw1.png" alt="Alphacom" width="120" height="48" className="h-12 w-auto" />
               
             )}
           </Link>
@@ -346,7 +346,7 @@ export function ModernHeader({ blackNavbar }: ModernHeaderProps) {
                             className="flex items-center gap-3 px-3 py-2 text-sm rounded-md hover:bg-accent"
                           >
                             {p.main_image && (
-                              <img src={cdnImage(p.main_image, 96)} alt="" className="h-10 w-10 rounded object-cover shrink-0" />
+                              <img src={cdnImage(p.main_image, 96)} alt={p.name} width="40" height="40" className="h-10 w-10 rounded object-cover shrink-0" />
                             )}
                             <span className="truncate">{p.name}</span>
                           </Link>
@@ -566,7 +566,7 @@ export function ModernHeader({ blackNavbar }: ModernHeaderProps) {
                             onClick={(e) => { e.preventDefault(); setIsSearchOpen(false); setSearchQuery(""); handleNavClick(); router.push(productHref(p)); }}
                             className="flex items-center gap-3 px-3 py-2 text-sm rounded-md hover:bg-accent"
                           >
-                            {p.main_image && <img src={cdnImage(p.main_image, 96)} alt="" className="h-10 w-10 rounded object-cover shrink-0" />}
+                            {p.main_image && <img src={cdnImage(p.main_image, 96)} alt={p.name} width="40" height="40" className="h-10 w-10 rounded object-cover shrink-0" />}
                             <span className="truncate">{p.name}</span>
                           </Link>
                         ))
@@ -652,7 +652,7 @@ export function ModernHeader({ blackNavbar }: ModernHeaderProps) {
               }`}
             >
               <div className="flex items-center justify-between border-b border-stone-200 px-5 py-4 dark:border-white/10">
-                <img src={isDark ? "/alpd.png" : "/alpw1.png"} alt="Alphacom" className="h-8 w-auto" />
+                <img src={isDark ? "/alpd.png" : "/alpw1.png"} alt="Alphacom" width="80" height="32" className="h-8 w-auto" />
                 <button
                   type="button"
                   onClick={() => setIsMobileMenuOpen(false)}
@@ -712,7 +712,7 @@ export function ModernHeader({ blackNavbar }: ModernHeaderProps) {
                           className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm hover:bg-stone-50 dark:hover:bg-white/5"
                         >
                           {p.main_image && (
-                            <img src={cdnImage(p.main_image, 96)} alt="" className="h-9 w-9 shrink-0 rounded-md object-cover" />
+                            <img src={cdnImage(p.main_image, 96)} alt={p.name} width="36" height="36" className="h-9 w-9 shrink-0 rounded-md object-cover" />
                           )}
                           <span className="truncate">{p.name}</span>
                         </Link>

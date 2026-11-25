@@ -202,20 +202,7 @@ export function PromotionLanding() {
           <p className="mt-4 max-w-2xl text-[15px] leading-7 text-stone-600">
             At Alphacom, we understand that you want to feel confident before making a purchase. These are messages from people who have shopped with us.
           </p>
-          <div className="mt-10 grid gap-4 sm:grid-cols-3">
-            {(
-              [
-                ["/promotion/review-full-1.jpg", "WhatsApp review: I love this your 20000mah powerbank", 472, 560],
-                ["/promotion/review-full-2.jpg", "WhatsApp review: The Powerbank is my best buy ever", 472, 560],
-                ["/promotion/review-full-3.jpg", "WhatsApp review: The Powerbank was worth buying. Thank you Alphacom Online", 472, 560],
-              ] as const
-            ).map(([src, alt, width, height]) => (
-              <figure key={src} className="overflow-hidden rounded-[1.75rem] border border-stone-200 bg-white shadow-sm">
-                <Image src={src} alt={alt} width={width} height={height} className="h-auto w-full" />
-              </figure>
-            ))}
-          </div>
-          <figure className="mx-auto mt-4 max-w-3xl overflow-hidden rounded-[1.75rem] border border-stone-200 bg-white shadow-sm">
+          <figure className="mx-auto mt-10 max-w-3xl overflow-hidden rounded-[1.75rem] border border-stone-200 bg-white shadow-sm">
             <Image
               src="/promotion/review-full-4.jpg"
               alt="WhatsApp review: The Powerbank was worth my money. Thank you Alphacom Online for the gift"

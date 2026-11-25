@@ -440,6 +440,8 @@ export function CategoryPage({ categorySlug, selectedSubcategory, initialCategor
                     <img
                       src={cdnImage(product.main_image, 600) || "/placeholder.svg"}
                       alt={product.name}
+                      width="600"
+                      height="600"
                       loading="lazy"
                       decoding="async"
                       className="h-full w-full object-cover"

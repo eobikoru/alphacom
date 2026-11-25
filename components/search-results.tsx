@@ -158,7 +158,7 @@ export function SearchResults({
                       >
                         <div className="aspect-square bg-muted relative">
                           {p.main_image && (
-                            <img src={cdnImage(p.main_image, 600)} alt={p.name} loading="lazy" decoding="async" className="w-full h-full object-cover" />
+                            <img src={cdnImage(p.main_image, 600)} alt={p.name} width="600" height="600" loading="lazy" decoding="async" className="w-full h-full object-cover" />
                           )}
                         </div>
                         <div className="p-3">

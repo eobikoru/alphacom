@@ -286,7 +286,7 @@ export function ProductDetailClient({ slug, productId, initialProduct = null }: 
                   >
                     <img
                       src={cdnImage(image, 240) || "/placeholder.svg"}
-                      alt=""
+                      alt={product.name}
                       loading="lazy"
                       decoding="async"
                       className="aspect-square w-full object-contain p-1.5"

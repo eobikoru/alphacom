@@ -174,6 +174,8 @@ export function ShopByBrands() {
                 <img
                   src={brand.logoUrl}
                   alt={brand.name}
+                  width="160"
+                  height="64"
                   loading="lazy"
                   decoding="async"
                   className="max-w-full max-h-full w-auto h-auto object-contain opacity-90 group-hover:opacity-100 transition-opacity duration-300"

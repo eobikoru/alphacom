@@ -1,8 +1,6 @@
 import { SITE_URL } from "@/lib/site"
 
-export function GET(): Response {
-  const robotsTxt = `User-agent: *
-Allow: /
+const rules = `Allow: /
 
 Disallow: /admin/
 Disallow: /api/
@@ -27,7 +25,31 @@ Allow: /sitemap-products.xml
 Allow: /product-feed.xml
 
 Disallow: /*.json$
-Disallow: /*.log$
+Disallow: /*.log$`
+
+const aiCrawlers = [
+  "GPTBot",
+  "ChatGPT-User",
+  "OAI-SearchBot",
+  "Google-Extended",
+  "anthropic-ai",
+  "ClaudeBot",
+  "Claude-SearchBot",
+  "Claude-Web",
+  "cohere-ai",
+  "PerplexityBot",
+  "Amazonbot",
+  "Applebot-Extended",
+  "Bytespider",
+  "CCBot",
+  "meta-externalagent",
+]
+
+export function GET(): Response {
+  const robotsTxt = `User-agent: *
+${rules}
+
+${aiCrawlers.map((agent) => `User-agent: ${agent}\n${rules}`).join("\n\n")}
 
 Sitemap: ${SITE_URL}/sitemap.xml
 Sitemap: ${SITE_URL}/sitemap-products.xml

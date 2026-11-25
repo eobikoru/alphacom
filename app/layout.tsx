@@ -56,8 +56,8 @@ export const metadata: Metadata = {
   publisher: "AlphaCom Online",
   formatDetection: {
     email: false,
-    address: false,
-    telephone: false,
+    address: true,
+    telephone: true,
   },
   openGraph: {
     type: "website",
@@ -125,8 +125,6 @@ export default function RootLayout({
         <link rel="icon" href="/alphacomwhitelogo.ico" type="image/svg+xml" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
         <link rel="manifest" href="/manifest.json" />
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         {/* Google tag (gtag.js) */}
         <Script
           src={`https://www.googletagmanager.com/gtag/js?id=${GOOGLE_TAG_ID}`}
@@ -159,7 +157,7 @@ export default function RootLayout({
           <img
             height="1"
             width="1"
-            style={{ display: "none" }}
+            className="hidden"
             src={`https://www.facebook.com/tr?id=${META_PIXEL_ID}&ev=PageView&noscript=1`}
             alt=""
           />

@@ -36,6 +36,8 @@ export function SaleProductCard({
         <img
           src={cdnImage(product.main_image, 320) || "/placeholder.svg?height=96&width=144"}
           alt={product.name}
+          width="144"
+          height="96"
           loading="lazy"
           decoding="async"
           className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-300"
