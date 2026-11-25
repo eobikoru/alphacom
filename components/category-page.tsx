@@ -153,9 +153,11 @@ export function CategoryPage({ categorySlug, selectedSubcategory, initialCategor
       }
     }
 
+    const query = searchQuery.trim()
     return products.filter((product) => {
-      const matchesSearch = searchHits ? true : searchIncludes(product.name, searchQuery)
-      const matchesPrice = product.price >= priceRange[0] && product.price <= priceRange[1]
+      const matchesSearch = !query || searchHits ? true : searchIncludes(product.name || "", query)
+      const price = Number(product.price)
+      const matchesPrice = Number.isFinite(price) && price >= priceRange[0] && price <= priceRange[1]
       const matchesBrand = selectedBrands.length === 0 || selectedBrands.includes(product.brand)
       const matchesStock = !inStockOnly || product.in_stock
       const matchesSale = !onSaleOnly || product.discount_percentage > 0
