@@ -25,11 +25,13 @@ function shuffleAndTake<T>(arr: T[], count: number): T[] {
   return shuffled.slice(0, Math.min(count, shuffled.length))
 }
 
-export function TopSales() {
-  const [items, setItems] = useState<CategoryProduct[]>([])
-  const [loading, setLoading] = useState(true)
+export function TopSales({ categories }: { categories?: CategoryWithProducts[] }) {
+  const seeded = categories ? collectAllProducts(categories).slice(0, TOP_SALES_LIMIT) : null
+  const [items, setItems] = useState<CategoryProduct[]>(seeded ?? [])
+  const [loading, setLoading] = useState(seeded === null)
 
   useEffect(() => {
+    if (seeded) return
     const fetch = async () => {
       try {
         const res = await getCategoriesWithProducts()

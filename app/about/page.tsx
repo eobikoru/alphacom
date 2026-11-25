@@ -1,6 +1,15 @@
+import type { Metadata } from "next"
 import { AboutUsHero } from "@/components/about-us-hero"
 import { Mail, MapPin, Phone, Shield, Star, Truck, HeartHandshake } from "lucide-react"
 import { AppLayout } from "@/components/app-layout"
+import { SITE_URL } from "@/lib/site"
+
+export const metadata: Metadata = {
+  title: "About AlphaCom in Lagos",
+  description:
+    "AlphaCom Online is a technology shop at No 3 Adepele Street, Computer Village, Ikeja. Genuine products, warranty, and delivery across Nigeria.",
+  alternates: { canonical: `${SITE_URL}/about` },
+}
 
 const stats = [
   { value: "50,000+", label: "Happy customers" },
@@ -72,7 +81,7 @@ const contact = [
   {
     icon: Phone,
     title: "Phone",
-    lines: ["+234 702 638 4967", "+234 813 733 1005", "Mon – Sat, 8AM – 7PM"],
+    lines: ["+234 702 638 4967", "+234 813 733 1005", "Mon–Wed & Fri 9AM–6PM, Thu 10AM–6PM, Sat 10AM–4PM"],
   },
   {
     icon: Mail,

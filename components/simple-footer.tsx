@@ -203,7 +203,7 @@ export function SimpleFooter() {
               </div>
               <div className="flex items-center gap-3">
                 <Mail className="h-4 w-4 text-primary flex-shrink-0" />
-                <p className="text-muted-foreground">info@alphacomonline.com</p>
+                <p className="text-muted-foreground">alphacomonline@gmail.com</p>
               </div>
             </div>
           </div>

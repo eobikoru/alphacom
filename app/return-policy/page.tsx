@@ -1,4 +1,12 @@
+import type { Metadata } from "next"
 import { PolicyPage, PolicySection } from "@/components/policy-page"
+import { SITE_URL } from "@/lib/site"
+
+export const metadata: Metadata = {
+  title: "Return policy",
+  description: "AlphaCom Online returns: start a return within 1 day of receiving the product.",
+  alternates: { canonical: `${SITE_URL}/return-policy` },
+}
 
 const timeline = [
   {

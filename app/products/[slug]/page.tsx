@@ -5,6 +5,7 @@ import { ProductDetailClient } from "@/components/product-detail-client"
 import { fetchProductDetail, findProductById, findProductBySlug, type ProductSummary } from "@/lib/server/product-lookup"
 import type { Product } from "@/lib/api/products"
 import { isProductId, productHref } from "@/lib/product-url"
+import { micropackGtin } from "@/lib/micropack-barcodes"
 import { SITE_URL } from "@/lib/site"
 
 interface ProductPageProps {
@@ -33,16 +34,23 @@ function metaDescription(product: ProductSummary, detail: Product | null) {
 
 function productJsonLd(product: Product, url: string) {
   const description = (product.short_description || product.description || `Buy ${product.name} at Alphacom Online.`).replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim()
+  const rated = product as Product & { rating?: number | null; review_count?: number | null }
+  const aggregateRating =
+    rated.rating && rated.review_count && rated.review_count > 0
+      ? { "@type": "AggregateRating", ratingValue: rated.rating, reviewCount: rated.review_count }
+      : undefined
   return {
     "@context": "https://schema.org",
     "@type": "Product",
     name: product.name,
     sku: product.sku || undefined,
     mpn: product.sku || undefined,
+    gtin13: micropackGtin(product),
     brand: product.brand ? { "@type": "Brand", name: product.brand } : undefined,
     description,
     image: product.main_image ? [product.main_image] : undefined,
     url,
+    ...(aggregateRating ? { aggregateRating } : {}),
     offers: {
       "@type": "Offer",
       url,
@@ -90,7 +98,7 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
   const detail = await fetchProductDetail(product.id)
   const url = `${SITE_URL}${productHref(product)}`
   const description = metaDescription(product, detail)
-  const title = product.name
+  const title = `${product.name} in Lagos`
   return {
     title,
     description,

@@ -1,209 +1,108 @@
-"use client"
-
-import { cdnImage } from "@/lib/image-url"
-import { useState, useEffect } from "react"
-import { useSearchParams } from "next/navigation"
-import { useQuery } from "@tanstack/react-query"
-import { getProductsWithCategories, searchProducts, type Product, type ProductSearchHit } from "@/lib/api/products"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Badge } from "@/components/ui/badge"
-import { Card, CardContent, CardFooter } from "@/components/ui/card"
-import { Skeleton } from "@/components/ui/skeleton"
-import { Search, ShoppingCart } from "lucide-react"
+import type { Metadata } from "next"
 import Link from "next/link"
-import { useCart } from "@/hooks/use-cart"
+import { AddToCartButton } from "@/components/add-to-cart-button"
+import { AppLayout } from "@/components/app-layout"
+import { fetchCataloguePage } from "@/lib/server/catalogue"
+import { cdnImage } from "@/lib/image-url"
 import { productHref } from "@/lib/product-url"
-import { toast } from "sonner"
+import { SITE_URL } from "@/lib/site"
 
-function toCatalogueProduct(hit: ProductSearchHit): Product {
+export async function generateMetadata({
+  searchParams,
+}: {
+  searchParams: { search?: string; page?: string }
+}): Promise<Metadata> {
+  if (searchParams.search || searchParams.page) {
+    return { title: "All products", robots: { index: false, follow: true } }
+  }
   return {
-    id: hit.id,
-    name: hit.name,
-    slug: hit.slug,
-    sku: "",
-    brand: hit.brand,
-    price: hit.price,
-    original_price: hit.original_price ?? hit.price,
-    discount_percentage: hit.discount_percentage ?? 0,
-    currency: hit.currency || "NGN",
-    main_image: hit.main_image,
-    images: hit.images ?? [],
-    category: { id: "", name: "", slug: "" },
-    subcategory_id: null,
-    in_stock: hit.in_stock,
-    stock_quantity: 0,
-    stock_status: hit.stock_status,
-    description: "",
-    short_description: null,
+    title: "Buy electronics in Lagos",
+    description:
+      "Shop every product AlphaCom sells at Computer Village, Ikeja, Lagos. Genuine products, warranty, and delivery across Nigeria.",
+    alternates: { canonical: `${SITE_URL}/products` },
+    robots: { index: true, follow: true },
   }
 }
 
-export default function ProductsPage() {
-  const searchParams = useSearchParams()
-  const [page, setPage] = useState(1)
-  const [search, setSearch] = useState("")
-  const { addItem } = useCart()
+function naira(amount: number) {
+  return `₦${amount.toLocaleString("en-NG")}`
+}
 
-  useEffect(() => {
-    const q = searchParams.get("search")
-    if (q != null) setSearch(q)
-  }, [searchParams])
-
-  useEffect(() => {
-    setPage(1)
-  }, [search])
-
-  const { data, isLoading, error } = useQuery({
-    queryKey: ["products", page, search],
-    queryFn: () => {
-      const q = search.trim()
-      if (!q) return getProductsWithCategories({ page, per_page: 12 })
-      return searchProducts({ q, page, per_page: 20 }).then((response) => ({
-        ...response,
-        data: response.data.map(toCatalogueProduct),
-      }))
-    },
-  })
-
-  const handleAddToCart = (product: any) => {
-    addItem({
-      id: product.id,
-      name: product.name,
-      price: product.price,
-      image: product.main_image || "/placeholder.svg",
-      brand: product.brand || "Unknown",
-      category: product.category.name,
-    })
-    toast.success(`${product.name} added to cart`)
-  }
+export default async function ProductsPage({ searchParams }: { searchParams: { search?: string; page?: string } }) {
+  const search = searchParams.search?.trim() || ""
+  const page = Math.max(1, Number(searchParams.page) || 1)
+  const catalogue = await fetchCataloguePage(search, page)
+  const products = catalogue.data ?? []
+  const pagination = catalogue.pagination
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="container mx-auto px-4 py-8">
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold mb-4">All Products</h1>
-          <p className="text-muted-foreground mb-6">Browse our complete collection of premium tech products</p>
+    <AppLayout>
+      <div className="bg-background">
+        <div className="container mx-auto px-4 py-6">
+          <h1 className="text-2xl font-semibold text-foreground">All products</h1>
+          <p className="mt-1 text-sm text-muted-foreground">The full Alphacom catalogue.</p>
+          <form action="/products" className="mt-4 flex max-w-md gap-2">
+            <input
+              name="search"
+              defaultValue={search}
+              placeholder="Search products"
+              className="h-10 w-full rounded-md border border-border bg-background px-3 text-sm"
+            />
+            <button type="submit" className="h-10 rounded-md bg-[#8E1B2C] px-4 text-sm text-white">
+              Search
+            </button>
+          </form>
 
-          <div className="flex gap-4 items-center">
-            <div className="relative flex-1 max-w-md">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="Search products..."
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                className="pl-10"
-              />
-            </div>
-          </div>
-        </div>
-
-        {isLoading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {[...Array(8)].map((_, i) => (
-              <Card key={i}>
-                <CardContent className="p-4">
-                  <Skeleton className="w-full h-48 mb-4" />
-                  <Skeleton className="h-4 w-3/4 mb-2" />
-                  <Skeleton className="h-4 w-1/2" />
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        ) : error ? (
-          <div className="text-center py-12">
-            <p className="text-destructive">Failed to load products. Please try again later.</p>
-          </div>
-        ) : data?.data.length === 0 ? (
-          <div className="text-center py-12">
-            <p className="text-muted-foreground">No products found.</p>
-          </div>
-        ) : (
-          <>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {data?.data.map((product) => (
-                <Card key={product.id} className="group hover:shadow-lg transition-shadow">
-                  <CardContent className="p-4">
-                    <Link href={productHref(product)}>
-                      <div className="relative aspect-square mb-4 overflow-hidden rounded-lg bg-muted">
-                        <img
-                          src={cdnImage(product.main_image, 600) || "/placeholder.svg"}
-                          alt={product.name}
-                          loading="lazy"
-                          decoding="async"
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform"
-                        />
-                        {product.discount_percentage > 0 && (
-                          <Badge className="absolute top-2 right-2 bg-destructive">
-                            -{product.discount_percentage}%
-                          </Badge>
-                        )}
-                        {!product.in_stock && (
-                          <Badge className="absolute top-2 left-2 bg-muted-foreground">Out of Stock</Badge>
-                        )}
-                      </div>
-                    </Link>
-
-                    <div className="space-y-2">
-                      <Link href={productHref(product)}>
-                        <h3 className="font-semibold line-clamp-2 hover:text-primary transition-colors">
-                          {product.name}
-                        </h3>
-                      </Link>
-                      <p className="text-sm text-muted-foreground">{product.brand || "Unknown Brand"}</p>
-                      {product.category?.name ? (
-                        <Badge variant="outline" className="text-xs">
-                          {product.category.name}
-                        </Badge>
-                      ) : null}
-
-                      <div className="flex items-center gap-2">
-                        <span className="text-lg font-bold">
-                          {product.currency}
-                          {product.price.toLocaleString()}
-                        </span>
-                        {product.original_price > product.price && (
-                          <span className="text-sm text-muted-foreground line-through">
-                            {product.currency}
-                            {product.original_price.toLocaleString()}
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                  </CardContent>
-
-                  <CardFooter className="p-4 pt-0">
-                    <Button className="h-14 w-full text-base sm:h-10 sm:text-sm" onClick={() => handleAddToCart(product)} disabled={!product.in_stock}>
-                      <ShoppingCart className="h-4 w-4 mr-2" />
-                      {product.in_stock ? "Add to Cart" : "Out of Stock"}
-                    </Button>
-                  </CardFooter>
-                </Card>
+          {products.length === 0 ? (
+            <p className="py-12 text-center text-muted-foreground">No products found.</p>
+          ) : (
+            <ul className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+              {products.map((product, index) => (
+                <li key={product.id} className="flex flex-col rounded-lg border bg-card p-2">
+                  <Link href={productHref(product)}>
+                    <span className="relative mb-2 block">
+                      <img
+                        src={cdnImage(product.main_image, 400) || "/placeholder.svg"}
+                        alt={product.name}
+                        width={400}
+                        height={300}
+                        loading={index < 4 ? "eager" : "lazy"}
+                        className="h-28 w-full rounded-md bg-white object-contain sm:h-36"
+                      />
+                      <span className="absolute bottom-1 left-1 rounded bg-white px-1.5 py-0.5 text-sm font-semibold text-neutral-950">
+                        {naira(product.price)}
+                      </span>
+                    </span>
+                    <h2 className="line-clamp-2 text-sm font-medium leading-snug">{product.name}</h2>
+                  </Link>
+                  <p className="mt-1 text-xs text-muted-foreground">{product.in_stock ? "In stock" : "Out of stock"}</p>
+                  <div className="mt-2">
+                    <AddToCartButton product={product} />
+                  </div>
+                </li>
               ))}
-            </div>
+            </ul>
+          )}
 
-            {data?.pagination && data.pagination.total_pages > 1 && (
-              <div className="flex justify-center gap-2 mt-8">
-                <Button
-                  variant="outline"
-                  onClick={() => setPage((p) => Math.max(1, p - 1))}
-                  disabled={!data.pagination.has_prev}
-                >
+          {pagination && pagination.total_pages > 1 && (
+            <div className="mt-8 flex items-center justify-center gap-3 text-sm">
+              {pagination.has_prev ? (
+                <Link className="rounded border px-3 py-2" href={`/products?search=${encodeURIComponent(search)}&page=${page - 1}`}>
                   Previous
-                </Button>
-                <div className="flex items-center gap-2 px-4">
-                  <span className="text-sm text-muted-foreground">
-                    Page {data.pagination.page} of {data.pagination.total_pages}
-                  </span>
-                </div>
-                <Button variant="outline" onClick={() => setPage((p) => p + 1)} disabled={!data.pagination.has_next}>
+                </Link>
+              ) : null}
+              <span className="text-muted-foreground">
+                Page {pagination.page} of {pagination.total_pages}
+              </span>
+              {pagination.has_next ? (
+                <Link className="rounded border px-3 py-2" href={`/products?search=${encodeURIComponent(search)}&page=${page + 1}`}>
                   Next
-                </Button>
-              </div>
-            )}
-          </>
-        )}
+                </Link>
+              ) : null}
+            </div>
+          )}
+        </div>
       </div>
-    </div>
+    </AppLayout>
   )
 }

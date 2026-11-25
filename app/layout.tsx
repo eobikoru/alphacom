@@ -16,6 +16,7 @@ import NextTopLoader from "nextjs-toploader"
 import { WhatsAppWidget } from "@/components/whatsapp-widget"
 import { QueryProvider } from "@/lib/providers/query-provider"
 import { Toaster } from "@/components/ui/sonner"
+import { CatalogueIndex } from "@/components/catalogue-index"
 import { SITE_URL } from "@/lib/site"
 import Script from "next/script"
 
@@ -31,7 +32,7 @@ export const metadata: Metadata = {
     template: "%s | AlphaCom Online",
   },
   description:
-    "Premium technology store in Computer Village, Lagos. Shop Logitech, Anker, SanDisk, Micropack & more. Electronics, computers, accessories with 100% warranty, expert support & fast delivery across Nigeria.",
+    "AlphaCom Online in Computer Village, Ikeja, Lagos. Shop the full catalogue, with warranty and delivery across Nigeria.",
   keywords: [
     "alphacom online",
     "computer village lagos",
@@ -65,7 +66,7 @@ export const metadata: Metadata = {
     siteName: "AlphaCom Online",
     title: "AlphaCom Online | Premium Technology Store",
     description:
-      "Premium technology store in Computer Village, Lagos. Shop Logitech, Anker, SanDisk, Micropack. Expert support, 100% warranty & fast delivery across Nigeria.",
+      "AlphaCom Online in Computer Village, Ikeja, Lagos. Shop the full catalogue, with warranty and delivery across Nigeria.",
     images: [
       {
         url: `${SITE_URL}/og-image.jpg`,
@@ -78,7 +79,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "AlphaCom Online | Premium Technology Store",
-    description: "Premium technology store in Computer Village, Lagos. Logitech, Anker, SanDisk & more. Expert support & competitive prices.",
+    description: "AlphaCom Online in Computer Village, Ikeja, Lagos. Shop the full catalogue, with warranty and delivery across Nigeria.",
     images: [`${SITE_URL}/twitter-image.jpg`],
     creator: "@alphacomonline",
   },
@@ -95,11 +96,6 @@ export const metadata: Metadata = {
   },
   verification: {
     google: "c8oQppTwjVGtJpAyfFXvq-Io27nJKOCHmWbx0qhL8Xc",
-    yandex: "your-yandex-verification-code",
-    yahoo: "your-yahoo-verification-code",
-  },
-  alternates: {
-    canonical: SITE_URL,
   },
   category: "technology",
 }
@@ -218,27 +214,44 @@ export default function RootLayout({
               logo: `${SITE_URL}/logo.png`,
               image: `${SITE_URL}/og-image.jpg`,
               description:
-                "Premium technology store. Authorized Logitech, Anker, SanDisk, Micropack partner. Computer Village Ikeja, Lagos. Quality electronics, computers & accessories with expert support.",
+                "AlphaCom Online, No 3 Adepele Street, off Medical Road, Computer Village, Ikeja, Lagos. The full catalogue, with warranty and delivery across Nigeria.",
               priceRange: "$$",
-              telephone: "+2347026384967, +2348137331005",
-              email: "info@alphacomonline.com",
+              telephone: "+2347026384967",
+              email: "alphacomonline@gmail.com",
               address: {
                 "@type": "PostalAddress",
                 streetAddress: "No 3 Adepele street, off Medical road",
-                addressLocality: "Computer village Ikeja",
+                addressLocality: "Computer Village, Ikeja",
                 addressRegion: "Lagos",
                 addressCountry: "NG",
               },
-              geo: {
-                "@type": "GeoCoordinates",
-                latitude: "6.5244",
-                longitude: "3.3792",
-              },
+              contactPoint: [
+                {
+                  "@type": "ContactPoint",
+                  telephone: "+2347026384967",
+                  contactType: "customer service",
+                  areaServed: "NG",
+                  availableLanguage: "English",
+                },
+                {
+                  "@type": "ContactPoint",
+                  telephone: "+2348137331005",
+                  contactType: "sales",
+                  areaServed: "NG",
+                  availableLanguage: "English",
+                },
+              ],
               openingHoursSpecification: [
                 {
                   "@type": "OpeningHoursSpecification",
-                  dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+                  dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Friday"],
                   opens: "09:00",
+                  closes: "18:00",
+                },
+                {
+                  "@type": "OpeningHoursSpecification",
+                  dayOfWeek: "Thursday",
+                  opens: "10:00",
                   closes: "18:00",
                 },
                 {
@@ -248,17 +261,24 @@ export default function RootLayout({
                   closes: "16:00",
                 },
               ],
+              geo: {
+                "@type": "GeoCoordinates",
+                latitude: "6.595744",
+                longitude: "3.339838",
+              },
               paymentAccepted: ["Cash", "Credit Card", "Bank Transfer"],
               currenciesAccepted: "NGN",
               areaServed: {
                 "@type": "Country",
                 name: "Nigeria",
               },
+              hasMap: "https://maps.google.com/maps?q=No%203%20Adepele%20street%2C%20off%20Medical%20road%2C%20Computer%20Village%2C%20Ikeja%2C%20Lagos",
             }),
           }}
         />
       </head>
       <body className={`font-sans ${GeistSans.variable} ${GeistMono.variable}`}>
+        <CatalogueIndex />
         <NextTopLoader
           color="#3b82f6"
           initialPosition={0.08}

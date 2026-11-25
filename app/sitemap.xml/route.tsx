@@ -1,4 +1,31 @@
-import { SITE_URL, SEO_BRANDS } from "@/lib/site"
+import { getBrandsFromCategories, type CategoryWithProducts } from "@/lib/api/categories"
+import { SITE_URL } from "@/lib/site"
+
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || "https://api.alphacomonline.com"
+
+async function shopMap(): Promise<{ aisles: { url: string; priority: number }[]; brands: string[] }> {
+  try {
+    const response = await fetch(`${API_BASE}/api/v1/categories/with-products`, {
+      next: { revalidate: 3600 },
+      headers: { Accept: "application/json" },
+    })
+    if (!response.ok) return { aisles: [], brands: [] }
+    const json = await response.json()
+    const categories = (json.data ?? []) as CategoryWithProducts[]
+    const aisles: { url: string; priority: number }[] = []
+    for (const category of categories) {
+      if (!category.slug) continue
+      aisles.push({ url: `/categories/${category.slug}`, priority: 0.8 })
+      for (const subcategory of category.subcategories ?? []) {
+        if (!subcategory.slug) continue
+        aisles.push({ url: `/categories/${category.slug}/${subcategory.slug}`, priority: 0.7 })
+      }
+    }
+    return { aisles, brands: getBrandsFromCategories(categories) }
+  } catch {
+    return { aisles: [], brands: [] }
+  }
+}
 
 export async function GET(): Promise<Response> {
   const baseUrl = SITE_URL
@@ -19,58 +46,24 @@ export async function GET(): Promise<Response> {
     { url: "/promotion", priority: 0.8, changefreq: "weekly", lastmod: currentDate },
   ]
 
-  // Brand pages – so "Logitech", "Anker", etc. surface in search
-  const brandUrls = SEO_BRANDS.map((b) => ({
-    url: `/brands/${encodeURIComponent(b.slug)}`,
+  const map = await shopMap()
+
+  // Every brand we actually sell, so a search for that brand can find the shelf.
+  const brandUrls = map.brands.map((brand) => ({
+    url: `/brands/${encodeURIComponent(brand)}`,
     priority: 0.9,
     changefreq: "weekly" as const,
     lastmod: currentDate,
   }))
 
-  // Dynamic category pages
-  const categories = [
-    { slug: "electronics", priority: 0.9, changefreq: "daily" },
-    { slug: "computers", priority: 0.9, changefreq: "daily" },
-    { slug: "smartphones", priority: 0.9, changefreq: "daily" },
-    { slug: "fashion", priority: 0.8, changefreq: "weekly" },
-    { slug: "home-garden", priority: 0.8, changefreq: "weekly" },
-    { slug: "sports", priority: 0.7, changefreq: "weekly" },
-    { slug: "books", priority: 0.6, changefreq: "weekly" },
-    { slug: "automotive", priority: 0.7, changefreq: "weekly" },
-    { slug: "health-beauty", priority: 0.7, changefreq: "weekly" },
-    { slug: "toys-games", priority: 0.6, changefreq: "weekly" },
-  ]
-
-  const categoryUrls = categories.map((cat) => ({
-    url: `/categories/${cat.slug}`,
-    priority: cat.priority,
-    changefreq: cat.changefreq,
+  const aisleUrls = map.aisles.map((aisle) => ({
+    url: aisle.url,
+    priority: aisle.priority,
+    changefreq: "weekly" as const,
     lastmod: currentDate,
   }))
 
-  // Subcategory pages
-  const subcategories = [
-    { category: "electronics", subcategory: "laptops", priority: 0.8 },
-    { category: "electronics", subcategory: "tablets", priority: 0.8 },
-    { category: "electronics", subcategory: "headphones", priority: 0.7 },
-    { category: "computers", subcategory: "desktops", priority: 0.8 },
-    { category: "computers", subcategory: "accessories", priority: 0.7 },
-    { category: "smartphones", subcategory: "android", priority: 0.8 },
-    { category: "smartphones", subcategory: "iphone", priority: 0.8 },
-    { category: "fashion", subcategory: "mens", priority: 0.7 },
-    { category: "fashion", subcategory: "womens", priority: 0.7 },
-    { category: "fashion", subcategory: "accessories", priority: 0.6 },
-  ]
-
-  const subcategoryUrls = subcategories.map((sub) => ({
-    url: `/categories/${sub.category}/${sub.subcategory}`,
-    priority: sub.priority,
-    changefreq: "weekly",
-    lastmod: currentDate,
-  }))
-
-  // Combine all URLs (brands included for Logitech, Anker, SanDisk, Micropack)
-  const allUrls = [...staticPages, ...brandUrls, ...categoryUrls, ...subcategoryUrls]
+  const allUrls = [...staticPages, ...brandUrls, ...aisleUrls]
 
   const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"

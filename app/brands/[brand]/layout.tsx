@@ -27,7 +27,7 @@ type Props = { params: { brand: string }; children: React.ReactNode }
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { brand } = params
   const { name, description } = getBrandMeta(brand)
-  const title = `Buy ${name} Products | AlphaCom Online`
+  const title = `Buy ${name} in Lagos | AlphaCom Online`
   const url = `${SITE_URL}/brands/${encodeURIComponent(name)}`
 
   return {
@@ -73,11 +73,6 @@ export default async function BrandLayout({ params, children }: Props) {
     url: collectionUrl,
     isPartOf: { "@id": `${SITE_URL}/#organization` },
     about: { "@type": "Brand", name },
-    mainEntity: {
-      "@type": "ItemList",
-      name: `${name} products`,
-      description: `Genuine ${name} products available at AlphaCom Online, Computer Village Lagos.`,
-    },
   }
   const breadcrumbLd = {
     "@context": "https://schema.org",

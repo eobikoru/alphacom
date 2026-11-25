@@ -1,34 +1,9 @@
+import { SITE_URL } from "@/lib/site"
+
 export function GET(): Response {
-  const robotsTxt = `# Premium Store - Robots.txt
-# Generated on ${new Date().toISOString()}
-
-# Allow all crawlers to access the site
-User-agent: *
+  const robotsTxt = `User-agent: *
 Allow: /
 
-# Specific rules for major search engines
-User-agent: Googlebot
-Allow: /
-Crawl-delay: 1
-Request-rate: 1/1
-
-User-agent: Bingbot
-Allow: /
-Crawl-delay: 1
-
-User-agent: Slurp
-Allow: /
-Crawl-delay: 2
-
-User-agent: DuckDuckBot
-Allow: /
-Crawl-delay: 1
-
-User-agent: Baiduspider
-Allow: /
-Crawl-delay: 2
-
-# Block admin and sensitive areas
 Disallow: /admin/
 Disallow: /api/
 Disallow: /checkout/
@@ -44,32 +19,20 @@ Disallow: /*?sort=*
 Disallow: /*?filter=*
 Disallow: /*?page=*
 
-# Allow important directories
 Allow: /categories/
 Allow: /products/
 Allow: /brands/
-Allow: /images/
-Allow: /about/
-Allow: /contact/
-Allow: /stores/
-Allow: /blog/
+Allow: /sitemap.xml
+Allow: /sitemap-products.xml
+Allow: /product-feed.xml
 
-# Block specific file types
 Disallow: /*.json$
-Disallow: /*.xml$
-Disallow: /*.txt$
 Disallow: /*.log$
 
-# Allow CSS and JS for better rendering
-Allow: /*.css$
-Allow: /*.js$
-
-# Sitemap locations
-Sitemap: https://alphacomonline.com/sitemap.xml
-Sitemap: https://alphacomonline.com/sitemap-products.xml
-
-# Host directive
-Host: https://alphacomonline.com`
+Sitemap: ${SITE_URL}/sitemap.xml
+Sitemap: ${SITE_URL}/sitemap-products.xml
+Sitemap: ${SITE_URL}/product-feed.xml
+`
 
   return new Response(robotsTxt, {
     headers: {

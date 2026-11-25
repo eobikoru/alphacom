@@ -1,4 +1,12 @@
+import type { Metadata } from "next"
 import { PolicyList, PolicyPage, PolicySection } from "@/components/policy-page"
+import { SITE_URL } from "@/lib/site"
+
+export const metadata: Metadata = {
+  title: "Terms and conditions",
+  description: "The terms for shopping at AlphaCom Online, Computer Village, Ikeja.",
+  alternates: { canonical: `${SITE_URL}/terms` },
+}
 
 export default function TermsPage() {
   return (

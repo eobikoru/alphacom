@@ -18,6 +18,7 @@ import { useAuth } from "@/hooks/use-auth"
 import { useAuthModal } from "@/components/auth-modal"
 import { getCategoriesWithProducts, type CategoryWithProducts } from "@/lib/api/categories"
 import { searchProducts as searchProductsApi, type ProductSearchHit } from "@/lib/api/products"
+import { searchIncludes } from "@/lib/site"
 import { productHref } from "@/lib/product-url"
 import { useAppSelector } from "@/store/hooks"
 interface ModernHeaderProps {
@@ -102,7 +103,7 @@ export function ModernHeader({ blackNavbar }: ModernHeaderProps) {
   const q = searchQuery.trim().toLowerCase()
   const matchedCategories = useMemo(() => {
     if (q.length < MIN_QUERY_LENGTH) return []
-    return categories.filter((c) => c.name.toLowerCase().includes(q))
+    return categories.filter((c) => searchIncludes(c.name, q))
   }, [categories, q])
 
   const matchedSubcategories = useMemo(() => {
@@ -110,7 +111,7 @@ export function ModernHeader({ blackNavbar }: ModernHeaderProps) {
     const out: { name: string; slug: string; categorySlug: string }[] = []
     categories.forEach((cat) => {
       ;(cat.subcategories || []).forEach((sub) => {
-        if (sub.name.toLowerCase().includes(q)) {
+        if (searchIncludes(sub.name, q)) {
           out.push({ name: sub.name, slug: sub.slug, categorySlug: cat.slug })
         }
       })

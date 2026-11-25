@@ -7,11 +7,12 @@ import { getFeaturedProducts, type FeaturedProduct } from "@/lib/api/products"
 import { SaleProductCard } from "@/components/sale-product-card"
 import { productHref } from "@/lib/product-url"
 
-export function FeaturedProducts() {
-  const [products, setProducts] = useState<FeaturedProduct[]>([])
-  const [loading, setLoading] = useState(true)
+export function FeaturedProducts({ products: initialProducts }: { products?: FeaturedProduct[] }) {
+  const [products, setProducts] = useState<FeaturedProduct[]>(initialProducts ?? [])
+  const [loading, setLoading] = useState(!initialProducts)
 
   useEffect(() => {
+    if (initialProducts) return
     const fetchFeaturedProducts = async () => {
       try {
         setLoading(true)

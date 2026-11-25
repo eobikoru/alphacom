@@ -1,4 +1,12 @@
+import type { Metadata } from "next"
 import { PolicyList, PolicyPage, PolicySection } from "@/components/policy-page"
+import { SITE_URL } from "@/lib/site"
+
+export const metadata: Metadata = {
+  title: "Warranty",
+  description: "How the AlphaCom Online warranty works for products bought in store or on alphacomonline.com.",
+  alternates: { canonical: `${SITE_URL}/warranty` },
+}
 
 const steps = [
   {

@@ -1,4 +1,5 @@
 import { getProductsWithCategories, type Product } from "@/lib/api/products"
+import { micropackGtin } from "@/lib/micropack-barcodes"
 import { SITE_URL } from "@/lib/site"
 import { productHref } from "@/lib/product-url"
 
@@ -36,14 +37,26 @@ async function getAllProducts(): Promise<Product[]> {
   return allProducts.slice(0, MAX_PRODUCTS)
 }
 
+function feedDescription(product: Product): string {
+  const text = stripHtml(product.short_description || product.description || "")
+  const place = `Buy ${product.name} at AlphaCom Online, Computer Village, Ikeja, Lagos.`
+  if (!text || text.toLowerCase() === product.name.toLowerCase() || text.length < 40) return place
+  return text
+}
+
 function productToItemXml(product: Product): string {
-  const description = stripHtml(product.short_description || product.description || product.name)
+  const description = feedDescription(product)
   const productLink = `${SITE_URL}${productHref(product)}`
   const imageLink = toAbsoluteImage(product.main_image)
   const availability = product.in_stock ? "in stock" : "out of stock"
-  const price = `${product.price.toFixed(2)} ${product.currency}`
+  const gtin = micropackGtin(product)
+  const currency = product.currency || "NGN"
+  const listPrice = product.original_price > product.price ? product.original_price : product.price
+  const price = `${listPrice.toFixed(2)} ${currency}`
   const salePrice =
-    product.original_price > product.price ? `\n      <g:sale_price>${xmlEscape(price)}</g:sale_price>` : ""
+    product.original_price > product.price
+      ? `\n      <g:sale_price>${xmlEscape(`${product.price.toFixed(2)} ${currency}`)}</g:sale_price>`
+      : ""
 
   return `    <item>
       <g:id>${xmlEscape(product.id)}</g:id>
@@ -56,8 +69,9 @@ function productToItemXml(product: Product): string {
       <g:price>${xmlEscape(price)}</g:price>${salePrice}
       <g:brand>${xmlEscape(product.brand || "AlphaCom")}</g:brand>
       <g:product_type>${xmlEscape(product.category?.name || "General")}</g:product_type>
-      <g:identifier_exists>${product.sku ? "yes" : "no"}</g:identifier_exists>
+      <g:identifier_exists>${product.sku || gtin ? "yes" : "no"}</g:identifier_exists>
       ${product.sku ? `<g:mpn>${xmlEscape(product.sku)}</g:mpn>` : ""}
+      ${gtin ? `<g:gtin>${xmlEscape(gtin)}</g:gtin>` : ""}
     </item>`
 }
 

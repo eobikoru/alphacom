@@ -22,12 +22,23 @@ function shuffleAndTake<T>(arr: T[], count: number): T[] {
   return shuffled.slice(0, Math.min(count, shuffled.length))
 }
 
-export function ProductCategories() {
-  const [categories, setCategories] = useState<CategoryWithProducts[]>([])
-  const [categoryProducts, setCategoryProducts] = useState<Map<string, CategoryProduct[]>>(new Map())
-  const [isLoading, setIsLoading] = useState(true)
+function shelfMap(categories: CategoryWithProducts[]) {
+  const map = new Map<string, CategoryProduct[]>()
+  for (const category of categories) {
+    map.set(category.id, collectCategoryProducts(category).slice(0, ITEMS_PER_CATEGORY))
+  }
+  return map
+}
+
+export function ProductCategories({ categories: initialCategories }: { categories?: CategoryWithProducts[] }) {
+  const [categories, setCategories] = useState<CategoryWithProducts[]>(initialCategories ?? [])
+  const [categoryProducts, setCategoryProducts] = useState<Map<string, CategoryProduct[]>>(
+    initialCategories ? shelfMap(initialCategories) : new Map(),
+  )
+  const [isLoading, setIsLoading] = useState(!initialCategories)
 
   useEffect(() => {
+    if (initialCategories) return
     const fetchCategories = async () => {
       try {
         const response = await getCategoriesWithProducts()

@@ -14,10 +14,11 @@ import { useWishlist } from "@/hooks/use-wishlist"
 import { useCart } from "@/hooks/use-cart"
 import { toast } from "sonner"
 import Link from "next/link"
-import { getCategoriesWithProducts, getSubcategoriesByCategory } from "@/lib/api/categories"
+import { getCategoriesWithProducts, getSubcategoriesByCategory, type CategoryWithProducts } from "@/lib/api/categories"
 import { searchProducts, type ProductSearchHit } from "@/lib/api/products"
 import { ProductCardSkeleton } from "@/components/skeletons/product-card-skeleton"
 import { productHref } from "@/lib/product-url"
+import { searchIncludes } from "@/lib/site"
 
 interface Product {
   id: string
@@ -37,26 +38,37 @@ interface Product {
 interface CategoryPageProps {
   categorySlug: string
   selectedSubcategory?: string
+  initialCategories?: CategoryWithProducts[]
 }
 
-export function CategoryPage({ categorySlug, selectedSubcategory }: CategoryPageProps) {
+function shelfForCategory(categories: CategoryWithProducts[], categorySlug: string) {
+  const category = categories.find((item) => item.slug === categorySlug) ?? null
+  const products = (category?.subcategories || []).flatMap((subcategory) => subcategory.products || [])
+  return { category, products }
+}
+
+export function CategoryPage({ categorySlug, selectedSubcategory, initialCategories = [] }: CategoryPageProps) {
   const [searchQuery, setSearchQuery] = useState("")
   const [sortBy, setSortBy] = useState("featured")
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid")
   const [priceRange, setPriceRange] = useState([0, 1000000])
   const [selectedBrands, setSelectedBrands] = useState<string[]>([])
+  const [inStockOnly, setInStockOnly] = useState(false)
+  const [onSaleOnly, setOnSaleOnly] = useState(false)
   const [showFilters, setShowFilters] = useState(false)
 
-  const [categoriesData, setCategoriesData] = useState<any[]>([])
-  const [loading, setLoading] = useState(true)
-  const [currentCategory, setCurrentCategory] = useState<any>(null)
-  const [allProducts, setAllProducts] = useState<any[]>([])
+  const seeded = initialCategories.length ? shelfForCategory(initialCategories, categorySlug) : null
+  const [categoriesData, setCategoriesData] = useState<any[]>(initialCategories)
+  const [loading, setLoading] = useState(seeded === null)
+  const [currentCategory, setCurrentCategory] = useState<any>(seeded?.category ?? null)
+  const [allProducts, setAllProducts] = useState<any[]>(seeded?.products ?? [])
   const [searchHits, setSearchHits] = useState<ProductSearchHit[] | null>(null)
 
   const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist()
   const { addItem, isInCart, getItemQuantity } = useCart()
 
   useEffect(() => {
+    if (seeded) return
     const fetchData = async () => {
       try {
         setLoading(true)
@@ -142,13 +154,15 @@ export function CategoryPage({ categorySlug, selectedSubcategory }: CategoryPage
     }
 
     return products.filter((product) => {
-      const matchesSearch = searchHits ? true : product.name.toLowerCase().includes(searchQuery.toLowerCase())
+      const matchesSearch = searchHits ? true : searchIncludes(product.name, searchQuery)
       const matchesPrice = product.price >= priceRange[0] && product.price <= priceRange[1]
       const matchesBrand = selectedBrands.length === 0 || selectedBrands.includes(product.brand)
+      const matchesStock = !inStockOnly || product.in_stock
+      const matchesSale = !onSaleOnly || product.discount_percentage > 0
 
-      return matchesSearch && matchesPrice && matchesBrand
+      return matchesSearch && matchesPrice && matchesBrand && matchesStock && matchesSale
     })
-  }, [allProducts, searchHits, selectedSubcategory, subcategories, searchQuery, priceRange, selectedBrands])
+  }, [allProducts, searchHits, selectedSubcategory, subcategories, searchQuery, priceRange, selectedBrands, inStockOnly, onSaleOnly])
 
   const sortedProducts = useMemo(() => {
     const sorted = [...filteredProducts]
@@ -206,58 +220,27 @@ export function CategoryPage({ categorySlug, selectedSubcategory }: CategoryPage
     toast.success(`${product.name} has been added to your cart`)
   }
 
+  const pageTitle = selectedSubcategory
+    ? subcategories.find((sub: any) => sub.slug === selectedSubcategory)?.name || categoryName
+    : categoryName
+
   if (loading) {
     return (
-      <div className="container mx-auto px-4 py-8 bg-background text-foreground">
-        {/* Breadcrumb Skeleton */}
-        <div className="flex items-center space-x-2 mb-6">
-          <Skeleton className="h-4 w-12" />
-          <span>/</span>
-          <Skeleton className="h-4 w-24" />
+      <div className="container mx-auto max-w-6xl px-4 py-10 bg-background text-foreground sm:py-14">
+        <Skeleton className="mb-8 h-4 w-40" />
+        <Skeleton className="mb-3 h-10 w-72" />
+        <Skeleton className="mb-10 h-4 w-96 max-w-full" />
+        <div className="mb-10 flex gap-6 border-b border-border pb-4">
+          {[...Array(4)].map((_, i) => (
+            <Skeleton key={i} className="h-4 w-24" />
+          ))}
         </div>
-
-        {/* Page Header Skeleton */}
-        <div className="mb-8">
-          <Skeleton className="h-9 w-64 mb-2" />
-          <Skeleton className="h-5 w-96" />
-        </div>
-
-        {/* Subcategories Skeleton */}
-        <div className="mb-8">
-          <Skeleton className="h-7 w-48 mb-4" />
-          <div className="hidden md:flex flex-wrap gap-3">
-            {[...Array(4)].map((_, i) => (
-              <Skeleton key={i} className="h-10 w-32 rounded-full" />
-            ))}
-          </div>
-        </div>
-
-        {/* Search and Filters Bar Skeleton */}
-        <div className="bg-card rounded-2xl shadow-sm border border-border p-6 mb-8">
-          <div className="flex flex-col gap-4">
-            <Skeleton className="h-10 w-full max-w-md mx-auto lg:mx-0" />
-            <div className="flex flex-col sm:flex-row items-center gap-4 justify-between">
-              <Skeleton className="h-10 w-full sm:w-48" />
-              <div className="flex items-center gap-4 w-full sm:w-auto justify-between sm:justify-end">
-                <Skeleton className="h-10 w-20" />
-                <Skeleton className="h-10 w-24" />
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Results Count Skeleton */}
-        <Skeleton className="h-5 w-48 mb-6" />
-
-        {/* Products Grid Skeleton - small cards */}
-        <div className="grid gap-3 grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6">
-          {[...Array(12)].map((_, i) => (
-            <div key={i} className="rounded-lg border border-border overflow-hidden">
-              <Skeleton className="w-full aspect-[4/3]" />
-              <div className="p-2 space-y-2">
-                <Skeleton className="h-3 w-full" />
-                <Skeleton className="h-4 w-2/3" />
-              </div>
+        <div className="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 lg:grid-cols-4">
+          {[...Array(8)].map((_, i) => (
+            <div key={i}>
+              <Skeleton className="aspect-square w-full" />
+              <Skeleton className="mt-3 h-4 w-4/5" />
+              <Skeleton className="mt-2 h-4 w-1/3" />
             </div>
           ))}
         </div>
@@ -266,176 +249,105 @@ export function CategoryPage({ categorySlug, selectedSubcategory }: CategoryPage
   }
 
   return (
-    <div className="container mx-auto px-4 py-8 bg-background text-foreground">
-      {/* Breadcrumb */}
-      <nav className="flex items-center space-x-2 text-sm text-muted-foreground mb-6">
-        <span>Home</span>
-        <span>/</span>
-        <span className="text-foreground font-medium">{categoryName}</span>
+    <div className="container mx-auto max-w-6xl bg-background px-4 py-10 text-foreground sm:py-14">
+      <nav className="mb-8 flex flex-wrap items-center gap-x-2 text-sm text-muted-foreground">
+        <Link href="/" className="transition-colors hover:text-foreground">Home</Link>
+        <span aria-hidden>/</span>
+        <Link href="/categories" className="transition-colors hover:text-foreground">All categories</Link>
+        <span aria-hidden>/</span>
+        {selectedSubcategory ? (
+          <Link href={`/categories/${categorySlug}`} className="transition-colors hover:text-foreground">{categoryName}</Link>
+        ) : (
+          <span className="text-foreground">{categoryName}</span>
+        )}
         {selectedSubcategory && (
           <>
-            <span>/</span>
-            <span className="text-foreground font-medium">
-              {subcategories.find((sub: any) => sub.slug === selectedSubcategory)?.name || selectedSubcategory}
-            </span>
+            <span aria-hidden>/</span>
+            <span className="text-foreground">{pageTitle}</span>
           </>
         )}
       </nav>
 
-      {/* Page Header */}
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-foreground mb-2">
-          {selectedSubcategory
-            ? subcategories.find((sub: any) => sub.slug === selectedSubcategory)?.name || categoryName
-            : categoryName}
-        </h1>
-        <p className="text-muted-foreground">
-          {currentCategory?.description || `Discover our premium collection of ${categoryName.toLowerCase()}`}
-        </p>
+      <div className="mb-8 flex items-end justify-between gap-6 border-b border-border pb-5">
+        <div>
+          <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-[#8E1B2C]">Category</p>
+          <h1 className="mt-2 text-3xl font-medium tracking-tight sm:text-4xl">{pageTitle}</h1>
+          <p className="mt-2 max-w-xl text-sm leading-6 text-muted-foreground">
+            {currentCategory?.description ||
+              `Buy ${pageTitle} at AlphaCom Online in Computer Village, Ikeja, Lagos.`}
+          </p>
+        </div>
+        <p className="shrink-0 text-sm tabular-nums text-muted-foreground">{sortedProducts.length}</p>
       </div>
 
       {subcategories.length > 0 && (
-        <div className="mb-8">
-          <h2 className="text-xl font-light text-foreground mb-4">Shop by Subcategory</h2>
-
-          {/* Mobile Dropdown */}
-          <div className="md:hidden mb-4">
-            <Select
-              value={selectedSubcategory || "all"}
-              onValueChange={(value) => {
-                if (value && value !== "all") {
-                  window.location.href = `/categories/${categorySlug}/${value}`
-                  setTimeout(() => {
-                    const productsSection = document.getElementById("products-section")
-                    if (productsSection) {
-                      productsSection.scrollIntoView({
-                        behavior: "smooth",
-                        block: "start",
-                      })
-                    }
-                  }, 100)
-                }
-              }}
+        <div className="mb-10 flex flex-wrap gap-x-6 gap-y-3 border-b border-border">
+          <Link
+            href={`/categories/${categorySlug}`}
+            className={`-mb-px border-b-2 pb-3 text-sm transition-colors ${
+              !selectedSubcategory
+                ? "border-[#8E1B2C] text-foreground"
+                : "border-transparent text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            All
+          </Link>
+          {subcategories.map((subcategory: any) => (
+            <Link
+              key={subcategory.id}
+              href={`/categories/${categorySlug}/${subcategory.slug}`}
+              className={`-mb-px border-b-2 pb-3 text-sm transition-colors ${
+                selectedSubcategory === subcategory.slug
+                  ? "border-[#8E1B2C] text-foreground"
+                  : "border-transparent text-muted-foreground hover:text-foreground"
+              }`}
             >
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder="Select a subcategory" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Categories</SelectItem>
-                {subcategories.map((subcategory: any) => (
-                  <SelectItem key={subcategory.id} value={subcategory.slug}>
-                    {subcategory.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-
-          <div className="hidden md:flex flex-wrap gap-3">
-            {subcategories.map((subcategory: any) => (
-              <Link
-                key={subcategory.id}
-                href={`/categories/${categorySlug}/${subcategory.slug}`}
-                className="group"
-                onClick={(e) => {
-                  setTimeout(() => {
-                    const productsSection = document.getElementById("products-section")
-                    if (productsSection) {
-                      productsSection.scrollIntoView({
-                        behavior: "smooth",
-                        block: "start",
-                      })
-                    }
-                  }, 100)
-                }}
-              >
-                <div
-                  className={`flex items-center gap-2 px-4 py-2.5 rounded-full border transition-all duration-200 hover:shadow-md hover:scale-105 ${
-                    selectedSubcategory === subcategory.slug
-                      ? "bg-cyan-50 border-cyan-200 text-cyan-700 shadow-sm"
-                      : "bg-card border-border hover:border-cyan-200 hover:bg-cyan-50/50"
-                  }`}
-                >
-                  <span
-                    className={`font-medium text-sm ${
-                      selectedSubcategory === subcategory.slug
-                        ? "text-cyan-700"
-                        : "text-card-foreground group-hover:text-cyan-600"
-                    }`}
-                  >
-                    {subcategory.name}
-                  </span>
-                </div>
-              </Link>
-            ))}
-          </div>
+              {subcategory.name}
+            </Link>
+          ))}
         </div>
       )}
 
-      {/* Search and Filters Bar */}
-      <div className="bg-card rounded-2xl shadow-sm border border-border p-6 mb-8" id="products-section">
-        <div className="flex flex-col gap-4">
-          {/* Search */}
-          <div className="relative flex-1 max-w-md mx-auto lg:mx-0">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+      <div className="mb-8" id="products-section">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="relative w-full max-w-sm">
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
-              placeholder="Search products..."
+              placeholder="Search in this category"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10 border-input focus:border-cyan-500 focus:ring-cyan-500"
+              className="border-border bg-transparent pl-10 focus-visible:ring-[#8E1B2C]/30"
             />
           </div>
 
-          <div className="flex flex-col sm:flex-row items-center gap-4 justify-between">
-            {/* Sort - Featured */}
-            <div className="w-full sm:w-auto">
-              <Select value={sortBy} onValueChange={setSortBy}>
-                <SelectTrigger className="w-full sm:w-48">
-                  <SelectValue placeholder="Sort by" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="featured">Featured</SelectItem>
-                  <SelectItem value="newest">Newest First</SelectItem>
-                  <SelectItem value="price-low">Price: Low to High</SelectItem>
-                  <SelectItem value="price-high">Price: High to Low</SelectItem>
-                  <SelectItem value="rating">Highest Rated</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="flex items-center gap-4 w-full sm:w-auto justify-between sm:justify-end">
-              {/* View Mode */}
-              <div className="flex items-center border border-border rounded-lg p-1">
-                <Button
-                  variant={viewMode === "grid" ? "default" : "ghost"}
-                  size="sm"
-                  onClick={() => setViewMode("grid")}
-                  className="h-8 w-8 p-0"
-                >
-                  <Grid3X3 className="h-4 w-4" />
-                </Button>
-                <Button
-                  variant={viewMode === "list" ? "default" : "ghost"}
-                  size="sm"
-                  onClick={() => setViewMode("list")}
-                  className="h-8 w-8 p-0"
-                >
-                  <List className="h-4 w-4" />
-                </Button>
-              </div>
-
-              {/* Filter Toggle */}
-              <Button
-                variant="outline"
-                onClick={() => setShowFilters(!showFilters)}
-                className="flex items-center gap-2"
-              >
-                <Filter className="h-4 w-4" />
-                Filters
-                <ChevronDown className={`h-4 w-4 transition-transform ${showFilters ? "rotate-180" : ""}`} />
+          <div className="flex flex-wrap items-center gap-3">
+            <Select value={sortBy} onValueChange={setSortBy}>
+              <SelectTrigger className="w-[180px] border-border bg-transparent">
+                <SelectValue placeholder="Sort by" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="featured">Featured</SelectItem>
+                <SelectItem value="newest">Newest first</SelectItem>
+                <SelectItem value="price-low">Price, low to high</SelectItem>
+                <SelectItem value="price-high">Price, high to low</SelectItem>
+                <SelectItem value="rating">Highest rated</SelectItem>
+              </SelectContent>
+            </Select>
+            <div className="flex items-center border border-border">
+              <Button variant={viewMode === "grid" ? "default" : "ghost"} size="sm" onClick={() => setViewMode("grid")} className="h-9 w-9 rounded-none p-0" aria-label="Grid view">
+                <Grid3X3 className="h-4 w-4" />
+              </Button>
+              <Button variant={viewMode === "list" ? "default" : "ghost"} size="sm" onClick={() => setViewMode("list")} className="h-9 w-9 rounded-none p-0" aria-label="List view">
+                <List className="h-4 w-4" />
               </Button>
             </div>
+            <Button variant="outline" onClick={() => setShowFilters(!showFilters)} className="gap-2 border-border bg-transparent">
+              <Filter className="h-4 w-4" />
+              Filter
+              <ChevronDown className={`h-4 w-4 transition-transform ${showFilters ? "rotate-180" : ""}`} />
+            </Button>
           </div>
+        </div>
 
           {/* Expandable Filters */}
           {showFilters && (
@@ -443,7 +355,7 @@ export function CategoryPage({ categorySlug, selectedSubcategory }: CategoryPage
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {/* Price Range */}
                 <div>
-                  <h3 className="font-semibold text-foreground mb-3">Price Range</h3>
+                  <h3 className="mb-3 text-sm font-medium text-foreground">Price</h3>
                   <div className="space-y-3">
                     <Slider
                       value={priceRange}
@@ -461,7 +373,7 @@ export function CategoryPage({ categorySlug, selectedSubcategory }: CategoryPage
 
                 {/* Brands */}
                 <div>
-                  <h3 className="font-semibold text-foreground mb-3">Brands</h3>
+                  <h3 className="mb-3 text-sm font-medium text-foreground">Brand</h3>
                   <div className="space-y-2">
                     {brands.map((brand) => (
                       <div key={brand} className="flex items-center space-x-2">
@@ -486,18 +398,18 @@ export function CategoryPage({ categorySlug, selectedSubcategory }: CategoryPage
 
                 {/* Availability */}
                 <div>
-                  <h3 className="font-semibold text-foreground mb-3">Availability</h3>
+                  <h3 className="mb-3 text-sm font-medium text-foreground">Availability</h3>
                   <div className="space-y-2">
                     <div className="flex items-center space-x-2">
-                      <Checkbox id="in-stock" />
-                      <label htmlFor="in-stock" className="text-sm text-card-foreground cursor-pointer">
-                        In Stock ({allProducts.filter((p) => p.in_stock).length})
+                      <Checkbox id="in-stock" checked={inStockOnly} onCheckedChange={(checked) => setInStockOnly(checked === true)} />
+                      <label htmlFor="in-stock" className="cursor-pointer text-sm text-card-foreground">
+                        In stock ({allProducts.filter((p) => p.in_stock).length})
                       </label>
                     </div>
                     <div className="flex items-center space-x-2">
-                      <Checkbox id="on-sale" />
-                      <label htmlFor="on-sale" className="text-sm text-card-foreground cursor-pointer">
-                        On Sale ({allProducts.filter((p) => p.discount_percentage > 0).length})
+                      <Checkbox id="on-sale" checked={onSaleOnly} onCheckedChange={(checked) => setOnSaleOnly(checked === true)} />
+                      <label htmlFor="on-sale" className="cursor-pointer text-sm text-card-foreground">
+                        On sale ({allProducts.filter((p) => p.discount_percentage > 0).length})
                       </label>
                     </div>
                   </div>
@@ -505,24 +417,13 @@ export function CategoryPage({ categorySlug, selectedSubcategory }: CategoryPage
               </div>
             </div>
           )}
-        </div>
       </div>
 
-      {/* Results Count */}
-      <div className="flex items-center justify-between mb-6">
-        <p className="text-muted-foreground">
-          Showing {sortedProducts.length} of {allProducts.length} results
-        </p>
-      </div>
+      <p className="mb-6 text-sm text-muted-foreground">
+        {sortedProducts.length} {sortedProducts.length === 1 ? "product" : "products"}
+      </p>
 
-      {/* Products Grid - small cards */}
-      <div
-        className={`grid gap-3 ${
-          viewMode === "grid"
-            ? "grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6"
-            : "grid-cols-1 max-w-xl"
-        }`}
-      >
+      <div className={viewMode === "grid" ? "grid grid-cols-2 gap-x-4 gap-y-10 sm:grid-cols-3 lg:grid-cols-4" : "mx-auto grid max-w-xl grid-cols-1 gap-y-8"}>
         {sortedProducts.map((product) => {
           const productInWishlist = isInWishlist(product.id)
           const productInCart = isInCart(product.id)
@@ -530,64 +431,61 @@ export function CategoryPage({ categorySlug, selectedSubcategory }: CategoryPage
           const inStock = product.in_stock
 
           return (
-            <Card
-              key={product.id}
-              className="group hover:shadow-md transition-all duration-300 border-border overflow-hidden bg-card"
-            >
+            <Card key={product.id} className="group overflow-hidden rounded-none border-border bg-card shadow-none">
               <div className="relative">
-                <div className="w-full aspect-[4/3] overflow-hidden bg-muted">
-                  <Link href={productHref(product)} className="block w-full h-full">
+                <div className="aspect-square w-full overflow-hidden bg-muted">
+                  <Link href={productHref(product)} className="block h-full w-full">
                     <img
                       src={cdnImage(product.main_image, 600) || "/placeholder.svg"}
                       alt={product.name}
                       loading="lazy"
                       decoding="async"
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      className="h-full w-full object-cover"
                     />
                   </Link>
                 </div>
                 {product.discount_percentage > 0 && (
-                  <span className="absolute top-1 right-1 rounded bg-amber-600 px-1.5 py-0.5 text-[10px] font-bold text-white">
+                  <span className="absolute right-2 top-2 bg-[#8E1B2C] px-1.5 py-0.5 text-[10px] font-medium text-white">
                     -{Math.round(product.discount_percentage)}%
                   </span>
                 )}
                 {!inStock && (
-                  <span className="absolute inset-0 flex items-center justify-center bg-black/50 text-[10px] font-medium text-white">
-                    Out of Stock
+                  <span className="absolute inset-0 flex items-center justify-center bg-background/70 text-xs font-medium text-foreground">
+                    Out of stock
                   </span>
                 )}
                 <Button
                   size="sm"
                   variant="secondary"
-                  className="absolute top-1 left-1 h-7 w-7 p-0 rounded-full bg-background/90 hover:bg-background opacity-0 group-hover:opacity-100 transition-opacity"
+                  className="absolute left-2 top-2 h-8 w-8 rounded-full bg-background/90 p-0 hover:bg-background"
                   onClick={() => toggleWishlist(product)}
+                  aria-label={productInWishlist ? "Remove from wishlist" : "Add to wishlist"}
                 >
-                  <Heart className={`h-3.5 w-3.5 ${productInWishlist ? "fill-red-500 text-red-500" : ""}`} />
+                  <Heart className={`h-3.5 w-3.5 ${productInWishlist ? "fill-[#8E1B2C] text-[#8E1B2C]" : ""}`} />
                 </Button>
               </div>
-              <CardContent className="p-2">
+              <CardContent className="p-3">
+                {product.brand ? <p className="text-[11px] uppercase tracking-[0.14em] text-muted-foreground">{product.brand}</p> : null}
                 <Link href={productHref(product)}>
-                  <p className="text-xs font-medium text-foreground line-clamp-2 leading-tight hover:text-primary">
+                  <p className="mt-1 line-clamp-2 text-sm leading-5 text-foreground transition-colors hover:text-[#8E1B2C]">
                     {product.name}
                   </p>
                 </Link>
-                <div className="mt-1 flex items-center gap-1">
-                  <span className="text-sm font-bold text-foreground">{formatPrice(product.price)}</span>
+                <div className="mt-2 flex items-baseline gap-2">
+                  <span className="text-sm text-foreground">{formatPrice(product.price)}</span>
                   {product.discount_percentage > 0 && product.original_price && (
-                    <span className="text-[10px] text-muted-foreground line-through">
-                      {formatPrice(product.original_price)}
-                    </span>
+                    <span className="text-xs text-muted-foreground line-through">{formatPrice(product.original_price)}</span>
                   )}
                 </div>
                 <Button
                   onClick={() => handleAddToCart(product)}
                   disabled={!inStock}
                   size="sm"
-                  className="mt-2 h-12 w-full px-1 text-sm sm:h-8 sm:text-xs"
+                  className="mt-3 h-9 w-full text-xs"
                   variant={productInCart ? "secondary" : "default"}
                 >
-                  <ShoppingCart className="h-4 w-4 sm:h-3.5 sm:w-3.5" />
-                  {!inStock ? "Out" : productInCart ? cartQuantity : "Cart"}
+                  <ShoppingCart className="h-3.5 w-3.5" />
+                  {!inStock ? "Out of stock" : productInCart ? `${cartQuantity} in cart` : "Add to cart"}
                 </Button>
               </CardContent>
             </Card>
@@ -597,17 +495,8 @@ export function CategoryPage({ categorySlug, selectedSubcategory }: CategoryPage
 
       {/* Empty State */}
       {sortedProducts.length === 0 && (
-        <div className="text-center py-12">
-          <p className="text-muted-foreground text-lg">No products found matching your criteria.</p>
-        </div>
-      )}
-
-      {/* Load More */}
-      {sortedProducts.length > 0 && sortedProducts.length < allProducts.length && (
-        <div className="text-center mt-12">
-          <Button variant="outline" size="lg" className="px-8 bg-transparent">
-            Load More Products
-          </Button>
+        <div className="py-16 text-center">
+          <p className="text-sm text-muted-foreground">Nothing in this category matches that search.</p>
         </div>
       )}
     </div>

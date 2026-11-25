@@ -25,13 +25,24 @@ function formatTimeLeft(ms: number): string {
   return `${String(h).padStart(2, "0")}h : ${String(m).padStart(2, "0")}m : ${String(s).padStart(2, "0")}s`
 }
 
-export function FlashSales() {
-  const [items, setItems] = useState<{ category: CategoryWithProducts; product: CategoryProduct }[]>([])
-  const [loading, setLoading] = useState(true)
+function shelfFromCategories(categories: CategoryWithProducts[]) {
+  const list: { category: CategoryWithProducts; product: CategoryProduct }[] = []
+  for (const category of categories) {
+    const product = getFirstProductFromCategory(category)
+    if (product) list.push({ category, product })
+  }
+  return list
+}
+
+export function FlashSales({ categories }: { categories?: CategoryWithProducts[] }) {
+  const seeded = categories ? shelfFromCategories(categories) : null
+  const [items, setItems] = useState<{ category: CategoryWithProducts; product: CategoryProduct }[]>(seeded ?? [])
+  const [loading, setLoading] = useState(seeded === null)
   const [timeLeft, setTimeLeft] = useState<string>(() => formatTimeLeft(TWENTY_FOUR_HR_MS))
   const endTimeRef = useRef<number>(Date.now() + TWENTY_FOUR_HR_MS)
 
   useEffect(() => {
+    if (seeded) return
     const fetch = async () => {
       try {
         const res = await getCategoriesWithProducts()

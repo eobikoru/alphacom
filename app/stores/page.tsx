@@ -1,4 +1,13 @@
+import type { Metadata } from "next"
 import { AppLayout } from "@/components/app-layout"
+import { SITE_URL } from "@/lib/site"
+
+export const metadata: Metadata = {
+  title: "AlphaCom store in Computer Village",
+  description:
+    "Visit AlphaCom at No 3 Adepele Street, off Medical Road, Computer Village, Ikeja. Open Monday, Tuesday, Wednesday and Friday 9:00 to 18:00, Thursday 10:00 to 18:00, Saturday 10:00 to 16:00.",
+  alternates: { canonical: `${SITE_URL}/stores` },
+}
 import { Clock, Mail, MapPin, Navigation, Phone } from "lucide-react"
 
 const store = {
@@ -9,7 +18,9 @@ const store = {
   phones: ["+234 702 638 4967", "+234 813 733 1005"],
   email: "alphacomonline@gmail.com",
   hours: [
-    { label: "Monday – Friday", value: "9:00 AM – 6:00 PM" },
+    { label: "Monday – Wednesday", value: "9:00 AM – 6:00 PM" },
+    { label: "Thursday", value: "10:00 AM – 6:00 PM" },
+    { label: "Friday", value: "9:00 AM – 6:00 PM" },
     { label: "Saturday", value: "10:00 AM – 4:00 PM" },
     { label: "Sunday", value: "Closed" },
   ],
