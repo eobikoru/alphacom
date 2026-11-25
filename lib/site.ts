@@ -21,7 +21,7 @@ export function foldSearch(value: string): string {
 /** True when the product or aisle name contains the typed words, ignoring case, _ and -. */
 export function searchIncludes(haystack: string, query: string): boolean {
   const folded = foldSearch(query)
-  if (!folded) return false
+  if (!folded) return true
   return foldSearch(haystack).includes(folded)
 }
 

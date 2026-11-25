@@ -68,7 +68,7 @@ export function CategoryPage({ categorySlug, selectedSubcategory, initialCategor
   const { addItem, isInCart, getItemQuantity } = useCart()
 
   useEffect(() => {
-    if (seeded) return
+    if (seeded && seeded.products.length > 0) return
     const fetchData = async () => {
       try {
         setLoading(true)
