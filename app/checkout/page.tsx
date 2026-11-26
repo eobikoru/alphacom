@@ -15,7 +15,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Card, CardContent } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
 import { ShoppingCart, ArrowLeft, Landmark, Lock, CreditCard } from "lucide-react"
-import { useGuestCheckout, useAuthenticatedCheckout, useOrderBreakdown } from "@/hooks/use-orders"
+import { useGuestCheckout, useAuthenticatedCheckout } from "@/hooks/use-orders"
 import type { CheckoutItem, CheckoutMode, CheckoutResponse, ShippingAddress } from "@/lib/api/orders"
 import Link from "next/link"
 import { toast } from "sonner"
@@ -58,8 +58,6 @@ export default function CheckoutPage() {
   const { formData, updateField, clearForm } = useCheckout()
 
   const [phoneError, setPhoneError] = useState("")
-  const [breakdownData, setBreakdownData] = useState<any>(null)
-  const [breakdownLoading, setBreakdownLoading] = useState(false)
   const [transferOpen, setTransferOpen] = useState(false)
   const [invalidFields, setInvalidFields] = useState<RequiredField[]>([])
   const [shaking, setShaking] = useState(false)
@@ -68,7 +66,6 @@ export default function CheckoutPage() {
 
   const guestCheckoutMutation = useGuestCheckout()
   const authenticatedCheckoutMutation = useAuthenticatedCheckout()
-  const orderBreakdownMutation = useOrderBreakdown()
 
   useEffect(() => {
     if (isAuthenticated && user) {
@@ -89,31 +86,6 @@ export default function CheckoutPage() {
       setPhoneError("")
     }
   }, [formData.phone])
-
-  useEffect(() => {
-    if (items.length === 0) {
-      setBreakdownData(null)
-      return
-    }
-
-    const fetchBreakdown = async () => {
-      setBreakdownLoading(true)
-      try {
-        const checkoutItems = items.map((item) => ({
-          product_id: item.id,
-          quantity: item.quantity,
-        }))
-        const response = await orderBreakdownMutation.mutateAsync({ items: checkoutItems })
-        setBreakdownData(response?.data)
-      } catch (error) {
-        console.error("[v0] Error fetching order breakdown:", error)
-      } finally {
-        setBreakdownLoading(false)
-      }
-    }
-
-    fetchBreakdown()
-  }, [items])
 
   const isLoading = guestCheckoutMutation.isPending || authenticatedCheckoutMutation.isPending
 
@@ -137,7 +109,6 @@ export default function CheckoutPage() {
   const trimmedLength = (field: MinLengthField) => (formData[field] ?? "").trim().length
   const meetsMinLength = (field: MinLengthField) => trimmedLength(field) >= MIN_LENGTH[field]
   const isEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test((formData.email ?? "").trim())
-  const summaryTotal = breakdownData?.subtotal || total
 
   const getInvalidFields = (): RequiredField[] => {
     const invalid: RequiredField[] = []
@@ -273,7 +244,7 @@ export default function CheckoutPage() {
         open={transferOpen}
         onOpenChange={setTransferOpen}
         items={items}
-        total={summaryTotal}
+        total={total}
         formatPrice={formatPrice}
         orderNumber={transferOrder?.order_number}
       />
@@ -469,20 +440,10 @@ export default function CheckoutPage() {
 
                 <Separator className="my-5" />
 
-                {!breakdownLoading && breakdownData?.shipping ? (
-                  <>
-                    <div className="flex justify-between text-sm">
-                      <span className="text-gray-500 dark:text-gray-400">Shipping</span>
-                      <span>{formatPrice(breakdownData.shipping)}</span>
-                    </div>
-                    <Separator className="my-5" />
-                  </>
-                ) : null}
-
                 <div className="flex items-baseline justify-between">
                   <span className="text-sm font-medium text-gray-600 dark:text-gray-300">Total</span>
                   <span className="text-2xl font-semibold tracking-tight tabular-nums text-gray-950 dark:text-white">
-                    {formatPrice(summaryTotal)}
+                    {formatPrice(total)}
                   </span>
                 </div>
               </section>
