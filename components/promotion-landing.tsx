@@ -1,12 +1,14 @@
 "use client"
 
-import { useState, type FormEvent, type ReactNode } from "react"
+import { useState, type FormEvent } from "react"
 import Image from "next/image"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import { X } from "lucide-react"
 
-const WHATSAPP_NUMBER = "2347026384967"
 const PRICE = "₦27,000"
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || "https://api.alphacomonline.com"
+const OFFER_NOTE = "20,000mAh power bank + free hand fan"
 
 const photos = [
   {
@@ -45,59 +47,64 @@ const faqs = [
   },
   {
     q: "How do I place an order?",
-    a: "Click any order button on this page and submit your details through WhatsApp. Our team will assist you.",
+    a: "Click any order button on this page and fill in your name and phone number. Our team will contact you.",
   },
 ]
 
 export function PromotionLanding() {
+  const router = useRouter()
   const [activePhoto, setActivePhoto] = useState<number | null>(null)
   const [name, setName] = useState("")
   const [phone, setPhone] = useState("")
-  const [location, setLocation] = useState("")
-  const [quantity, setQuantity] = useState("1")
-  const [notes, setNotes] = useState("")
+  const [email, setEmail] = useState("")
+  const [address, setAddress] = useState("")
+  const [note, setNote] = useState("")
   const [error, setError] = useState("")
-  const [sent, setSent] = useState(false)
+  const [submitting, setSubmitting] = useState(false)
 
   const scrollToOrder = () => {
     document.getElementById("order")?.scrollIntoView({ behavior: "smooth", block: "start" })
   }
 
-  const submitOrder = (event: FormEvent) => {
+  const submitLead = async (event: FormEvent) => {
     event.preventDefault()
     const trimmedName = name.trim()
     const trimmedPhone = phone.trim()
-    const trimmedLocation = location.trim()
-
-    if (!trimmedName || !trimmedPhone || !trimmedLocation) {
-      setError("Enter your full name, phone number, and delivery location.")
-      setSent(false)
+    if (!trimmedName || !trimmedPhone) {
+      setError("Enter your name and phone number.")
+      return
+    }
+    if (trimmedPhone.replace(/\D/g, "").length < 10) {
+      setError("Enter a Nigerian phone number, such as 0803…")
       return
     }
 
-    const digits = trimmedPhone.replace(/\D/g, "")
-    if (digits.length < 10) {
-      setError("Enter an active phone number so our team can reach you.")
-      setSent(false)
-      return
-    }
-
-    const message = [
-      "Hello Alphacom, I want the special bundle.",
-      "",
-      "Offer: 20,000mAh Power Bank + FREE Electric Hand Fan",
-      `Bundle price: ${PRICE}`,
-      `How many bundles: ${quantity}`,
-      "",
-      `Full name: ${trimmedName}`,
-      `Phone number: ${trimmedPhone}`,
-      `Delivery address / location: ${trimmedLocation}`,
-      `Additional information: ${notes.trim() || "None"}`,
-    ].join("\n")
-
-    window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`, "_blank", "noopener,noreferrer")
+    setSubmitting(true)
     setError("")
-    setSent(true)
+    const extra = note.trim()
+    try {
+      const response = await fetch(`${API_BASE}/api/v1/promotions/leads`, {
+        method: "POST",
+        headers: { Accept: "application/json", "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: trimmedName,
+          phone: trimmedPhone,
+          ...(email.trim() ? { email: email.trim() } : {}),
+          ...(address.trim() ? { address: address.trim() } : {}),
+          note: extra ? `${OFFER_NOTE}. ${extra}` : OFFER_NOTE,
+        }),
+      })
+      const json = await response.json().catch(() => null)
+      if (!response.ok || json?.success === false) {
+        setError(leadError(json))
+        return
+      }
+      router.push("/promotion/thank-you")
+    } catch {
+      setError("We couldn't send your request. Check your connection and try again.")
+    } finally {
+      setSubmitting(false)
+    }
   }
 
   return (
@@ -291,7 +298,7 @@ export function PromotionLanding() {
           {[
             "Click the order button.",
             "Fill in your name, phone number and delivery location.",
-            "Submit your order through WhatsApp.",
+            "Submit the form with your name and phone number.",
             "Our team will contact you to confirm your order and delivery arrangements.",
           ].map((step, index) => (
             <li key={step} className="rounded-2xl bg-white p-5 shadow-sm">
@@ -307,53 +314,44 @@ export function PromotionLanding() {
           <div className="text-center">
             <h2 className="text-3xl font-medium sm:text-4xl">Order your bundle now.</h2>
             <p className="mx-auto mt-3 max-w-sm text-sm leading-6 text-stone-600">
-              Fill in your details and send them on WhatsApp. Our team will confirm your order.
+              Fill in the form below. Our team will confirm your order.
             </p>
           </div>
-          <form onSubmit={submitOrder} className="mt-8 overflow-hidden rounded-[1.75rem] border border-stone-200 bg-white shadow-[0_24px_60px_rgba(142,27,44,0.08)]">
+          <form onSubmit={submitLead} className="mt-8 overflow-hidden rounded-[1.75rem] border border-stone-200 bg-white shadow-[0_24px_60px_rgba(142,27,44,0.08)]">
             <div className="flex items-center justify-between gap-4 border-b border-stone-200 bg-[#F0F4F8] px-6 py-5 sm:px-8">
               <div>
                 <p className="text-sm font-medium">Power bank + free hand fan</p>
-                <p className="mt-1 text-xs text-stone-500">Free delivery on this offer</p>
+                <p className="mt-1 text-xs text-stone-500">Free delivery within Lagos</p>
               </div>
               <p className="text-2xl font-medium tracking-tight text-[#8E1B2C]">{PRICE}</p>
             </div>
             <div className="px-6 py-7 sm:px-8">
               <div className="grid gap-4 sm:grid-cols-2">
-                <Field label="Full name" htmlFor="full-name">
-                  <input id="full-name" name="name" autoComplete="name" value={name} onChange={(event) => setName(event.target.value)} placeholder="Your full name" className={inputClass} />
-                </Field>
-                <Field label="Phone number" htmlFor="phone">
-                  <input id="phone" name="phone" type="tel" inputMode="tel" autoComplete="tel" value={phone} onChange={(event) => setPhone(event.target.value)} placeholder="0803 000 0000" className={inputClass} />
-                </Field>
+                <label className="block text-sm font-medium" htmlFor="lead-name">
+                  Name
+                  <input id="lead-name" name="name" autoComplete="name" required value={name} onChange={(event) => setName(event.target.value)} placeholder="Your full name" className={inputClass} />
+                </label>
+                <label className="block text-sm font-medium" htmlFor="lead-phone">
+                  Phone number
+                  <input id="lead-phone" name="phone" type="tel" inputMode="tel" autoComplete="tel" required value={phone} onChange={(event) => setPhone(event.target.value)} placeholder="0803 000 0000" className={inputClass} />
+                </label>
               </div>
-              <Field label="Delivery location" htmlFor="location">
-                <textarea id="location" name="location" rows={3} value={location} onChange={(event) => setLocation(event.target.value)} placeholder="Area, city, and state" className={`${inputClass} resize-y`} />
-              </Field>
-              <Field label="How many bundles" htmlFor="quantity">
-                <select id="quantity" name="quantity" value={quantity} onChange={(event) => setQuantity(event.target.value)} className={inputClass}>
-                  {["1", "2", "3", "4", "5"].map((value) => (
-                    <option key={value} value={value}>
-                      {value}
-                    </option>
-                  ))}
-                </select>
-              </Field>
-              <Field label="Anything else, optional" htmlFor="notes">
-                <textarea id="notes" name="notes" rows={2} value={notes} onChange={(event) => setNotes(event.target.value)} placeholder="A note for the team" className={`${inputClass} resize-y`} />
-              </Field>
-              {error ? <p className="mb-4 rounded-xl bg-[#F8ECEE] px-4 py-3 text-sm text-[#8E1B2C]">{error}</p> : null}
-              <button type="submit" className="w-full rounded-xl bg-[#8E1B2C] py-4 text-base font-medium text-white transition hover:bg-[#741625]">
-                Order your bundle now
+              <label className="mt-4 block text-sm font-medium" htmlFor="lead-email">
+                Email, optional
+                <input id="lead-email" name="email" type="email" autoComplete="email" value={email} onChange={(event) => setEmail(event.target.value)} placeholder="you@email.com" className={inputClass} />
+              </label>
+              <label className="mt-4 block text-sm font-medium" htmlFor="lead-address">
+                Delivery address, optional
+                <textarea id="lead-address" name="address" rows={3} autoComplete="street-address" value={address} onChange={(event) => setAddress(event.target.value)} placeholder="Area, city, and state" className={`${inputClass} resize-y`} />
+              </label>
+              <label className="mt-4 block text-sm font-medium" htmlFor="lead-note">
+                Anything else, optional
+                <textarea id="lead-note" name="note" rows={2} value={note} onChange={(event) => setNote(event.target.value)} placeholder="A note for the team" className={`${inputClass} resize-y`} />
+              </label>
+              {error ? <p className="mt-4 rounded-xl bg-[#F8ECEE] px-4 py-3 text-sm text-[#8E1B2C]">{error}</p> : null}
+              <button type="submit" disabled={submitting} className="mt-5 w-full rounded-xl bg-[#8E1B2C] py-4 text-base font-medium text-white transition hover:bg-[#741625] disabled:opacity-60">
+                {submitting ? "Sending…" : "Order your bundle now"}
               </button>
-              <p className="mt-3 text-center text-xs leading-5 text-stone-500">
-                This opens WhatsApp with your details. The order is confirmed when our team replies.
-              </p>
-              {sent ? (
-                <p className="mt-3 rounded-xl bg-[#e8f5ee] px-4 py-3 text-center text-sm text-[#1d6b3a]">
-                  WhatsApp is open with your order. Send the message so we can confirm it.
-                </p>
-              ) : null}
             </div>
           </form>
         </div>
@@ -416,11 +414,17 @@ const buttonClass = "whitespace-nowrap rounded-full bg-[#8E1B2C] px-5 py-2.5 tex
 const inputClass =
   "mt-1.5 w-full rounded-xl border border-stone-300 bg-[#F0F4F8] px-4 py-3.5 text-base text-stone-950 outline-none transition placeholder:text-stone-400 focus:border-[#8E1B2C] focus:bg-white focus:ring-2 focus:ring-[#8E1B2C]/15"
 
-function Field({ label, htmlFor, children }: { label: string; htmlFor: string; children: ReactNode }) {
-  return (
-    <label htmlFor={htmlFor} className="mb-4 block text-sm font-medium text-stone-950">
-      {label}
-      {children}
-    </label>
-  )
+function leadError(json: unknown): string {
+  if (!json || typeof json !== "object") return "We couldn't send your request. Please try again."
+  const record = json as { message?: unknown; detail?: unknown }
+  if (typeof record.message === "string" && record.message.trim()) return record.message
+  if (typeof record.detail === "string" && record.detail.trim()) return record.detail
+  if (Array.isArray(record.detail)) {
+    const text = record.detail
+      .map((item) => (item && typeof item === "object" && "msg" in item && typeof item.msg === "string" ? item.msg : ""))
+      .filter(Boolean)
+      .join(" ")
+    if (text) return text
+  }
+  return "We couldn't send your request. Please try again."
 }
