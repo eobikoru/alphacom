@@ -4,10 +4,10 @@ import { getCanonicalSearchQuery, SEO_BRANDS } from "@/lib/site"
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "https://api.alphacomonline.com"
 
-async function getJson<T>(path: string): Promise<T | null> {
+async function getJson<T>(path: string, revalidate = 3600): Promise<T | null> {
   try {
     const response = await fetch(`${API_BASE}${path}`, {
-      next: { revalidate: 3600 },
+      ...(revalidate > 0 ? { next: { revalidate } } : { cache: "no-store" as const }),
       headers: { Accept: "application/json" },
     })
     if (!response.ok) return null
@@ -18,7 +18,8 @@ async function getJson<T>(path: string): Promise<T | null> {
 }
 
 export async function fetchCategoriesWithProducts(): Promise<CategoryWithProducts[]> {
-  const json = await getJson<{ data?: CategoryWithProducts[] }>("/api/v1/categories/with-products")
+  // Do not cache this. An empty reply while the API is down was saved for an hour and Shop by Category stayed blank.
+  const json = await getJson<{ data?: CategoryWithProducts[] }>("/api/v1/categories/with-products", 0)
   return json?.data ?? []
 }
 
